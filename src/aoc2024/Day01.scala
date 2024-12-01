@@ -8,6 +8,9 @@ object Day01 {
 
   /** @return the sum of distances. */
   def part1(locations: Seq[(Int, Int)]): Int = {
+    require(locations.nonEmpty, "locations.nonEmpty")
+    logger.debug(s"${locations}")
+
     val l1Sorted = locations.map(_._1).sorted
     val l2Sorted = locations.map(_._2).sorted
     val locationsSorted = l1Sorted.zip(l2Sorted)
@@ -19,6 +22,9 @@ object Day01 {
 
   /** @return the similarity score. */
   def part2(locations: Seq[(Int, Int)]): Int = {
+    require(locations.nonEmpty, "locations.nonEmpty")
+    logger.debug(s"${locations}")
+
     val l1 = locations.map(_._1)
     val l2 = locations.map(_._2)
 
@@ -28,6 +34,7 @@ object Day01 {
     }}
   }
 
+  /** @return the file for the given filename as parsed elements */ 
   def readFile(filename: String): Seq[(Int, Int)] = {
     import scala.io.Source
 
