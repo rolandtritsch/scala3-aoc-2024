@@ -19,7 +19,13 @@ object Day01 {
 
   /** @return the similarity score. */
   def part2(locations: Seq[(Int, Int)]): Int = {
-    31
+    val l1 = locations.map(_._1)
+    val l2 = locations.map(_._2)
+
+    l1.foldLeft(0) {(acc, l) => {
+      val c = l2.count(_ == l)
+      acc + (l * c)
+    }}
   }
 
   def readFile(filename: String): Seq[(Int, Int)] = {
