@@ -1,6 +1,6 @@
 package aoc2024
 
-/** Day01 - list of locations
+/** Day01 - Historian Hysteria
   */
 
 object Day01 {
