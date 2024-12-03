@@ -35,10 +35,30 @@ object Day03 {
     execute(instructions, true)
   }
 
+  object Parser {
+    import scala.util.matching
+
+    val line: matching.Regex = """mul\(\d{1,3},\d{1,3}\)|do\(\)|don\'t\(\)""".r
+    val instruction: matching.Regex = """(mul|do|don\'t)\s*\(((\d+),\s*(\d+))?\)""".r
+  }
+
+
+  extension (toBeParsed: String) {
+    def parseLine: List[String] = {
+      Parser.line.findAllIn(toBeParsed).toList
+    }
+
+    def parseInstruction: Operation = toBeParsed match {
+      case Parser.instruction("mul", _, op1, op2) => Mul(op1.toInt, op2.toInt)
+      case Parser.instruction("don't", _, _, _) => Disable()
+      case Parser.instruction("do", _, _, _) => Enable()
+      case _ => throw new RuntimeException("Unexpected case")
+    }
+  }
+
   /** @return the file for the given filename as parsed elements */ 
   def readFile(filename: String): Seq[Operation] = {
     import scala.io.Source
-    import scala.util.matching
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"${filename}")
@@ -48,17 +68,7 @@ object Day03 {
       source.getLines().toSeq.map { line => {
         logger.debug(s"line: ${line}")
 
-        val parseLine: matching.Regex = """mul\(\d{1,3},\d{1,3}\)|do\(\)|don\'t\(\)""".r
-        val parsed = parseLine.findAllIn(line).toList
-        logger.debug(s"parsed: ${parsed}")
-
-        val parseInstruction: matching.Regex = """(mul|do|don\'t)\s*\(((\d+),\s*(\d+))?\)""".r
-        parsed.map { instruction => instruction match {
-          case parseInstruction("mul", _, op1, op2) => Mul(op1.toInt, op2.toInt)
-          case parseInstruction("don't", _, _, _) => Disable()
-          case parseInstruction("do", _, _, _) => Enable()
-          case _ => throw new RuntimeException("Unexpected case")
-        }}
+        line.parseLine.map(_.parseInstruction)
       }}.flatten
     } finally {
       source.close()
