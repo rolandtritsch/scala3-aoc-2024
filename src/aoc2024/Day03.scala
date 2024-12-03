@@ -8,12 +8,15 @@ object Day03 {
 
   abstract class Operation
   case class Mul(op1: Int, op2: Int) extends Operation
+  case class Disable() extends Operation
+  case class Enable() extends Operation
 
-  private def execute(instructions: Seq[Operation]): Int = {
-    instructions.foldLeft(0) { (acc, operation) => operation match {
-      case Mul(op1, op2) => acc + (op1 * op2)
-      case _ => throw new RuntimeException("Unexpected case")
-    }}
+  private def execute(instructions: Seq[Operation], checking: Boolean): Int = {
+    instructions.foldLeft(0, true) { case ((acc, enabled), operation) => operation match {
+      case Mul(op1, op2) => if (enabled || !checking) (acc + (op1 * op2), true) else (acc, false)
+      case Disable() => (acc, false)
+      case Enable() => (acc, true)
+    }}._1
   }
 
   /** @return the solution for part1 */
@@ -21,7 +24,7 @@ object Day03 {
     require(instructions.nonEmpty, "instructions.nonEmpty")
     logger.debug(s"instructions: ${instructions}")
 
-    execute(instructions)
+    execute(instructions, false)
   }
 
   /** @return the solution for part2 */
@@ -29,8 +32,7 @@ object Day03 {
     require(instructions.nonEmpty, "instructions.nonEmpty")
     logger.debug(s"instructions: ${instructions}")
 
-    val Mul(op1, op2) = instructions(0) : @unchecked
-    op1 * op2
+    execute(instructions, true)
   }
 
   /** @return the file for the given filename as parsed elements */ 
@@ -46,13 +48,15 @@ object Day03 {
       source.getLines().toSeq.map { line => {
         logger.debug(s"line: ${line}")
 
-        val parseLine: matching.Regex = """mul\(\d{1,3},\d{1,3}\)""".r
+        val parseLine: matching.Regex = """mul\(\d{1,3},\d{1,3}\)|do\(\)|don\'t\(\)""".r
         val parsed = parseLine.findAllIn(line).toList
         logger.debug(s"parsed: ${parsed}")
 
-        val parseInstruction: matching.Regex = """(\w+)\s*\((\d+),\s*(\d+)\)""".r
+        val parseInstruction: matching.Regex = """(mul|do|don\'t)\s*\(((\d+),\s*(\d+))?\)""".r
         parsed.map { instruction => instruction match {
-          case parseInstruction("mul", op1, op2) => Mul(op1.toInt, op2.toInt)
+          case parseInstruction("mul", _, op1, op2) => Mul(op1.toInt, op2.toInt)
+          case parseInstruction("don't", _, _, _) => Disable()
+          case parseInstruction("do", _, _, _) => Enable()
           case _ => throw new RuntimeException("Unexpected case")
         }}
       }}.flatten
