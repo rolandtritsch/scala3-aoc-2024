@@ -13,4 +13,7 @@ def solve() = {
 
   println(s"Day03 - part1: ${Day03.part1(Day03.readFile("./inputs/Day03.txt"))}")
   println(s"Day03 - part2: ${Day03.part2(Day03.readFile("./inputs/Day03.txt"))}")
+
+  println(s"Day04 - part1: ${Day04.part1(Day04.readFile("./inputs/Day04.txt"))}")
+  println(s"Day04 - part2: ${Day04.part2(Day04.readFile("./inputs/Day04.txt"))}")
 }
