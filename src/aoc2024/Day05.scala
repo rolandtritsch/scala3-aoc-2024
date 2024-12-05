@@ -90,6 +90,38 @@ object Day05 {
 
     /** @return true, if update is valid for the given set of rules */
     def isValid(rules: Set[Rule]): Boolean = update.facts.subsetOf(rules)
+
+    /** @return invalid facts */
+    def invalid(rules: Set[Rule]): Set[Fact] = update.facts.filter(!rules.contains(_))
+    /** @return swap the two elements */
+    def swap(fact: Fact): Update = {
+      val (before, after) = fact
+      update.map { p => {
+        if (p == before) after
+        else if (p == after) before
+        else p
+      }}
+    }
+
+    /** @return the fixed update */
+    def fix(rules: Set[Rule]): Update = {
+      def fix0(invalid: List[Fact]): Update = invalid match {
+        case Nil => throw new RuntimeException("No fix found")
+        case fact :: rest => {
+          val swapped = update.swap(fact)
+          logger.info(s"update: ${update}, fact: ${fact}, swapped: ${swapped}")
+          if(swapped.isValid(rules)) swapped else fix0(rest)
+        }
+      }
+
+      def fix1(invalid: List[Fact], update: Update): Update = invalid match {
+        case Nil => update
+        case fact :: rest => fix1(rest, update.swap(fact))
+      }
+
+      // fix0(update.invalid(rules).toList)
+      fix1(update.invalid(rules).toList.sorted, update)
+    }
   }
 
   /** @return the sum of middle page numbers from the valid updates  */
@@ -105,11 +137,17 @@ object Day05 {
     middlePages.sum
   }
 
-  /** @return the solution for part2 */
-  def part2(is: Seq[Int]): Int = {
-    require(is.nonEmpty, "is.nonEmpty")
-    logger.debug(s"is: ${is}")
+  /** @return the sum of middle pages of the fixed invalid updates */
+  def part2(rules: Set[Rule], updates: Set[Update]): Int = {
+    require(rules.nonEmpty, "rules.nonEmpty")
+    require(updates.nonEmpty, "updates.nonEmpty")
+    logger.debug(s"rules: ${rules}, updates: ${updates}")
 
-    is(0)
+    val inValidUpdates = updates.filter(!_.isValid(rules))
+    val validUpdates = inValidUpdates.map(_.fix(rules))
+    val middlePages = validUpdates.toList.map { update => {
+      update(update.size/2)
+    }}
+    middlePages.sum
   }
 }

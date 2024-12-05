@@ -18,5 +18,5 @@ def solve() = {
   println(s"Day04 - part2: ${Day04.part2(Day04.readFile("./inputs/Day04.txt"))}")
 
   println(s"Day05 - part1: ${Day05.part1(Day05.readFileRules("./inputs/Day05-Rules.txt"), Day05.readFileUpdates("./inputs/Day05-Updates.txt"))}")
-  println(s"Day05 - part2: ${Day05.part2(Seq(1))}")
+  println(s"Day05 - part1: ${Day05.part2(Day05.readFileRules("./inputs/Day05-Rules.txt"), Day05.readFileUpdates("./inputs/Day05-Updates.txt"))}")
 }

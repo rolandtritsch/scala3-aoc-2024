@@ -61,7 +61,7 @@ class Day05Test extends munit.ScalaCheckSuite {
   }
 
   test("Day05 - part2") {
-    val obtained = Day05.part2(input)
-    assertEquals(obtained, 0)
+    val obtained = Day05.part2(testRules, testUpdates)
+    assertEquals(obtained, 89)
   }
 }
