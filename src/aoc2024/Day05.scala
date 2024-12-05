@@ -99,7 +99,7 @@ object Day05 {
     logger.debug(s"rules: ${rules}, updates: ${updates}")
 
     val validUpdates = updates.filter(_.isValid(rules))
-    val middlePages = validUpdates.map { update => {
+    val middlePages = validUpdates.toList.map { update => {
       update(update.size/2)
     }}
     middlePages.sum
