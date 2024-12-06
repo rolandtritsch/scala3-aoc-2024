@@ -28,6 +28,7 @@ package aoc2024
   * - add a new obstruction
   * - walk the lab
   * - check, if the walk ended up in a loop
+  * - do this for all positions in the lab
   */
 
 object Day06 {
@@ -48,7 +49,6 @@ object Day06 {
   class Grid(val grid: Array[Array[State]], var guard: Position) {
     val rows = grid.size
     val cols = grid(0).size
-    var steps = 0
     var done = false
     var looped = false
     val visited = scala.collection.mutable.Set.empty[Position]
@@ -75,16 +75,15 @@ object Day06 {
         val Position(row, col, direction) = guard
         visited.add(guard)
         guard = direction match {
-          case UP if(nextPosition == FREE) => {steps += 1; Position(row - 1, col, UP)}
-          case UP if(nextPosition == BLOCKED) => {Position(row, col, RIGHT)}
-          case DOWN if(nextPosition == FREE) => {steps += 1; Position(row + 1, col, DOWN)}
-          case DOWN if(nextPosition == BLOCKED) => {Position (row, col, LEFT)}
-          case LEFT if(nextPosition == FREE) => {steps += 1; Position(row, col - 1, LEFT)}
-          case LEFT if(nextPosition == BLOCKED) => {Position(row, col, UP)}
-          case RIGHT if(nextPosition == FREE) => {steps += 1; Position(row, col + 1, RIGHT)}
-          case RIGHT if(nextPosition == BLOCKED) => {Position(row, col, DOWN)}
+          case UP if(nextPosition == FREE) => Position(row - 1, col, UP)
+          case UP if(nextPosition == BLOCKED) => Position(row, col, RIGHT)
+          case DOWN if(nextPosition == FREE) => Position(row + 1, col, DOWN)
+          case DOWN if(nextPosition == BLOCKED) => Position (row, col, LEFT)
+          case LEFT if(nextPosition == FREE) => Position(row, col - 1, LEFT)
+          case LEFT if(nextPosition == BLOCKED) => Position(row, col, UP)
+          case RIGHT if(nextPosition == FREE) => Position(row, col + 1, RIGHT)
+          case RIGHT if(nextPosition == BLOCKED) => Position(row, col, DOWN)
           case _ if(nextPosition == OUTOFBOUNDS) => {
-            steps += 1
             done = true
             guard
           }
@@ -92,7 +91,8 @@ object Day06 {
         }
       }
     }
-        
+
+    /** Walk the lab until done */
     def walk: Unit = {
       while(!done) step
     }
@@ -126,6 +126,7 @@ object Day06 {
     Grid(grid, guard)
   }
 
+  /** @return the number of positions that create loops */
   private def findLoops(lab: Grid): Int = {
     var counter = 0
     (0 until lab.rows).map { row => {
@@ -139,6 +140,7 @@ object Day06 {
     counter
   }
 
+  /** @return a clone lab with a new BLOCK at the given position */
   private def clone(lab: Grid, labRow: Int, labCol: Int, state: State): Array[Array[State]] = {
     (0 until lab.rows).map { row => {
       (0 until lab.cols).map { col => {
@@ -157,7 +159,7 @@ object Day06 {
     lab.visited.map { case Position(row, col, _) => (row, col) }.size
   }
 
-  /** @return the solution for part2 */
+  /** @return the number of ways you can create loops */
   def part2(lab: Grid): Int = {
     require(!lab.done, "!lab.done")
     logger.debug(s"lab: ${lab}")
