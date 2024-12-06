@@ -120,7 +120,7 @@ object Day05 {
       }
 
       // fix0(update.invalid(rules).toList)
-      fix1(update.invalid(rules).toList.sorted, update)
+      fix1(update.invalid(rules).toList.sorted.reverse, update)
     }
   }
 
