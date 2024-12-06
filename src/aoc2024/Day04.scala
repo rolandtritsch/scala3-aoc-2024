@@ -84,6 +84,10 @@ object Day04 {
       }}
     }
 
+    def rotate: Seq[String] = {
+      lines.map(_.toSeq).transpose.map(_.reverse).map(_.mkString)
+    }
+
     def transposed: Seq[String] = {
       lines.map(_.toSeq).transpose.map(_.mkString)
     }

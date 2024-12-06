@@ -10,6 +10,24 @@ class Day04Test extends munit.ScalaCheckSuite {
     assertEquals(obtained, expected)
   }
 
+  test("Day04 - rotate") {
+    import aoc2024.Day04._
+
+    val input = Seq(
+      "123",
+      "ABC",
+      "abc")
+    val obtained = input.rotate
+    val expected = Seq(
+      "aA1",
+      "bB2",
+      "cC3")
+
+    assertEquals(obtained, expected)
+
+    assertEquals(obtained.rotate.rotate.rotate, input)
+  }
+
   test("Day04 - transpose") {
     import aoc2024.Day04._
 
