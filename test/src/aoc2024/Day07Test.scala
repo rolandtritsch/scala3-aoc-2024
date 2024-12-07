@@ -31,13 +31,25 @@ class Day07Test extends munit.ScalaCheckSuite {
     assert(input(4).isValid(true))
   }
 
-  test("Day07 - part1") {
+  test("Day07 - part1 - test") {
     val obtained = Day07.part1(input)
     assertEquals(obtained, BigInt(3749))
   }
 
-  test("Day07 - part2") {
+  test("Day07 - part1") {
+    val input = Day07.readFile("./inputs/Day07.txt")
+    val obtained = Day07.part1(input)
+    assertEquals(obtained, BigInt("28730327770375"))
+  }
+
+  test("Day07 - part2 - test") {
     val obtained = Day07.part2(input)
     assertEquals(obtained, BigInt(11387))
+  }
+
+  test("Day07 - part2") {
+    val input = Day07.readFile("./inputs/Day07.txt")
+    val obtained = Day07.part2(input)
+    assertEquals(obtained, BigInt("424977609625985"))
   }
 }

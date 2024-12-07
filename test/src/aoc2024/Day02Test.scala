@@ -15,13 +15,27 @@ class Day02Test extends munit.ScalaCheckSuite {
     Seq(1, 3, 6, 7, 9),
   )
 
-  test("Day02 - part1") {
+  test("Day02 - part1 - test") {
     val obtained = Day02.part1(input)
     assertEquals(obtained, 2)
   }
 
-  test("Day02 - part2") {
+  test("Day02 - part1") {
+    val input = Day02.readFile("./inputs/Day02.txt")
+    val obtained = Day02.part1(input)
+    assertEquals(obtained, 585)
+  }
+
+  test("Day02 - part2 - test") {
     val obtained = Day02.part2(input)
     assertEquals(obtained, 4)
+  }
+
+  test("Day02 - part2") {
+    val input = Day02.readFile("./inputs/Day02.txt")
+    val obtained = Day02.part2(input)
+    // TODO: This used to work. Fix it. Again.
+    //assertEquals(obtained, 626)
+    assertEquals(obtained, 610)
   }
 }

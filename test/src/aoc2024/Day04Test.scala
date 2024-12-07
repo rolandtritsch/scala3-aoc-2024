@@ -139,13 +139,25 @@ class Day04Test extends munit.ScalaCheckSuite {
     "MXMXAXMASX",
   )
 
-  test("Day04 - part1") {
+  test("Day04 - part1 - test") {
     val obtained = Day04.part1(input)
     assertEquals(obtained, 18)
   }
 
-  test("Day04 - part2") {
+  test("Day04 - part1") {
+    val input = Day04.readFile("./inputs/Day04.txt")
+    val obtained = Day04.part1(input)
+    assertEquals(obtained, 2536)
+  }
+
+  test("Day04 - part2 - test") {
     val obtained = Day04.part2(input)
     assertEquals(obtained, 9)
+  }
+
+  test("Day04 - part2") {
+    val input = Day04.readFile("./inputs/Day04.txt")
+    val obtained = Day04.part2(input)
+    assertEquals(obtained, 1875)
   }
 }

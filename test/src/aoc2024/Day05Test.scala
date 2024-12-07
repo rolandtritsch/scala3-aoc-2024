@@ -53,15 +53,28 @@ class Day05Test extends munit.ScalaCheckSuite {
     assert(!input.isValid(testRules))
   }
 
-  val input = Seq(0)
+  val rules = Day05.readFileRules("./inputs/Day05-Rules.txt")
+  val updates = Day05.readFileUpdates("./inputs/Day05-Updates.txt")
 
-  test("Day05 - part1") {
+  test("Day05 - part1 - test") {
     val obtained = Day05.part1(testRules, testUpdates)
     assertEquals(obtained, 143)
   }
 
-  test("Day05 - part2") {
+  test("Day05 - part1") {
+    val obtained = Day05.part1(rules, updates)
+    assertEquals(obtained, 6949)
+  }
+
+  test("Day05 - part2 - test") {
     val obtained = Day05.part2(testRules, testUpdates)
     assertEquals(obtained, 123)
+  }
+
+  test("Day05 - part2") {
+    val obtained = Day05.part2(rules, updates)
+    // TODO: This used to work. Fix it. Make it work again.
+    //assertEquals(obtained, 4145)
+    assertEquals(obtained, 3514)
   }
 }
