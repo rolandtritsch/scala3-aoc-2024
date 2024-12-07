@@ -34,8 +34,6 @@ class Day02Test extends munit.ScalaCheckSuite {
   test("Day02 - part2") {
     val input = Day02.readFile("./inputs/Day02.txt")
     val obtained = Day02.part2(input)
-    // TODO: This used to work. Fix it. Again.
-    //assertEquals(obtained, 626)
-    assertEquals(obtained, 610)
+    assertEquals(obtained, 626)
   }
 }
