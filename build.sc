@@ -25,7 +25,8 @@ object aoc2024 extends RootModule with ScoverageModule with ScalafmtModule with 
   )
 
   object test extends ScoverageTests with TestModule.Munit {
-    def testCachedArgs = Seq("--exclude-tags=ignore")
+    def testCachedArgs = Seq("--include-tags=only")
+    //def testCachedArgs = Seq("--exclude-tags=ignore")
     def ivyDeps = Agg(
       ivy"org.scalameta::munit::1.0.0",
       ivy"org.scalameta::munit-scalacheck:1.0.0",

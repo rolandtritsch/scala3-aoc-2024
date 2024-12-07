@@ -1,6 +1,7 @@
 package aoc2024
 
 class Day00Test extends munit.ScalaCheckSuite {
+  val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
 
   test("Day00 - dummy".tag(ignore)) {
