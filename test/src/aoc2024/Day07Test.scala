@@ -24,7 +24,7 @@ class Day07Test extends munit.ScalaCheckSuite {
 
   val input = Day07.readFile("./inputs/Day07Test.txt")
 
-  test("Day07 - isValid".tag(only)) {
+  test("Day07 - isValid") {
     assert(input(0).isValid())
     assert(!input(2).isValid())
     assert(!input(4).isValid())
