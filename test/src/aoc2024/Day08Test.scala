@@ -56,7 +56,7 @@ class Day08Test extends munit.ScalaCheckSuite {
     assertEquals(obtained, expected)
   }
 
-  test("Day08 - anntenna.pairs - test2".tag(only)) {
+  test("Day08 - anntenna.pairs - test2") {
     import aoc2024.Day08._
 
     val input = Day08.readFile("./inputs/Day08Test2.txt")
