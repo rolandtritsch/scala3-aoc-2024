@@ -1,6 +1,19 @@
 package aoc2024
 
 /** Day01 - Historian Hysteria
+  *
+  * part1:
+  *
+  * - some simple list processing
+  * - take the two cols, put them in seperate lists, zip it,
+  *   calculate the diff and sum it up
+  * - done
+  *
+  * part2:
+  *
+  * - almost the same as part1
+  * - but do the multiplication instead of the diff
+  * - done
   */
 
 object Day01 {
