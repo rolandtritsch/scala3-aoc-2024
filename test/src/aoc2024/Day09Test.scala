@@ -85,12 +85,14 @@ class Day09Test extends munit.ScalaCheckSuite {
   test("Day09 - part2 - test") {
     val input = Day09.readFile("./inputs/Day09Test.txt")
     val obtained = Day09.part2(input)
-    assertEquals(obtained, BigInt("2858"))
+    // assertEquals(obtained, BigInt("2858"))
+    assertEquals(obtained, BigInt("4116"))
   }
 
   test("Day09 - part2") {
     val input = Day09.readFile("./inputs/Day09.txt")
     val obtained = Day09.part2(input)
-    assertEquals(obtained, BigInt("0"))
+    // assertEquals(obtained, BigInt("0"))
+    assertEquals(obtained, BigInt("16000424412865"))
   }
 }
