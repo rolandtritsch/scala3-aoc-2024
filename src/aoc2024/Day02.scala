@@ -2,8 +2,18 @@ package aoc2024
 
 /** Day02 - Red-Nosed Reports
   *
-  * Count all the safe reports. A report is safe, when is has a minimum count of
-  * safe levels.
+  * part1:
+  *
+  * - count all the safe reports
+  * - a report is safe, when is has a minimum count of safe levels
+  *
+  * part2:
+  *
+  * - same as part1
+  * - but additionally count the reports that can be made safe,
+  *   by removing one element
+  * - we will do this by going through the list and try isSafe
+  *   on all possible (shorter by one) lists
   */
 
 object Day02 {
