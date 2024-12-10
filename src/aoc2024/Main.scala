@@ -31,8 +31,8 @@ def solve() = {
   println(s"Day08 - part1: ${Day08.part1(Day08.readFile("./inputs/Day08.txt"))}")
   println(s"Day08 - part2: ${Day08.part2(Day08.readFile("./inputs/Day08.txt"))}")
 
-  println(s"Day09 - part1: ${Day09.part1(Day09.readFile("./inputs/Day09.txt"))}")
-  println(s"Day09 - part2: ${Day09.part2(Day09.readFile2("./inputs/Day09.txt"))}")
+  println(s"Day09 - part1: ${Day09p1.part1(Day09p1.readFile("./inputs/Day09.txt"))}")
+  println(s"Day09 - part2: ${Day09p2.part2(Day09p2.readFile("./inputs/Day09.txt"))}")
 
   println(s"Day10 - part1: ${Day10.part1(Day10.readFile("./inputs/Day10.txt"))}")
   println(s"Day10 - part2: ${Day10.part2(Day10.readFile("./inputs/Day10.txt"))}")

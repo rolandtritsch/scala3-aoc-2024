@@ -2,20 +2,6 @@ package aoc2024
 
 /** Day09 - Disk Fragmenter
   *
-  * part1:
-  *
-  * - lets start simple
-  * - lets create a Vector[Option[Int]] to represent the Disk
-  * - lets iterate through the blocks and fill the freespace
-  *   with blocks from the back (until we have filled all
-  *   the freespace)
-  * - note: I was struggling to understand when to stop filling
-  *   freespace. But then I realized that I can stop, when I have
-  *   filled the first N blocks with N being the number of used
-  *   blocks
-  * - then we just need to do the checksum
-  * - done
-  *
   * part2:
   *
   * Hhhmmm ... much more difficult (at least for me). Let's see ...
@@ -25,7 +11,7 @@ package aoc2024
   * - we need to model this with blocks that have a size and Some(value)
   * - note: I will probably also add the index/address of the block (to
   *   allow for the implementation of a filesystem check)
-  * - we will then move around or more specifically swap blocks
+  * - we will then move around (or more specifically swap) blocks
   * - note: for that swap to work we need a split operation on a (freespace)
   *   block to make sure the blocks have the same size
   * - note: after the swap we need to check the block before/after the
@@ -35,98 +21,47 @@ package aoc2024
   *   because it is always the first file on the disk)
   * - then we create the checksum
   * - and then we are done
+  * 
+  * Note: I have tried to NOT use a mutable (double-linked) list, but was not
+  * able to get it to work. The code looked even more ugly than the code
+  * that uses a mutable list.
   */
 
-object Day09 {
+object Day09p2 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
-
-  type Block = Option[Int]
-
-  /** The disk */
-  class Disk (val blocks: Vector[Block]) {
-    val usedBlocks = blocks.flatten
-
-    override def toString(): String = {
-      blocks.map { b => b match {
-        case None => '.'
-        case Some(id) => id.toString.head
-      }}.mkString
-    }
-
-    def defragment: Disk = {
-      def defragmentor(fragmentedBlocks: Vector[Block], defragmentedBlocks: Vector[Block], blocksAvailableForDefragmentation: Vector[Int], n: Int): Vector[Block] = {
-        logger.debug(s"fragmentedBlocks: ${fragmentedBlocks}, defragmentedBlocks: ${defragmentedBlocks}, blocksAvailableForDefragmentation: ${blocksAvailableForDefragmentation}, n: ${n}")
-
-        if(n >= usedBlocks.size) {
-          defragmentedBlocks ++ Vector.fill(blocks.size - usedBlocks.size)(None)
-        } else fragmentedBlocks match {
-          case Vector(None, _*) => defragmentor(fragmentedBlocks.tail, defragmentedBlocks :+ Some(blocksAvailableForDefragmentation.head), blocksAvailableForDefragmentation.tail, n + 1)
-          case Vector(Some(id), _*) =>  defragmentor(fragmentedBlocks.tail, defragmentedBlocks :+ Some(id), blocksAvailableForDefragmentation, n + 1)
-          case _ => throw new RuntimeException("Unexpected case")
-        }
-      }
-
-      Disk(defragmentor(blocks, Vector(), usedBlocks.reverse, 0))
-    }
-
-    def checksum: BigInt = {
-      usedBlocks.map(BigInt(_)).zipWithIndex.map(_ * _).sum
-    }
-  }
-
-  /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Disk = {
-    import scala.io.Source
-
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
-
-    val source = Source.fromFile(filename)
-    try {
-      val line = source.getLines.toSeq.head
-      logger.debug(s"line: ${line}")
-      val firstBlockSize = line(0).toString.toInt
-      val firstBlock: Vector[Block] = Vector.fill(firstBlockSize)(Some(0))
-      val blocks = line.tail.grouped(2).foldLeft(firstBlock, 1) { case ((blocks, id), chars) => {
-        logger.debug(s"blocks: ${blocks}, chars: ${chars}, id: ${id}}")
-        val freeBlockSize = chars(0).toString.toInt
-        val freeBlocks: Vector[Block] = Vector.fill(freeBlockSize)(None)
-        val usedBlockSize = chars(1).toString.toInt
-        val usedBlocks: Vector[Block] = Vector.fill(usedBlockSize)(Some(id))
-        (blocks ++ freeBlocks ++ usedBlocks, id + 1)
-      }}
-      Disk(blocks._1)
-    } finally {
-      source.close()
-    }
-  }
 
   import scala.collection.mutable
 
-  type Block2 = (Int, Int, Option[Int])
+  /** A Block has an offset/address, size, id */
+  type Block = (Int, Int, Option[Int])
 
-  /** The disk */
-  class Disk2 (val blocks: mutable.ListBuffer[Block2]) {
+  /** The Disk */
+  class Disk (val blocks: mutable.ListBuffer[Block]) {
     override def toString(): String = {
       blocks.map { (_, blockSize, id) => id match {
         case None => '.'.toString * blockSize
         case Some(id) => id.toString * blockSize
       }}.mkString
     }
-
+    
+    /** @return true, if the file system is valid */
     def fileSystemCheck: Boolean = {
       val firstBlock = blocks.head
-      blocks.tail.foldLeft(firstBlock) { case(pb, b) => {
-        logger.debug(s"pb: ${pb}, b: ${b}")
-
+      blocks.tail.foldLeft(firstBlock, true) { case((pb, c), b) => {
         val (poffset, psize, pid) = pb
         val (offset, _, id) = b
 
-        assert(poffset + psize == offset)
-        assert(pid.getOrElse(-99) != id.getOrElse(-99))
-        b
-      }}
-      true
+        val check =if (offset != poffset + psize) {
+          logger.warn(s"Offset corrupted - offset: ${offset}, poffset: ${poffset}, psize: ${psize}, id: ${id}")
+          false
+        } else if (id.getOrElse(-99) == pid.getOrElse(-99)) {
+          logger.warn(s"Id corrupted - offset: ${offset}, poffset: ${poffset}, psize: ${psize}, id: ${id}")
+          false
+        } else {
+          true
+        }
+        (b, c && check)
+      }}._2
     }
 
     /** map to look up the size of the file by file id */
@@ -176,6 +111,7 @@ object Day09 {
       if (index0 >= 0 && index1 < blocks.size) {
         val (offset0, size0, id0) = blocks(index0)
         val (offset1, size1, id1) = blocks(index1)
+        // if both blocks are free space
         if (!id0.isDefined && !id1.isDefined) {
           blocks.remove(index1)
           blocks.remove(index0)
@@ -184,14 +120,19 @@ object Day09 {
       }
     }
 
+    private def foundFreeSpace(index: Int): Boolean = index >= 0
+
     /** defragment the file on the disk */
     def defragment(id: Int): Unit = {
       val freeIndex = findFirstFreeSpaceIndex(fileSizes(id))
-      if (freeIndex >= 0) {
+      if (foundFreeSpace(freeIndex)) {
         split(freeIndex, fileSizes(id))
+        // Note: We need to get the file index after the split!!!
         val fileIndex = findFileIndex(id)
+        // Note: We only swap if the freeSpace is before the file!!!
         if (freeIndex < fileIndex) {
           swap(freeIndex, fileIndex)
+          // Merge on the left and on the right
           merge(fileIndex, fileIndex + 1)
           merge(fileIndex - 1, fileIndex)
         }
@@ -210,48 +151,41 @@ object Day09 {
   }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile2(filename: String): Disk2 = {
+  def readFile(filename: String): Disk = {
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val emptyBlocks = mutable.ListBuffer[Block2]()
+    val blocks = mutable.ListBuffer[Block]()
     val source = Source.fromFile(filename)
     try {
       val line = source.getLines.toSeq.head
       logger.debug(s"line: ${line}")
 
       val firstBlockSize = line(0).toString.toInt
-      val firstBlock = emptyBlocks :+ (0, firstBlockSize, Some(0))
+      blocks.insert(0, (0, firstBlockSize, Some(0)))
 
-      val (blocks, _, _) = line.tail.grouped(2).foldLeft(firstBlock, firstBlockSize, 1) { case ((bs, offset, id), chars) => {
-        logger.debug(s"bs: ${bs}, chars: ${chars}, id: ${id}}")
+      val (_, _) = line.tail.grouped(2).foldLeft(firstBlockSize, 1) { case ((offset, id), chars) => {
+        logger.debug(s"blocks: ${blocks}, chars: ${chars}, id: ${id}}")
 
         val freeBlockSize = chars(0).toString.toInt
         val freeBlocks = (offset, freeBlockSize, None)
         val usedBlockSize = chars(1).toString.toInt
         val usedBlocks = (offset + freeBlockSize, usedBlockSize, Some(id))
 
-        (bs :+ freeBlocks :+ usedBlocks, offset + freeBlockSize + usedBlockSize, id + 1)
+        blocks.insertAll(blocks.size, List(freeBlocks, usedBlocks))
+        (offset + freeBlockSize + usedBlockSize, id + 1)
       }}
 
-      Disk2(blocks)
+      Disk(blocks)
     } finally {
       source.close()
     }
   }
 
   /** @return the checksum for the defragmented disk */
-  def part1(disk: Disk): BigInt = {
-    require(disk.blocks.nonEmpty, "disk.blocks.nonEmpty")
-    logger.debug(s"disk: ${disk}")
-
-    disk.defragment.checksum
-  }
-
-  /** @return the checksum for the defragmented disk */
-  def part2(disk: Disk2): BigInt = {
+  def part2(disk: Disk): BigInt = {
     require(disk.blocks.nonEmpty, "disk.blocks.nonEmpty")
     logger.debug(s"disk: ${disk}")
 
