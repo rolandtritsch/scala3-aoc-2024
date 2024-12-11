@@ -147,7 +147,8 @@ object Day11 {
                 s0.countN(rules, n - 1) + s1.countN(rules, n - 1)
               case _ => throw new RuntimeException("Unexpected case")
             }
-            cache.put((stone, n), i).get
+            cache.put((stone, n), i)
+            i
           }
         }
       } else 1
