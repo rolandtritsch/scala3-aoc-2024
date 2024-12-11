@@ -9,7 +9,7 @@ import $ivy.`com.lihaoyi::mill-contrib-scoverage:`
 import mill.contrib.scoverage.ScoverageModule
 
 object aoc2024 extends RootModule with ScoverageModule with ScalafmtModule with ScalafixModule {
-  def scalaVersion = "3.5.1"
+  def scalaVersion = "3.6.2"
   def scalacOptions = Seq("-Wunused:imports", "-deprecation")
   def scoverageVersion = "2.2.1"
   //def scalaVersion = "3.3.4"
@@ -17,7 +17,8 @@ object aoc2024 extends RootModule with ScoverageModule with ScalafmtModule with 
 
   def ivyDeps = Agg(
     ivy"com.typesafe.scala-logging::scala-logging:3.9.5",
-    ivy"ch.qos.logback:logback-classic:1.3.5"
+    ivy"ch.qos.logback:logback-classic:1.3.5",
+    ivy"org.scala-lang.modules::scala-parallel-collections:1.0.4"
   )
   
   def scalafixIvyDeps = Agg(
