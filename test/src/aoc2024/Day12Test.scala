@@ -10,35 +10,35 @@ class Day12Test extends munit.ScalaCheckSuite {
 
   test("Day12 - readFile - test") {
     val obtained = Day12.readFile("./inputs/Day12Test.txt")
-    assertEquals(obtained.regions.size, 100)
+    assertEquals(obtained.plotsByPlant.size, 9)
   }
 
   test("Day12 - readFile") {
     val obtained = Day12.readFile("./inputs/Day12.txt")
-    assertEquals(obtained.regions.size, 19600)
+    assertEquals(obtained.plotsByPlant.size, 26)
   }
 
-  test("Day12 - part1 - test".tag(only)) {
-    val input = Day12.readFile("./inputs/Day12Test3.txt")
+  test("Day12 - part1 - test") {
+    val input = Day12.readFile("./inputs/Day12Test.txt")
     val obtained = Day12.part1(input)
-    assertEquals(obtained, 0)
+    assertEquals(obtained, 9)
   }
 
   test("Day12 - part1") {
     val input = Day12.readFile("./inputs/Day12.txt")
     val obtained = Day12.part1(input)
-    assertEquals(obtained, 0)
+    assertEquals(obtained, 26)
   }
 
   test("Day12 - part2 - test") {
     val input = Day12.readFile("./inputs/Day12Test.txt")
     val obtained = Day12.part2(input)
-    assertEquals(obtained, 0)
+    assertEquals(obtained, 9)
   }
 
   test("Day12 - part2") {
     val input = Day12.readFile("./inputs/Day12.txt")
     val obtained = Day12.part2(input)
-    assertEquals(obtained, 0)
+    assertEquals(obtained, 26)
   }
 }

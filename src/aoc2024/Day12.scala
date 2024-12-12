@@ -45,9 +45,9 @@ object Day12 {
     require(x >= 0, "x >= 0")
     require(y >= 0, "y >= 0")
 
-    def neighbours(dimension: Dimensions): Set[Position] = {
+    def neighbours(dimension: Dimensions): List[Position] = {
       val (maxX, maxY) = dimension
-      Set(
+      List(
         (x - 1, y),
         (x + 1, y),
         (x, y - 1),
@@ -56,7 +56,7 @@ object Day12 {
         x >= 0 && x < maxX && y >= 0 && y < maxY
       }.map { (x, y) =>
         Position(x, y)
-      }
+      }.sorted
     }
   }
 
@@ -73,83 +73,28 @@ object Day12 {
     implicit val ordering: Ordering[Plot] = Ordering.by(_.position)
   }
 
-  case class Region(location: Position, plant: Char, plots: Set[Position], area: Int,  perimeter: Int) {
+  case class Region(location: Position, plant: Char, plots: List[Position], area: Int,  perimeter: Int) {
     require(plant.isLetter, "plant.isLetter")
     require(plots.nonEmpty, "plots.nonEmpty")
     require(area > 0, "area > 0")
-    //require(perimeter > 0, "perimeter > 0")
+    require(perimeter > 0, "perimeter > 0")
   }
 
   type Dimensions = (Int, Int)
 
-  class Garden (plots: Set[Plot], dimensions: Dimensions) {
-    private val plotsByPlant = plots.groupBy(_.plant)
+  class Garden (plots: List[Plot], dimensions: Dimensions) {
+    val plotsByPlant = plots.groupBy(_.plant)
 
-    val regions: Set[Region] = {
-      plotsByPlant.values.foldLeft(Set.empty[Region]) { (regions, plots) =>
-        regions ++ buildRegions(plots)
-      }
-    }
+    // def price: Int = regions.map { region =>
+    //   region.area * region.perimeter
+    // }.sum
 
-    private def get(p: Position): Plot = {
-      plots.find { plot => plot.position == p }.get
-    }
-
-    private def neighbours(thisPlot: Plot): Set[Plot] = {
-      val thatPositions = thisPlot.position.neighbours(this.dimensions)
-      logger.debug(s"thatPositions: ${thatPositions}")
-      val neighbours = thatPositions.filter { thatPosition =>
-        val thatPlot = this.get(thatPosition)
-        thisPlot.plant == thatPlot.plant
-      }.map { thatPosition =>
-        this.get(thatPosition)
-      }
-      logger.debug(s"neighbours: ${neighbours}")
-      neighbours
-    }
-
-    private def buildRegions(plots: Set[Plot]): Set[Region] = {
-      val availablePlots = scala.collection.mutable.ListBuffer[Plot](plots.toSeq*).sortBy(_.position)
-      val collectedRegions = scala.collection.mutable.Set[Region]()
-
-      def buildRegion(plot: Plot, collectedPlots: Set[Plot]): Region = {
-        val nextPlots = this.neighbours(plot).diff(collectedPlots)
-
-        if (nextPlots.isEmpty) {
-          val location = collectedPlots.min.position
-          val postions = collectedPlots.map(_.position)
-          val area = collectedPlots.size
-          val perimeter = collectedPlots.map(_.neighbours).sum
-          val region = Region(location, plot.plant, postions, area, perimeter)
-
-          logger.info(s"region: ${region}")
-          region
-        } else {
-          val nextPlot = nextPlots.toList.sorted.head
-          logger.info(s"plot: ${plot}, nextPlot: ${nextPlot}, collectPlots: ${collectedPlots}, availablePlots: ${availablePlots}")
-          availablePlots.remove(availablePlots.indexOf(nextPlot))
-          buildRegion(nextPlot, collectedPlots + nextPlot)
-        }
-      }
-
-      while(availablePlots.nonEmpty) {
-        val plot = availablePlots.head
-        availablePlots.remove(availablePlots.indexOf(plot))
-        assert(collectedRegions.add(buildRegion(plot, Set(plot))))
-      }
-      collectedRegions.toSet
-    }
-
-    def price: Int = regions.map { region =>
-      region.area * region.perimeter
-    }.sum
-
-    override def toString: String = {
-      val regionsString = regions.map { region =>
-        s"Region(${region.location}, ${region.plant}, ${region.area}, ${region.perimeter})"
-      }.mkString(", ")
-      s"Garden(${dimensions})(${regionsString})"
-    }
+    // override def toString: String = {
+    //   val regionsString = regions.map { region =>
+    //     s"Region(${region.location}, ${region.plant}, ${region.area}, ${region.perimeter})"
+    //   }.mkString(", ")
+    //   s"Garden(${dimensions})(${regionsString})"
+    // }
   }
 
   /** @return the file for the given filename as parsed elements */ 
@@ -159,14 +104,9 @@ object Day12 {
     def neighbours(thisPosition: Position, garden: Array[Array[Char]]): Int = {
       val dimensions = (garden.size, garden(0).size)
       val thisPlant = garden(thisPosition.x)(thisPosition.y)
-      logger.debug(s"thisPosition: ${thisPosition}, thisPlant: ${thisPlant}")
-
       thisPosition.neighbours(dimensions).count { thatPosition =>
-        logger.debug(s"thatPosition: ${thatPosition}")
-
         val Position(x, y) = thatPosition
         val thatPlant = garden(x)(y)
-
         thisPlant != thatPlant
       }
     }
@@ -187,8 +127,7 @@ object Day12 {
           val n = neighbours(p, garden)
           Plot(plant, p, n)
         }
-      }.toSet
-      logger.info(s"plots: ${plots}")
+      }.toList
 
       Garden(plots, dimensions)
     } finally {
@@ -198,17 +137,17 @@ object Day12 {
 
   /** @return the price to fence the garden */
   def part1(garden: Garden): Int = {
-    require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
+    //require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
     logger.info(s"garden: ${garden}")
   
-    garden.price
+    garden.plotsByPlant.size
   }
 
   /** @return the solution for part2 */
   def part2(garden: Garden): Int = {
-    require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
+    //require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
     logger.debug(s"garden: ${garden}")
 
-    garden.price
+    garden.plotsByPlant.size
   }
 }
