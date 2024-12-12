@@ -7,12 +7,12 @@ package aoc2024
   * This is going to be interesting. First we have to build/collect
   * the regions. We can do this with flood-fill depth-first traversal.
   *
-  * We then need to determine the number of neighbours every cell has.
-  * With the number of neighbours we can can calculate the perimeter
+  * We then need to determine the number of neighbors every cell has.
+  * With the number of neighbors we can can calculate the perimeter
   * like this ...
   *
   * For all cells in the region sum up the perimeters of each cell,
-  * where the perimeter of each cell is the number of neighbours
+  * where the perimeter of each cell is the number of neighbors
   *
   * The area of the region is simply the number of elements in the region.
   *
@@ -20,7 +20,7 @@ package aoc2024
   *
   * Means ... while we read the input we should probably collect ...
   *
-  * Plot(plant: Char, Position(x: Int, y: Int), neighbours: Int) 
+  * Plot(plant: Char, Position(x: Int, y: Int), neighbors: Int) 
   *
   * We can then build the regions by traversing the plots and calculate
   * the area and perimeter for each region. A Region would be ...
@@ -33,7 +33,7 @@ package aoc2024
   *
   * part1:
   *
-  * - read the plots (including the number of neighbours)
+  * - read the plots (including the number of neighbors)
   * - build the regions
   * - calculate price of the fence from the areas and perimeters of the regions 
   */
@@ -41,39 +41,22 @@ package aoc2024
 object Day12 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  case class Position(x: Int, y: Int) {
-    require(x >= 0, "x >= 0")
-    require(y >= 0, "y >= 0")
-
-    def neighbours(dimension: Dimensions): List[Position] = {
-      val (maxX, maxY) = dimension
-      List(
-        (x - 1, y),
-        (x + 1, y),
-        (x, y - 1),
-        (x, y + 1),
-      ).filter { (x, y) =>
-        x >= 0 && x < maxX && y >= 0 && y < maxY
-      }.map { (x, y) =>
-        Position(x, y)
-      }.sorted
-    }
-  }
+  case class Position(x: Int, y: Int)
 
   object Position {
     implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
   }
 
-  case class Plot(plant: Char, position: Position, neighbours: Int) {
+  case class Plot(plant: Char, position: Position, neighbors: Int) {
     require(plant.isLetter, "plant.isLetter")
-    require(neighbours >= 0, "neighbours >= 0")
+    require(neighbors >= 0, "neighbors >= 0")
   }
 
   object Plot {
     implicit val ordering: Ordering[Plot] = Ordering.by(_.position)
   }
 
-  case class Region(location: Position, plant: Char, plots: List[Position], area: Int,  perimeter: Int) {
+  case class Region(location: Position, plant: Char, plots: Set[Position], area: Int,  perimeter: Int) {
     require(plant.isLetter, "plant.isLetter")
     require(plots.nonEmpty, "plots.nonEmpty")
     require(area > 0, "area > 0")
@@ -82,33 +65,81 @@ object Day12 {
 
   type Dimensions = (Int, Int)
 
-  class Garden (plots: List[Plot], dimensions: Dimensions) {
+  class Garden (plots: Set[Plot], dimensions: Dimensions) {
     val plotsByPlant = plots.groupBy(_.plant)
+    val regions = plotsByPlant.values.foldLeft(Set.empty[Region]) { (regions, plots) =>
+      regions ++ collectRegions(plots, Set.empty[Region])
+    }
 
-    // def price: Int = regions.map { region =>
-    //   region.area * region.perimeter
-    // }.sum
+    def collectRegion(plots: Set[Plot]): (Region, Set[Plot]) = {
+      val validPositions = plots.map(_.position)
 
-    // override def toString: String = {
-    //   val regionsString = regions.map { region =>
-    //     s"Region(${region.location}, ${region.plant}, ${region.area}, ${region.perimeter})"
-    //   }.mkString(", ")
-    //   s"Garden(${dimensions})(${regionsString})"
-    // }
+      def neighbors(p: Position): Set[Position] = {
+        Set(
+          Position(p.x - 1, p.y),
+          Position(p.x + 1, p.y),
+          Position(p.x, p.y - 1),
+          Position(p.x, p.y + 1),
+        ).filter(validPositions.contains)
+      }
+
+      def dfs(position: Position, visited: Set[Position]): Set[Position] = {
+        if (visited.contains(position)) visited
+        else {
+          val newVisited = visited + position
+          neighbors(position).foldLeft(newVisited) { (acc, neighbor) =>
+            dfs(neighbor, acc)
+          }
+        }
+      }
+
+      val location = validPositions.toList.sorted.head
+      val regionPositions = dfs(location, Set.empty)
+      val regionPlots = plots.filter(p => regionPositions.contains(p.position))
+      val remainingPositions = validPositions.diff(regionPositions)
+      val remainingPlots = plots.filter(p => remainingPositions.contains(p.position))
+      val area = regionPlots.size
+      val perimeter = regionPlots.toList.map(_.neighbors).sum
+
+      (Region(location, plots.head.plant, regionPositions, area, perimeter), remainingPlots)
+    }
+
+    def collectRegions(plots: Set[Plot], regions: Set[Region]): Set[Region] = {
+      if(plots.isEmpty) regions
+      else {
+        val (region, remainingPlots) = collectRegion(plots)
+        collectRegions(remainingPlots, regions + region)
+      }
+    }
+
+    def price: Int = regions.toList.map { region =>
+      region.area * region.perimeter
+    }.sum
   }
 
   /** @return the file for the given filename as parsed elements */ 
   def readFile(filename: String): Garden = {
     import scala.io.Source
 
-    def neighbours(thisPosition: Position, garden: Array[Array[Char]]): Int = {
-      val dimensions = (garden.size, garden(0).size)
-      val thisPlant = garden(thisPosition.x)(thisPosition.y)
-      thisPosition.neighbours(dimensions).count { thatPosition =>
-        val Position(x, y) = thatPosition
-        val thatPlant = garden(x)(y)
+    def neighbors(p: Position, garden: Array[Array[Char]]): Int = {
+      val (maxX, maxY) = (garden.size, garden(0).size)
+      val thisPlant = garden(p.x)(p.y)
+      val positionsToCheck = Set(
+        Position(p.x - 1, p.y),
+        Position(p.x + 1, p.y),
+        Position(p.x, p.y - 1),
+        Position(p.x, p.y + 1),
+      )
+      val inGardenNeigbors = positionsToCheck.filter { p =>
+        p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY 
+      }.count { p =>
+        val thatPlant = garden(p.x)(p.y)
         thisPlant != thatPlant
       }
+      val outOfGardenNeighbors = positionsToCheck.filter { p =>
+        p.x < 0 || p.x >= maxX || p.y < 0 || p.y >= maxY 
+      }.size
+      inGardenNeigbors + outOfGardenNeighbors
     }
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -124,10 +155,10 @@ object Day12 {
         (0 until dimensions._2).map { y =>
           val plant = garden(x)(y)
           val p = Position(x, y)
-          val n = neighbours(p, garden)
+          val n = neighbors(p, garden)
           Plot(plant, p, n)
         }
-      }.toList
+      }.toSet
 
       Garden(plots, dimensions)
     } finally {
@@ -137,17 +168,17 @@ object Day12 {
 
   /** @return the price to fence the garden */
   def part1(garden: Garden): Int = {
-    //require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
-    logger.info(s"garden: ${garden}")
+    require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
+    logger.debug(s"garden: ${garden}")
   
-    garden.plotsByPlant.size
+    garden.price
   }
 
   /** @return the solution for part2 */
   def part2(garden: Garden): Int = {
-    //require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
+    require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
     logger.debug(s"garden: ${garden}")
 
-    garden.plotsByPlant.size
+    garden.price
   }
 }
