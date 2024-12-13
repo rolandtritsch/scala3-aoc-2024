@@ -34,8 +34,21 @@ package aoc2024
   * part1:
   *
   * - read the plots (including the number of neighbors)
-  * - build the regions
-  * - calculate price of the fence from the areas and perimeters of the regions 
+  * - build the regions (with a recursive dfs flood-fill)
+  * - calculate price of the fence from the areas and perimeters of the regions
+  *
+  * part2:
+  *
+  * Notice that the number of corners is the number of sides.
+  *
+  * Means the only thing that we need to figure out is the number
+  * of corners per Plot (or per Region).
+  *
+  * And you calculate that from the neighbors a Position has ...
+  *
+  * - 4 neighbors means 4 corners
+  * - 0 neighbors means 0 corners
+  * - ... and now it gets tricky
   */
 
 object Day12 {
