@@ -42,7 +42,6 @@ object Day03 {
     val instruction: matching.Regex = """(mul|do|don\'t)\s*\(((\d+),\s*(\d+))?\)""".r
   }
 
-
   extension (toBeParsed: String) {
     def parseLine: List[String] = {
       Parser.line.findAllIn(toBeParsed).toList

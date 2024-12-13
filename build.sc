@@ -18,11 +18,12 @@ object aoc2024 extends RootModule with ScoverageModule with ScalafmtModule with 
   def ivyDeps = Agg(
     ivy"com.typesafe.scala-logging::scala-logging:3.9.5",
     ivy"ch.qos.logback:logback-classic:1.3.5",
-    ivy"org.scala-lang.modules::scala-parallel-collections:1.0.4"
+    ivy"org.scala-lang.modules::scala-parallel-collections:1.0.4",
+    ivy"org.scala-lang.modules::scala-collection-contrib:0.4.0",
   )
   
   def scalafixIvyDeps = Agg(
-    ivy"com.github.xuwei-k::scalafix-rules:0.4.3"
+    ivy"com.github.xuwei-k::scalafix-rules:0.4.3",
   )
 
   object test extends ScoverageTests with TestModule.Munit {
@@ -31,7 +32,7 @@ object aoc2024 extends RootModule with ScoverageModule with ScalafmtModule with 
     def ivyDeps = Agg(
       ivy"org.scalameta::munit::1.0.0",
       ivy"org.scalameta::munit-scalacheck:1.0.0",
-      ivy"org.typelevel::spire:0.18.0"
+      ivy"org.typelevel::spire:0.18.0",
     )
   }
 }
