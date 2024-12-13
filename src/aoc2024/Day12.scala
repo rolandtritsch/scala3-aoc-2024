@@ -47,16 +47,13 @@ object Day12 {
     implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
   }
 
-  case class Plot(plant: Char, position: Position, neighbors: Int) {
-    require(plant.isLetter, "plant.isLetter")
-    require(neighbors >= 0, "neighbors >= 0")
-  }
+  case class Plot(plant: Char, position: Position, neighbors: Set[Position])
 
   object Plot {
     implicit val ordering: Ordering[Plot] = Ordering.by(_.position)
   }
 
-  case class Region(location: Position, plant: Char, plots: Set[Position], area: Int,  perimeter: Int) {
+  case class Region(location: Position, plant: Char, plots: Set[Position], area: Int,  perimeter: Int, sides: Int) {
     require(plant.isLetter, "plant.isLetter")
     require(plots.nonEmpty, "plots.nonEmpty")
     require(area > 0, "area > 0")
@@ -99,9 +96,32 @@ object Day12 {
       val remainingPositions = validPositions.diff(regionPositions)
       val remainingPlots = plots.filter(p => remainingPositions.contains(p.position))
       val area = regionPlots.size
-      val perimeter = regionPlots.toList.map(_.neighbors).sum
+      val perimeter = regionPlots.toList.map(_.neighbors.size).sum
+      //val sides = countSides(regionPlots, regionPositions)
+      val sides = countSides1(regionPlots)
 
-      (Region(location, plots.head.plant, regionPositions, area, perimeter), remainingPlots)
+      (Region(location, plots.head.plant, regionPositions, area, perimeter, sides), remainingPlots)
+    }
+
+    def countSides(rPlots: Set[Plot], rPositions: Set[Position]) = {
+      rPlots.toList.map { p => 
+        val count = p.neighbors.count(rPositions.contains)
+        if(count < 2) 1 else 0
+      }.sum
+    }
+
+    def countSides1(rPlots: Set[Plot]) = {
+      def corners(neighbors: Set[Position]): Int = {
+        neighbors.size match {
+          case 4 => 0
+          case 0 => 4
+          case 3 => 2
+          case 2 => 1
+          case 1 => 2
+        }
+      }
+
+      rPlots.toList.map(p => corners(p.neighbors)).sum 
     }
 
     def collectRegions(plots: Set[Plot], regions: Set[Region]): Set[Region] = {
@@ -115,13 +135,17 @@ object Day12 {
     def price: Int = regions.toList.map { region =>
       region.area * region.perimeter
     }.sum
+
+    def price0: Int = regions.toList.map { region =>
+      region.area * region.sides
+    }.sum
   }
 
   /** @return the file for the given filename as parsed elements */ 
   def readFile(filename: String): Garden = {
     import scala.io.Source
 
-    def neighbors(p: Position, garden: Array[Array[Char]]): Int = {
+    def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] = {
       val (maxX, maxY) = (garden.size, garden(0).size)
       val thisPlant = garden(p.x)(p.y)
       val positionsToCheck = Set(
@@ -132,14 +156,14 @@ object Day12 {
       )
       val inGardenNeigbors = positionsToCheck.filter { p =>
         p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY 
-      }.count { p =>
+      }.filter { p =>
         val thatPlant = garden(p.x)(p.y)
         thisPlant != thatPlant
       }
       val outOfGardenNeighbors = positionsToCheck.filter { p =>
         p.x < 0 || p.x >= maxX || p.y < 0 || p.y >= maxY 
-      }.size
-      inGardenNeigbors + outOfGardenNeighbors
+      }
+      inGardenNeigbors ++ outOfGardenNeighbors
     }
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -155,8 +179,8 @@ object Day12 {
         (0 until dimensions._2).map { y =>
           val plant = garden(x)(y)
           val p = Position(x, y)
-          val n = neighbors(p, garden)
-          Plot(plant, p, n)
+          val ns = neighbors(p, garden)
+          Plot(plant, p, ns)
         }
       }.toSet
 
@@ -179,6 +203,6 @@ object Day12 {
     require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
     logger.debug(s"garden: ${garden}")
 
-    garden.price
+    garden.price0
   }
 }
