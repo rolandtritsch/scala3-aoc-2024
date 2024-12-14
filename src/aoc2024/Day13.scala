@@ -30,6 +30,28 @@ package aoc2024
   * - what if you need to find the most expensive way to win the price
   * - what if there is not restriction on the number of combinations
   * - ...
+  *
+  * part2:
+  *
+  * LOL ... it is on of these again ...
+  *
+  * Tried running my solution with a depth of Int.MaxValue and ... (you
+  * can guess what happened).
+  *
+  * Now I am thinking that for part2 we need to think about this differently.
+  *
+  * Maybe with some algebra. It is not hard to see that ...
+  *
+  * Button A: X+94, Y+34
+  * Button B: X+22, Y+67
+  * Prize: X=8400, Y=5400
+  *
+  * ... is ...
+  *
+  * - A * 94 + B * 22 = 8400
+  * - A * 34 + B * 67 = 5400
+  *
+  * ... and then :).
   */
 
 object Day13 {
