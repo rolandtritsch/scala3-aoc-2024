@@ -8,6 +8,11 @@ class Day00Test extends munit.ScalaCheckSuite {
     assert(true)
   }
 
+  test("Day00 - readFile - test") {
+    val obtained = Day00.readFile("./inputs/Day00Test.txt")
+    assertEquals(obtained, Seq(1, 2, 3))
+  }
+
   test("Day00 - readFile") {
     val obtained = Day00.readFile("./inputs/Day00.txt")
     assertEquals(obtained, Seq(1, 2, 3))
