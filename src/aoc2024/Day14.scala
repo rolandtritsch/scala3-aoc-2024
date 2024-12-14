@@ -1,9 +1,9 @@
 package aoc2024
 
-/** Day00 - template
+/** Day14 - template
   */
 
-object Day00 {
+object Day14 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   /** @return the file for the given filename as parsed elements */ 
