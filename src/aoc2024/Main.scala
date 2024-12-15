@@ -49,6 +49,9 @@ def solve() = {
   println(s"Day14 - part1: ${Day14.part1(Day14.readFile("./inputs/Day14.txt"))}")
   println(s"Day14 - part2: ${Day14.part2(Day14.readFile("./inputs/Day14.txt"))}")
 
-  println(s"Day15 - part1: ${Day15.part1(Day15.readFile("./inputs/Day15.txt"))}")
-  println(s"Day15 - part2: ${Day15.part2(Day15.readFile("./inputs/Day15.txt"))}")
+  val day15Warehose = Day15.readFileWarehouse("./inputs/Day15-Warehouse.txt")
+  val day15Moves = Day15.readFileMoves("./inputs/Day15-Moves.txt")
+  val day15State = (day15Warehose, day15Moves)
+  println(s"Day15 - part1: ${Day15.part1(day15State)}")
+  println(s"Day15 - part2: ${Day15.part2(day15State)}")
 }
