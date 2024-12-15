@@ -20,7 +20,14 @@ package aoc2024
   * Not sure yet. Not clear how the christmas tree should look like.
   * After I find out how the christmas tree should look like, we can
   * run the simulation one step at a time to find out of if the result
-  * matches the shape of the christmas tree. 
+  * matches the shape of the christmas tree.
+  *
+  * One assumption that can be made is that the tree is in a frame of
+  * positions with at least one robot. We can try to find this frame
+  * by looking for a 5x5 grid with an L shape in it (all x=0 and y=0
+  * are occupied by at least one robot), rotate that grid 4 times and
+  * try to find a simulation that has all 4 grids on it (find one and
+  * then check (based on the x and y), if the other ones are there too).
   */
 
 object Day14 {
