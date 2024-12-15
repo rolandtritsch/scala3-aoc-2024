@@ -1,6 +1,6 @@
 package aoc2024
 
-import Day00._
+import aoc2024.Day00._
 
 class Day00Test extends munit.ScalaCheckSuite {
   val only = new munit.Tag("only")
