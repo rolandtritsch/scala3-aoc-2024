@@ -54,4 +54,7 @@ def solve() = {
   val day15State = (day15Warehose, day15Moves)
   println(s"Day15 - part1: ${Day15.part1(day15State)}")
   println(s"Day15 - part2: ${Day15.part2(day15State)}")
+
+  println(s"Day16 - part1: ${Day16.part1(Day16.readFile("./inputs/Day16.txt"))}")
+  println(s"Day16 - part2: ${Day16.part2(Day16.readFile("./inputs/Day16.txt"))}")
 }
