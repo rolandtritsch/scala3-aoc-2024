@@ -114,7 +114,7 @@ object Day14 {
         (0 until maxX).map { x =>
           (0 until maxY).map { y =>
             robots.count(_.position == Position(x, y))
-          }.mkString("")
+          }.mkString
         }.mkString("\n")
       s"Simulation(${robots.size}/${dimensions}):\n${rs}\n"
     }
