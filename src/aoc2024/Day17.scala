@@ -18,33 +18,116 @@ package aoc2024
 object Day17 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  type Registers = Map[Char, Int]
+  type Operand = BigInt
+  type Registers = Map[Char, Operand]
 
-  sealed trait Instruction
-  case class ADV(operand: Int) extends Instruction
-  case class BXL(operand: Int) extends Instruction
-  case class BST(operand: Int) extends Instruction
-  case class JNZ(operand: Int) extends Instruction
-  case class BXC(operand: Int) extends Instruction  
-  case class OUT(operand: Int) extends Instruction
-  case class BDV(operand: Int) extends Instruction
-  case class CDV(operand: Int) extends Instruction
+  sealed trait Instruction {
+    def operandLiteral: Int
+    def execute(registers: Registers): Registers
+    def operand(registers: Registers, literal: Int): Operand = literal match {
+      case 0 => 0
+      case 1 => 1
+      case 2 => 2
+      case 3 => 3
+      case 4 => registers('A')
+      case 5 => registers('B')
+      case 6 => registers('C')
+      //case 7 => throw new RuntimeException("Unexpected operand literal") 
+      case _ => throw new RuntimeException("Unexpected case")
+    }
+  }
+  case class ADV(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal) 
+    override def execute(registers: Registers): Registers = {
+      val numerator = registers('A')
+      val denominator = BigInt(2).pow(operand(registers).toInt)
+      val result = numerator / denominator
+      registers.updated('A', result)
+    }
+  }
+  case class BXL(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      val result = registers('B') ^ operand(registers)
+      registers.updated('B', result)
+    }
+  }
+  case class BST(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      val result = operand(registers) % 8
+      registers.updated('B', result)
+    }
+  }
+  case class JNZ(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      if (registers('A') == 0) registers
+      else registers.updated('Z', operand(registers))
+    }
+  }
+  case class BXC(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      val result = registers('B') ^ registers('C')
+      registers.updated('B', result)
+    }
+  }
+  case class OUT(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      val result = operand(registers) % 8
+      registers.updated('Y', result)
+    }
+  }
+  case class BDV(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      val numerator = registers('A')
+      val denominator = BigInt(2).pow(operand(registers).toInt)
+      val result = numerator / denominator
+      registers.updated('B', result)
+    }
+  }
+  case class CDV(operandLiteral: Int) extends Instruction {
+    override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
+    override def execute(registers: Registers): Registers = {
+      val numerator = registers('A')
+      val denominator = BigInt(2).pow(operand(registers).toInt)
+      val result = numerator / denominator
+      registers.updated('C', result)
+    }
+  }
 
   object Instruction {
-    def create(instruction: Int, operand: Int): Instruction = instruction match {
-      case 0 => ADV(operand)
-      case 1 => BXL(operand)
-      case 2 => BST(operand)
-      case 3 => JNZ(operand)
-      case 4 => BXC(operand)
-      case 5 => OUT(operand)
-      case 6 => BDV(operand)
-      case 7 => CDV(operand)
+    def create(instruction: Int, operandLiteral: Int): Instruction = instruction match {
+      case 0 => ADV(operandLiteral)
+      case 1 => BXL(operandLiteral)
+      case 2 => BST(operandLiteral)
+      case 3 => JNZ(operandLiteral)
+      case 4 => BXC(operandLiteral)
+      case 5 => OUT(operandLiteral)
+      case 6 => BDV(operandLiteral)
+      case 7 => CDV(operandLiteral)
       case _ => throw new RuntimeException("Unexpected case")
     } 
   }
 
-  class Program(val counter: Int, registers: Registers, instructions: Seq[Instruction])
+  class Program(val counter: Int, val registers: Registers, val instructions: Seq[Instruction], val outputs: List[Operand]) {
+    def halted: Boolean = counter >= instructions.size
+    def next: Program = {
+      val instruction = instructions(counter)
+      val newRegisters = instruction.execute(registers)
+      val newCounter = if (newRegisters.contains('Z')) newRegisters('Z').toInt else counter + 1
+      val newOutputs = if (newRegisters.contains('Y')) newRegisters('Y') :: outputs else outputs
+      new Program(newCounter, newRegisters.removed('Z').removed('Y'), instructions, newOutputs)
+    }
+
+    def run: Program = {
+      if (halted) this
+      else next.run
+    }
+  }
 
   /** @return the registers from the given file */ 
   def readFileRegisters(filename: String): Registers = {
@@ -63,8 +146,8 @@ object Day17 {
         val parsed = parser.findAllIn(line).matchData.next.subgroups
         assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
         logger.debug(s"parsed: ${parsed}")
-        (parsed(0).charAt(0), parsed(1).toInt)
-      }.toMap
+        (parsed(0).charAt(0), BigInt(parsed(1)))
+      }.toMap.withDefault(_ => BigInt(Int.MinValue))
     } finally {
       source.close()
     }
@@ -86,7 +169,7 @@ object Day17 {
         val parser: matching.Regex = """Program: (\d+(?:,\s*\d+)*)""".r
         val parsed = parser.findAllIn(line).matchData.next.subgroups.head.split(",").map(_.toInt).grouped(2).map(pair => (pair(0), pair(1)))
         logger.debug(s"parsed: ${parsed}")
-        parsed.map { (instruction, operand) => Instruction.create(instruction, operand) }
+        parsed.map { (instruction, operandLiteral) => Instruction.create(instruction, operandLiteral) }
       }
     } finally {
       source.close()
@@ -94,15 +177,15 @@ object Day17 {
   }
 
   /** @return the list of outputs (as a csv string) */
-  def part1(start: (Registers, Seq[Instruction])): Int = {
+  def part1(start: (Registers, Seq[Instruction])): String = {
     require(start._1.nonEmpty, "start._1.nonEmpty")
     require(start._2.nonEmpty, "start._2.nonEmpty")
     logger.debug(s"start: ${start}")
 
     val (registers, instructions) = start
-    val program = new Program(0, registers, instructions)
+    val program = new Program(0, registers, instructions, List.empty)
 
-    program.counter
+    program.run.outputs.reverse.mkString(",")
   }
 
   def part2(start: (Registers, Seq[Instruction])): Int = {
@@ -111,7 +194,7 @@ object Day17 {
     logger.debug(s"start: ${start}")
 
     val (registers, instructions) = start
-    val program = new Program(0, registers, instructions)
+    val program = new Program(0, registers, instructions, List.empty)
 
     program.counter
   }
