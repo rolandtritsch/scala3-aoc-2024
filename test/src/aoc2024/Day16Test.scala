@@ -11,36 +11,45 @@ class Day16Test extends munit.ScalaCheckSuite {
   }
 
   test("Day16 - readFile - test") {
-    val obtained = readFile("./inputs/Day16Test.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    val (maze, reindeer) = readFile("./inputs/Day16Test.txt")
+    assertEquals(maze.exit, Position(1, 13))
+    assertEquals(reindeer.position, Position(13, 1))
   }
 
   test("Day16 - readFile") {
-    val obtained = readFile("./inputs/Day16.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    val (maze, reindeer) = readFile("./inputs/Day16.txt")
+    assertEquals(maze.exit, Position(1, 139))
+    assertEquals(reindeer.position, Position(139, 1))
+
   }
 
   test("Day16 - part1 - test") {
     val input = readFile("./inputs/Day16Test.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 1)
+    assertEquals(obtained, 7036)
   }
 
-  test("Day16 - part1") {
-    val input = readFile("./inputs/Day16.txt")
+  test("Day16 - part1 - test2") {
+    val input = readFile("./inputs/Day16Test2.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 1)
+    assertEquals(obtained, 11048)
   }
 
-  test("Day16 - part2 - test") {
-    val input = readFile("./inputs/Day16Test.txt")
-    val obtained = part2(input)
-    assertEquals(obtained, 1)
-  }
+  // test("Day16 - part1") {
+  //   val input = readFile("./inputs/Day16.txt")
+  //   val obtained = part1(input)
+  //   assertEquals(obtained, 0)
+  // }
 
-  test("Day16 - part2") {
-    val input = readFile("./inputs/Day16.txt")
-    val obtained = part2(input)
-    assertEquals(obtained, 1)
-  }
+  // Test("Day16 - part2 - test") {
+  //   val input = readFile("./inputs/Day16Test.txt")
+  //   val obtained = part2(input)
+  //   assertEquals(obtained, 13)
+  // }
+
+  // test("Day16 - part2") {
+  //   val input = readFile("./inputs/Day16.txt")
+  //   val obtained = part2(input)
+  //   assertEquals(obtained, 139)
+  // }
 }
