@@ -116,15 +116,6 @@ object Day16 {
         val (vCounterClockwise, bpCounterClockwise) = if (nextCounterClockwise.isDefined) nextCounterClockwise.get.step(maze, (this, FORWARD) :: (this, ROTATE_ANTICLOCKWISE) :: path, visited + v(vClockwise), bpClockwise) else (vClockwise, bpClockwise)
         (vCounterClockwise, bpCounterClockwise)
       }
-
-
-/*        
-        nextSteps.foldLeft(thisStep) { case (step, (next, move)) => {
-        val (_, bestPath) = step
-        val v = if (move == FORWARD) visited + this.position else visited
-        next.step(maze, (this, move) :: path, v, bestPath)
- }}
-*/
     }
 
     def next(maze: Maze, visited: Map[Position, Int]): Option[Reindeer] = {
