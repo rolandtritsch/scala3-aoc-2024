@@ -55,6 +55,9 @@ def solve() = {
   println(s"Day15 - part1: ${Day15.part1(day15State)}")
   println(s"Day15 - part2: ${Day15.part2(day15State)}")
 
-  println(s"Day16 - part1: ${Day16.part1(Day16.readFile("./inputs/Day16.txt"))}")
+  println(s"Day16 - part1: ${Day16.part1(Day16.readFile("./inputs/Day16Test.txt"))}")
   println(s"Day16 - part2: ${Day16.part2(Day16.readFile("./inputs/Day16.txt"))}")
+
+  println(s"Day17 - part1: ${Day17.part1(Day17.readFile("./inputs/Day17.txt"))}")
+  println(s"Day17 - part2: ${Day17.part2(Day17.readFile("./inputs/Day17.txt"))}")
 }
