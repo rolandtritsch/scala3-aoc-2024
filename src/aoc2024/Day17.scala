@@ -36,9 +36,7 @@ object Day17 {
   case class ADV(operandLiteral: Int) extends Instruction {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal) 
     override def execute(registers: Registers): Registers = {
-      val numerator = registers('A')
-      val denominator = 1L << operand(registers)
-      val result = numerator / denominator
+      val result = registers('A') / (1L << operand(registers))
       registers.updated('A', result)
     }
   }
@@ -80,18 +78,14 @@ object Day17 {
   case class BDV(operandLiteral: Int) extends Instruction {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
     override def execute(registers: Registers): Registers = {
-      val numerator = registers('A')
-      val denominator = 1L << (operand(registers))
-      val result = numerator / denominator
+      val result = registers('A') / (1L << operand(registers))
       registers.updated('B', result)
     }
   }
   case class CDV(operandLiteral: Int) extends Instruction {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
     override def execute(registers: Registers): Registers = {
-      val numerator = registers('A')
-      val denominator = 1L << operand(registers)
-      val result = numerator / denominator
+      val result = registers('A') / (1L << operand(registers))
       registers.updated('C', result)
     }
   }
