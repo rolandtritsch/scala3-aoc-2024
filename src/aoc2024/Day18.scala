@@ -21,7 +21,7 @@ object Day18 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   case class Position(x: Int, y: Int) {
-    def next(corruptedMemory: Set[Position], visited: Map[Position, Int], path: List[Position]): Seq[Position] = {
+    def next(corruptedMemory: Set[Position], visited: Set[Position], path: List[Position]): Seq[Position] = {
       val potentialNeighbors = Seq(
         Position(x - 1, y),
         Position(x + 1, y),
@@ -30,21 +30,24 @@ object Day18 {
       )
 
       potentialNeighbors.filter { n => {
-        !corruptedMemory.contains(n) && (!visited.contains(n) || visited(n) > path.size + 1)
+        !corruptedMemory.contains(n) && !visited.contains(n)
       }}
     }
 
-    def findShortestPath(end: Position, memory: Set[Position], visited: Map[Position, Int] = Map.empty, path: List[Position] = List.empty, shortestPath: Option[List[Position]] = None): Option[List[Position]] = {
-      if (this == end) 
-        if (shortestPath.isEmpty || path.size < shortestPath.get.size) Some(path)
-        else shortestPath 
+    def findShortestPath(end: Position, memory: Set[Position], visited: Set[Position] = Set.empty, path: List[Position] = List.empty, shortestPath: Option[List[Position]] = None): Option[List[Position]] = {
+      if (this == end) shortestPath.min(path)
       else next(memory, visited, path).foldLeft(shortestPath) { (sp, n) => {
-        // val v = visited + (this -> math.min(visited.getOrElse(this, Int.MaxValue), path.size))
-        val v = visited + (this -> path.size)
-        val p = path :+ this
-        val nsp = n.findShortestPath(end, memory, v, p)
-        if (nsp.isEmpty) sp else nsp
+        val nextsp = n.findShortestPath(end, memory, visited + this, path :+ this, sp)
+        if (nextsp.isEmpty) sp else nextsp
       }}
+    }
+
+    extension (shortestPath: Option[List[Position]]) {
+      def min(path: List[Position]): Option[List[Position]] = shortestPath match {
+        case Some(sp) if (sp.size > path.size) => Some(path)
+        case Some(sp) => Some(sp)   
+        case None => Some(path)
+      }
     }
   }
 
@@ -93,7 +96,6 @@ object Day18 {
 
     val memory = corruptedMemory.surround(dimensions)
     val shortestPath = start.findShortestPath(end, memory).getOrElse(List.empty)
-    println(shortestPath)
     shortestPath.size
   }
 
