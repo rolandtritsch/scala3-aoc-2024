@@ -25,14 +25,11 @@ object Day17 {
     def operandLiteral: Int
     def execute(registers: Registers): Registers
     def operand(registers: Registers, literal: Int): Operand = literal match {
-      case 0 => 0
-      case 1 => 1
-      case 2 => 2
-      case 3 => 3
+      case 0 | 1 | 2 | 3 => literal.toLong
       case 4 => registers('A')
       case 5 => registers('B')
       case 6 => registers('C')
-      //case 7 => throw new RuntimeException("Unexpected operand literal") 
+      case 7 => ???
       case _ => throw new RuntimeException("Unexpected case")
     }
   }
@@ -48,7 +45,7 @@ object Day17 {
   case class BXL(operandLiteral: Int) extends Instruction {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
     override def execute(registers: Registers): Registers = {
-      val result = registers('B') ^ operand(registers)
+      val result = registers('B') ^ operandLiteral.toLong
       registers.updated('B', result)
     }
   }
@@ -63,7 +60,7 @@ object Day17 {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
     override def execute(registers: Registers): Registers = {
       if (registers('A') == 0) registers
-      else registers.updated('Z', operand(registers))
+      else registers.updated('Z', operandLiteral.toLong)
     }
   }
   case class BXC(operandLiteral: Int) extends Instruction {
@@ -114,7 +111,7 @@ object Day17 {
   }
 
   class Program(val counter: Int, val registers: Registers, val instructions: Seq[Instruction], val outputs: List[Operand]) {
-    def halted: Boolean = counter >= instructions.size
+    def halted: Boolean = counter < 0 || counter >= instructions.size
     def next: Program = {
       val instruction = instructions(counter)
       val newRegisters = instruction.execute(registers)

@@ -28,8 +28,8 @@ class Day17Test extends munit.ScalaCheckSuite {
   }
 
   test("Day17 - instruction - BXL") {
-    val instruction = Instruction.create(1, 4)
-    val registers = Map('A' -> 3L, 'B' -> 4L)
+    val instruction = Instruction.create(1, 3)
+    val registers = Map('B' -> 4L)
     val obtained = instruction.execute(registers)
     assertEquals(obtained('B'), 7L)
   }
@@ -42,15 +42,15 @@ class Day17Test extends munit.ScalaCheckSuite {
   }
 
   test("Day17 - instruction - JNZ - no jump") {
-    val instruction = Instruction.create(3, 5)
-    val registers = Map('A' -> 0L, 'B' -> 999L)
+    val instruction = Instruction.create(3, 999)
+    val registers = Map('A' -> 0L)
     val obtained = instruction.execute(registers)
     assertEquals(obtained.contains('Z'), false)
   }
 
   test("Day17 - instruction - JNZ - jump") {
-    val instruction = Instruction.create(3, 5)
-    val registers = Map('A' -> 1L, 'B' -> 999L)
+    val instruction = Instruction.create(3, 999)
+    val registers = Map('A' -> 1L)
     val obtained = instruction.execute(registers)
     assertEquals(obtained('Z'), 999L)
   }
@@ -139,8 +139,7 @@ class Day17Test extends munit.ScalaCheckSuite {
     val registers = readFileRegisters("./inputs/Day17-Registers.txt")
     val instructions = readFileInstructions("./inputs/Day17-Instructions.txt")
     val obtained = part1(registers, instructions)
-    //assertEquals(obtained, "7,4,2,0,5,0,5,3,7")
-    assertEquals(obtained, "6,7,5,2,1,2,1,1,1")
+    assertEquals(obtained, "7,4,2,0,5,0,5,3,7")
   }
 
   test("Day17 - part2 - test") {
