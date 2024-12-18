@@ -1,4 +1,5 @@
 --- Day 18: RAM Run ---
+
 You and The Historians look a lot more pixelated than you remember. You're inside a computer at the North Pole!
 
 Just as you're about to check out your surroundings, a program runs up to you. "This region of memory isn't safe! The User misunderstood what a pushdown automaton is and their algorithm is pushing whole bytes down on top of us! Run!"
@@ -32,6 +33,7 @@ Your memory space is a two-dimensional grid with coordinates that range from 0 t
 0,5
 1,6
 2,0
+
 Each byte position is given as an X,Y coordinate, where X is the distance from the left edge of your memory space and Y is the distance from the top edge of your memory space.
 
 You and The Historians are currently in the top left corner of the memory space (at 0,0) and need to reach the exit in the bottom right corner (at 70,70 in your memory space, but at 6,6 in this example). You'll need to simulate the falling bytes to plan out where it will be safe to run; for now, simulate just the first few bytes falling into your memory space.
@@ -47,6 +49,7 @@ In the above example, if you were to draw the memory space after the first 12 by
 ..#..#.
 .#..#..
 #.#....
+
 You can take steps up, down, left, or right. After just 12 bytes have corrupted locations in your memory space, the shortest path from the top left corner to the exit would take 22 steps. Here (marked with O) is one such path:
 
 OO.#OOO
@@ -56,4 +59,14 @@ OO.#OOO
 ..#OO#.
 .#.O#..
 #.#OOOO
+
+List(
+    Position(0,0), 
+    Position(0,1), 
+    Position(1,1), 
+    Position(1,0), 
+    Position(2,0), 
+    Position(2,1), 
+    Position(2,2), Position(2,3), Position(1,3), Position(1,4), Position(0,4), Position(0,5), Position(0,6), Position(1,6), Position(2,6), Position(2,5), Position(3,5), Position(3,4), Position(4,4), Position(4,3), Position(5,3), Position(6,3), Position(6,4), Position(6,5))
+
 Simulate the first kilobyte (1024 bytes) falling onto your memory space. Afterward, what is the minimum number of steps needed to reach the exit?

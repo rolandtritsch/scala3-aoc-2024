@@ -64,6 +64,6 @@ def solve() = {
   println(s"Day17 - part1: ${Day17.part1(day17State)}")
   println(s"Day17 - part2: ${Day17.part2(day17State)}")
 
-  println(s"Day18 - part1: ${Day18.part1(Day18.readFile("./inputs/Day18.txt"))}")
-  println(s"Day18 - part2: ${Day18.part2(Day18.readFile("./inputs/Day18.txt"))}")
+  println(s"Day18 - part1: ${Day18.part1(Day18.readFile("./inputs/Day18.txt", 1024), (71, 71))}")
+  println(s"Day18 - part2: ${Day18.part2(Day18.readFile("./inputs/Day18.txt", 1024), (71, 71))}")
 }

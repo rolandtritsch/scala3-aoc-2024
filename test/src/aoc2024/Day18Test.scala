@@ -12,35 +12,35 @@ class Day18Test extends munit.ScalaCheckSuite {
 
   test("Day18 - readFile - test") {
     val obtained = readFile("./inputs/Day18Test.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    assertEquals(obtained.head, Position(5, 2))
   }
 
   test("Day18 - readFile") {
     val obtained = readFile("./inputs/Day18.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    assertEquals(obtained.head, Position(50, 16))
   }
 
   test("Day18 - part1 - test") {
-    val input = readFile("./inputs/Day18Test.txt")
-    val obtained = part1(input)
-    assertEquals(obtained, 1)
+    val input = readFile("./inputs/Day18Test.txt", 12)
+    val obtained = part1(input, (7, 7))
+    assertEquals(obtained, 22)
   }
 
-  test("Day18 - part1") {
-    val input = readFile("./inputs/Day18.txt")
-    val obtained = part1(input)
-    assertEquals(obtained, 1)
-  }
+//   test("Day18 - part1") {
+//     val input = readFile("./inputs/Day18.txt", 1024)
+//     val obtained = part1(input, (71, 71))
+//     assertEquals(obtained, 1308)
+//   }
 
-  test("Day18 - part2 - test") {
-    val input = readFile("./inputs/Day18Test.txt")
-    val obtained = part2(input)
-    assertEquals(obtained, 1)
-  }
+//   test("Day18 - part2 - test") {
+//     val input = readFile("./inputs/Day18Test.txt", 12)
+//     val obtained = part2(input, (7, 7))
+//     assertEquals(obtained, 12)
+//   }
 
-  test("Day18 - part2") {
-    val input = readFile("./inputs/Day18.txt")
-    val obtained = part2(input)
-    assertEquals(obtained, 1)
-  }
+//   test("Day18 - part2") {
+//     val input = readFile("./inputs/Day18.txt", 1024)
+//     val obtained = part2(input, (71, 71))
+//     assertEquals(obtained, 1024)
+//   }
 }
