@@ -44,7 +44,7 @@ def solve() = {
   println(s"Day12 - part2: ${Day12.part2(Day12.readFile("./inputs/Day12.txt"))}")
 
   println(s"Day13 - part1: ${Day13.part1(Day13.readFile("./inputs/Day13.txt"))}")
-  println(s"Day13 - part2: ${Day13.part2(Day13.readFile("./inputs/Day13.txt", "1000000000"))}")
+  println(s"Day13 - part2: ${Day13.part2(Day13.readFile("./inputs/Day13.txt", "1181818180"))}")
 
   println(s"Day14 - part1: ${Day14.part1(Day14.readFile("./inputs/Day14.txt"))}")
   println(s"Day14 - part2: ${Day14.part2(Day14.readFile("./inputs/Day14.txt"))}")
@@ -63,4 +63,7 @@ def solve() = {
   val day17State = (day17Registers, day17Instructions)
   println(s"Day17 - part1: ${Day17.part1(day17State)}")
   println(s"Day17 - part2: ${Day17.part2(day17State)}")
+
+  println(s"Day18 - part1: ${Day18.part1(Day18.readFile("./inputs/Day18.txt"))}")
+  println(s"Day18 - part2: ${Day18.part2(Day18.readFile("./inputs/Day18.txt"))}")
 }
