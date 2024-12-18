@@ -12,82 +12,82 @@ class Day17Test extends munit.ScalaCheckSuite {
 
   test("Day17 - readFileRegisters - test") {
     val registers = readFileRegisters("./inputs/Day17Test-Registers.txt")
-    assertEquals(registers('A'), BigInt(729))
+    assertEquals(registers('A'), 729L)
   }
 
   test("Day17 - readFileRegisters") {
     val registers = readFileRegisters("./inputs/Day17-Registers.txt")
-    assertEquals(registers('A'), BigInt(46337277))
+    assertEquals(registers('A'), 46337277L)
   }
 
   test("Day17 - instruction - ADV") {
     val instruction = Instruction.create(0, 5)
-    val registers = Map('A' -> BigInt(15360), 'B' -> BigInt(10))
+    val registers = Map('A' -> 15360L, 'B' -> 10L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('A'), BigInt(15))
+    assertEquals(obtained('A'), 15L)
   }
 
   test("Day17 - instruction - BXL") {
     val instruction = Instruction.create(1, 4)
-    val registers = Map('A' -> BigInt(3), 'B' -> BigInt(4))
+    val registers = Map('A' -> 3L, 'B' -> 4L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('B'), BigInt(7))
+    assertEquals(obtained('B'), 7L)
   }
 
   test("Day17 - instruction - BST") {
     val instruction = Instruction.create(2, 4)
-    val registers = Map('A' -> BigInt(511))
+    val registers = Map('A' -> 511L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('B'), BigInt(7))
+    assertEquals(obtained('B'), 7L)
   }
 
   test("Day17 - instruction - JNZ - no jump") {
     val instruction = Instruction.create(3, 5)
-    val registers = Map('A' -> BigInt(0), 'B' -> BigInt(999))
+    val registers = Map('A' -> 0L, 'B' -> 999L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained.getOrElse('Z', BigInt(Int.MinValue)), BigInt(Int.MinValue))
+    assertEquals(obtained.contains('Z'), false)
   }
 
   test("Day17 - instruction - JNZ - jump") {
     val instruction = Instruction.create(3, 5)
-    val registers = Map('A' -> BigInt(1), 'B' -> BigInt(999))
+    val registers = Map('A' -> 1L, 'B' -> 999L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('Z'), BigInt(999))
+    assertEquals(obtained('Z'), 999L)
   }
 
   test("Day17 - instruction - BXC") {
     val instruction = Instruction.create(4, 0)
-    val registers = Map('B' -> BigInt(4), 'C' -> BigInt(3))
+    val registers = Map('B' -> 4L, 'C' -> 3L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('B'), BigInt(7))
+    assertEquals(obtained('B'), 7L)
   }
 
   test("Day17 - instruction - BXC") {
     val instruction = Instruction.create(4, 0)
-    val registers = Map('B' -> BigInt(2024), 'C' -> BigInt(43690))
+    val registers = Map('B' -> 2024L, 'C' -> 43690L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('B'), BigInt(44354))
+    assertEquals(obtained('B'), 44354L)
   }
 
   test("Day17 - instruction - OUT") {
     val instruction = Instruction.create(5, 4)
-    val registers = Map('A' -> BigInt(511))
+    val registers = Map('A' -> 511L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('Y'), BigInt(7))
+    assertEquals(obtained('Y'), 7L)
   }
 
   test("Day17 - instruction - BDV") {
     val instruction = Instruction.create(6, 5)
-    val registers = Map('A' -> BigInt(15360), 'B' -> BigInt(10))
+    val registers = Map('A' -> 15360L, 'B' -> 10L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('B'), BigInt(15))
+    assertEquals(obtained('B'), 15L)
   }
 
   test("Day17 - instruction - CDV") {
     val instruction = Instruction.create(7, 5)
-    val registers = Map('A' -> BigInt(15360), 'B' -> BigInt(10))
+    val registers = Map('A' -> 15360L, 'B' -> 10L)
     val obtained = instruction.execute(registers)
-    assertEquals(obtained('C'), BigInt(15))
+    assertEquals(obtained('C'), 15L)
   }
 
   test("Day17 - readFileInstructions - test") {
@@ -105,12 +105,12 @@ class Day17Test extends munit.ScalaCheckSuite {
     val instructions = readFileInstructions("./inputs/Day17Test-Instructions.txt")
     val obtained = new Program(0, registers, instructions, List.empty)
     assertEquals(obtained.counter, 0)
-    assertEquals(obtained.registers('A'), BigInt(729))
+    assertEquals(obtained.registers('A'), 729L)
     assertEquals(obtained.instructions(0), ADV(1))
 
     val obtained2 = obtained.next
     assertEquals(obtained2.counter, 1)
-    assertEquals(obtained2.registers('A'), BigInt(364))
+    assertEquals(obtained2.registers('A'), 364L)
     assertEquals(obtained2.instructions(obtained2.counter), OUT(4))
   }
 
@@ -139,6 +139,7 @@ class Day17Test extends munit.ScalaCheckSuite {
     val registers = readFileRegisters("./inputs/Day17-Registers.txt")
     val instructions = readFileInstructions("./inputs/Day17-Instructions.txt")
     val obtained = part1(registers, instructions)
+    //assertEquals(obtained, "7,4,2,0,5,0,5,3,7")
     assertEquals(obtained, "6,7,5,2,1,2,1,1,1")
   }
 

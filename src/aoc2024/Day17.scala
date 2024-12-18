@@ -18,7 +18,7 @@ package aoc2024
 object Day17 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  type Operand = BigInt
+  type Operand = Long
   type Registers = Map[Char, Operand]
 
   sealed trait Instruction {
@@ -40,7 +40,7 @@ object Day17 {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal) 
     override def execute(registers: Registers): Registers = {
       val numerator = registers('A')
-      val denominator = BigInt(2).pow(operand(registers).toInt)
+      val denominator = 1L << operand(registers)
       val result = numerator / denominator
       registers.updated('A', result)
     }
@@ -84,7 +84,7 @@ object Day17 {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
     override def execute(registers: Registers): Registers = {
       val numerator = registers('A')
-      val denominator = BigInt(2).pow(operand(registers).toInt)
+      val denominator = 1L << (operand(registers))
       val result = numerator / denominator
       registers.updated('B', result)
     }
@@ -93,7 +93,7 @@ object Day17 {
     override def operand(registers: Registers, literal: Int = operandLiteral): Operand = super.operand(registers, literal)
     override def execute(registers: Registers): Registers = {
       val numerator = registers('A')
-      val denominator = BigInt(2).pow(operand(registers).toInt)
+      val denominator = 1L << operand(registers)
       val result = numerator / denominator
       registers.updated('C', result)
     }
@@ -146,8 +146,8 @@ object Day17 {
         val parsed = parser.findAllIn(line).matchData.next.subgroups
         assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
         logger.debug(s"parsed: ${parsed}")
-        (parsed(0).charAt(0), BigInt(parsed(1)))
-      }.toMap.withDefault(_ => BigInt(Int.MinValue))
+        (parsed(0).charAt(0), parsed(1).toLong)
+      }.toMap.withDefault(_ => Long.MinValue)
     } finally {
       source.close()
     }
