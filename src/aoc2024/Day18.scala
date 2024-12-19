@@ -14,32 +14,51 @@ package aoc2024
   * To make the grid traversal easier, we will surround the memory
   * with corrupted memory (based on some given dimensions). That
   * way we never need to check for the boundaries of the grid. We
-  * just check for corrupted memory. 
+  * just check for corrupted memory.
+  * 
+  * As always we need keep track of the visited positions (to prevent
+  * loops) and the shortest path for the visited positions (to prune/
+  * accelerate the search) and the shortest path found so far.
+  * 
+  * Note: Depending on the size of the memory we might need to
+  * change the number of lines read in (numberOfLines).
+  * 
+  * We probably also need to adjust the stack size (to make sure
+  * we do not run out of stack). And might need to adjust the
+  * the maximum time allowed to run the tests.
+  *  
+  * Part1:
+  * 
+  * - Read the file/memory
+  * - Do a recursive depth-first search (dfs)
+  * - Return the shortest path found
   */
 
 object Day18 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   case class Position(x: Int, y: Int) {
-    def next(corruptedMemory: Set[Position], visited: Set[Position], path: List[Position]): Seq[Position] = {
-      val potentialNeighbors = Seq(
+    def next(corruptedMemory: Set[Position]): Seq[Position] = {
+      Seq(
         Position(x - 1, y),
         Position(x + 1, y),
         Position(x, y - 1),
         Position(x, y + 1)
-      )
-
-      potentialNeighbors.filter { n => {
-        !corruptedMemory.contains(n) && !visited.contains(n)
-      }}
+      ).filter(!corruptedMemory.contains(_))
     }
-
-    def findShortestPath(end: Position, memory: Set[Position], visited: Set[Position] = Set.empty, path: List[Position] = List.empty, shortestPath: Option[List[Position]] = None): Option[List[Position]] = {
-      if (this == end) shortestPath.min(path)
-      else next(memory, visited, path).foldLeft(shortestPath) { (sp, n) => {
-        val nextsp = n.findShortestPath(end, memory, visited + this, path :+ this, sp)
-        if (nextsp.isEmpty) sp else nextsp
-      }}
+    
+    import scala.collection.mutable
+    /** @return the shortest path through the corrupted memory */
+    def dfs(end: Position, memory: Set[Position], path: List[Position] = List.empty, shortestPath: Option[List[Position]] = None, visited: mutable.Map[Position, Int] = mutable.Map[Position, Int]().withDefaultValue(Int.MaxValue)): (mutable.Map[Position, Int], Option[List[Position]]) = {
+      if (this == end) {print("."); (visited, shortestPath.min(path))}
+      else if (path.size >= visited(this)) (visited, None)
+      else {
+        visited(this) = path.size
+        next(memory).foldLeft((visited, shortestPath)) { case ((v, sp), n) => {
+          val (nextv, nextsp) = n.dfs(end, memory, path :+ this, sp, v)
+          if (nextsp.isEmpty) (nextv, sp) else (nextv, nextsp)
+        }}
+      }    
     }
 
     extension (shortestPath: Option[List[Position]]) {
@@ -95,8 +114,8 @@ object Day18 {
     val end = Position(maxX - 1, maxY - 1)
 
     val memory = corruptedMemory.surround(dimensions)
-    val shortestPath = start.findShortestPath(end, memory).getOrElse(List.empty)
-    shortestPath.size
+    val (_, shortestPath) = start.dfs(end, memory)
+    shortestPath.get.size
   }
 
   /** @return the solution for part2 */
