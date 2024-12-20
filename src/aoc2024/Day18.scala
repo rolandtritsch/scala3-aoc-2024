@@ -55,7 +55,7 @@ object Day18 {
       shortestPath: Option[List[Position]] = None, 
       visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue)
     ): (Map[Position, Int], Option[List[Position]]) = {
-      if (this == end) {print("."); (visited, shortestPath.min(path))}
+      if (this == end) (visited, shortestPath.min(path))
       else if (path.size >= visited(this)) (visited, None)
       else {
         next(memory).foldLeft((visited.updated(this, path.size), shortestPath)) { case ((v, sp), n) => {
