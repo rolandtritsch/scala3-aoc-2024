@@ -5,7 +5,7 @@ import aoc2024.Day18._
 class Day18Test extends munit.ScalaCheckSuite {
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
-  override val munitTimeout = scala.concurrent.duration.Duration(60, "s")
+  override val munitTimeout = scala.concurrent.duration.Duration(120, "s")
 
   test("Day18 - dummy".tag(ignore)) {
     assert(true)

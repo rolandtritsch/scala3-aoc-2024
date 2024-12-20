@@ -156,7 +156,7 @@ object Day16 {
 
   type State = (Maze, Reindeer)
 
-  /** @return the file for the given filename as parsed elements */ 
+  /** @return the Maze and the Reindeer (in its starting position) */ 
   def readFile(filename: String): State = {
     import scala.io.Source
 
