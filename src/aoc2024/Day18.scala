@@ -47,20 +47,18 @@ object Day18 {
       ).filter(!corruptedMemory.contains(_))
     }
     
-    import scala.collection.mutable
     /** @return the shortest path through the corrupted memory */
     def dfs(
       end: Position, 
       memory: Set[Position], 
       path: List[Position] = List.empty, 
       shortestPath: Option[List[Position]] = None, 
-      visited: mutable.Map[Position, Int] = mutable.Map.empty.withDefaultValue(Int.MaxValue)
-    ): (mutable.Map[Position, Int], Option[List[Position]]) = {
+      visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue)
+    ): (Map[Position, Int], Option[List[Position]]) = {
       if (this == end) {print("."); (visited, shortestPath.min(path))}
       else if (path.size >= visited(this)) (visited, None)
       else {
-        visited(this) = path.size
-        next(memory).foldLeft((visited, shortestPath)) { case ((v, sp), n) => {
+        next(memory).foldLeft((visited.updated(this, path.size), shortestPath)) { case ((v, sp), n) => {
           val (nextv, nextsp) = n.dfs(end, memory, path :+ this, sp, v)
           if (nextsp.isEmpty) (nextv, sp) else (nextv, nextsp)
         }}
