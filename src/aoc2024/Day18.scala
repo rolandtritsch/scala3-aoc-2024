@@ -49,7 +49,13 @@ object Day18 {
     
     import scala.collection.mutable
     /** @return the shortest path through the corrupted memory */
-    def dfs(end: Position, memory: Set[Position], path: List[Position] = List.empty, shortestPath: Option[List[Position]] = None, visited: mutable.Map[Position, Int] = mutable.Map[Position, Int]().withDefaultValue(Int.MaxValue)): (mutable.Map[Position, Int], Option[List[Position]]) = {
+    def dfs(
+      end: Position, 
+      memory: Set[Position], 
+      path: List[Position] = List.empty, 
+      shortestPath: Option[List[Position]] = None, 
+      visited: mutable.Map[Position, Int] = mutable.Map.empty.withDefaultValue(Int.MaxValue)
+    ): (mutable.Map[Position, Int], Option[List[Position]]) = {
       if (this == end) {print("."); (visited, shortestPath.min(path))}
       else if (path.size >= visited(this)) (visited, None)
       else {
