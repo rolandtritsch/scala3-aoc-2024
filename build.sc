@@ -8,7 +8,7 @@ import com.goyeau.mill.scalafix.ScalafixModule
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:`
 import mill.contrib.scoverage.ScoverageModule
 
-object aoc2024 extends RootModule with ScoverageModule with ScalafmtModule with ScalafixModule {
+object aoc2024 extends ScalaModule with ScoverageModule with ScalafmtModule with ScalafixModule {
   def scalaVersion = "3.6.2"
   def scalacOptions = Seq("-Wunused:imports", "-deprecation")
   def scoverageVersion = "2.2.1"
