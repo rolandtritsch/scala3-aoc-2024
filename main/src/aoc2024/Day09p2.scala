@@ -158,7 +158,7 @@ object Day09p2 {
     logger.debug(s"filename: ${filename}")
 
     val blocks = mutable.ListBuffer[Block]()
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       val line = source.getLines.toSeq.head
       logger.debug(s"line: ${line}")

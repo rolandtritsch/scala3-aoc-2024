@@ -51,7 +51,7 @@ object Day01 {
   def readFile(filename: String): Seq[(Int, Int)] = {
     import scala.io.Source
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       source.getLines().toSeq.map { line =>
         val parsed = line.split("\\s+").map(_.toInt)

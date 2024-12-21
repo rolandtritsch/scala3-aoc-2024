@@ -163,7 +163,7 @@ object Day16 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       val (maze, reindeer) = source.getLines().toSeq.zipWithIndex.foldLeft((new Maze(), Option.empty[Reindeer])) { case (state, (line, x)) => {
         logger.debug(s"line: ${line}")

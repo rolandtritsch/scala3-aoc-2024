@@ -173,7 +173,7 @@ object Day15 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       source.getLines().toSeq.zipWithIndex.foldLeft(new Warehouse()) { case (wh, (line, x)) => {
         logger.debug(s"line: ${line}")
@@ -197,7 +197,7 @@ object Day15 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       val moves = source.getLines().mkString
       moves.map { case c => c match {

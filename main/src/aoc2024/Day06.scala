@@ -106,7 +106,7 @@ object Day06 {
     logger.debug(s"filename: ${filename}")
 
     var guard = Position(0, 0)
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     val grid = try {
       source.getLines().zipWithIndex.map { (line, row) =>
         logger.debug(s"line: ${line}")

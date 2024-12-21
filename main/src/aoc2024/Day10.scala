@@ -105,7 +105,7 @@ object Day10 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       val lines = source.getLines().toSeq
       val parsed = lines.map { line => {

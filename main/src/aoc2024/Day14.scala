@@ -129,7 +129,7 @@ object Day14 {
     logger.debug(s"filename: ${filename}")
 
     var dimensions = (0, 0)
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       val robots = source.getLines().toSeq.zipWithIndex.map { (line, robot) =>
         logger.debug(s"line: ${line}")

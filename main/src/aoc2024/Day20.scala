@@ -120,7 +120,7 @@ object Day20 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       val (track, program) = source.getLines().toSeq.zipWithIndex.foldLeft((new RaceTrack(), Option.empty[Position])) { case (state, (line, x)) => {
         logger.debug(s"line: ${line}")

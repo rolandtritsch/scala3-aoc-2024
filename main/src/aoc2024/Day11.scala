@@ -51,7 +51,7 @@ object Day11 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       source.getLines.next.stones
     } finally {

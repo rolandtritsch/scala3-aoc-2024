@@ -95,7 +95,7 @@ object Day18 {
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"${filename}")
 
-    val source = Source.fromFile(filename)
+    val source = Source.fromResource(filename)
     try {
       source.getLines().toSeq.take(numberOfLines).map { line =>
         logger.debug(s"line: ${line}")
