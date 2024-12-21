@@ -37,6 +37,8 @@ package aoc2024
 object Day18 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
+  val visited = scala.collection.mutable.Map.empty[Position, Int].withDefaultValue(Int.MaxValue)
+
   case class Position(x: Int, y: Int) {
     def next(corruptedMemory: Set[Position]): Seq[Position] = {
       Seq(
@@ -52,15 +54,15 @@ object Day18 {
       end: Position, 
       memory: Set[Position], 
       path: List[Position] = List.empty, 
-      shortestPath: Option[List[Position]] = None, 
-      visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue)
-    ): (Map[Position, Int], Option[List[Position]]) = {
-      if (this == end) (visited, shortestPath.min(path))
-      else if (path.size >= visited(this)) (visited, None)
+      shortestPath: Option[List[Position]] = None
+    ): Option[List[Position]] = {
+      if (this == end) shortestPath.min(path)
+      else if (path.size >= visited(this)) None
       else {
-        next(memory).foldLeft((visited.updated(this, path.size), shortestPath)) { case ((v, sp), n) => {
-          val (nextv, nextsp) = n.dfs(end, memory, path :+ this, sp, v)
-          if (nextsp.isEmpty) (nextv, sp) else (nextv, nextsp)
+        visited.update(this, path.size)
+        next(memory).foldLeft((shortestPath)) { case (sp, n) => {
+          val nextsp = n.dfs(end, memory, path :+ this, sp)
+          if (nextsp.isEmpty) sp else nextsp
         }}
       }    
     }
@@ -118,7 +120,8 @@ object Day18 {
     val end = Position(maxX - 1, maxY - 1)
 
     val memory = corruptedMemory.surround(dimensions)
-    val (_, shortestPath) = start.dfs(end, memory)
+    Day18.visited.clear()
+    val shortestPath = start.dfs(end, memory)
     shortestPath.get.size
   }
 
