@@ -13,23 +13,15 @@ package aoc2024
   *
   * - Read in the race track and the program
   * - Find the shortest path (in picoseconds)
-  * - Replace two walls with spaces
+  * - Replace a wall with a space
   *   - We do not want to remove outer walls
   *   - We (probably) do not need to keep track of the free space (we
   *     can just remove the wall)
+  *   - The walls that can be removed are the ones that are on the
+  *     ones that have a space in fron of them and a space behind them
+  * - Walk the race track with the wall removed
   * - Find the shortest path (in picoseconds) ... again
   * - Rinse and repeat
-  * 
-  * Part1 (revisted):
-  * 
-  * - Obviously it's not that easy ...
-  * - Thought that I can (just) replace the wall with a space and
-  *   that would be it
-  * - But that is not the case. Instead I need to walk the shortest path
-  *   and and on that shortest need to replace a wall with a space (in
-  *   directionof travel), if the position after the wallcis free and then 
-  *   walk the race track with that wall removed
-  * - Hhhmmm ...
   */
 
 object Day20 {
@@ -47,17 +39,16 @@ object Day20 {
     
     /** @return the shortest path through the race track */
     def dfs(
-      end: Position,
-      walls: Set[Position], 
+      track: RaceTrack,
       path: List[Position] = List.empty, 
       shortestPath: Option[List[Position]] = None, 
       visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue)
     ): (Map[Position, Int], Option[List[Position]]) = {
-      if (this == end) (visited, shortestPath.min(path))
+      if (this == track.end) (visited, shortestPath.min(path))
       else if (path.size >= visited(this)) (visited, None)
       else {
-        next(walls).foldLeft((visited.updated(this, path.size), shortestPath)) { case ((v, sp), n) => {
-          val (nextv, nextsp) = n.dfs(end, walls, path :+ this, sp, v)
+        next(track.walls).foldLeft((visited.updated(this, path.size), shortestPath)) { case ((v, sp), n) => {
+          val (nextv, nextsp) = n.dfs(track, path :+ this, sp, v)
           if (nextsp.isEmpty) (nextv, sp) else (nextv, nextsp)
         }}
       }    
@@ -110,7 +101,8 @@ object Day20 {
     def shortCuts(program: Position, shortestPath: List[Position]): Set[(Position, Option[List[Position]])] = {
       cheats(shortestPath.toSet).map { c => {
         val cheatingWalls = walls - c
-        (c, program.dfs(end, cheatingWalls)._2)
+        val cheatingTrack = clone(walls = cheatingWalls)
+        (c, program.dfs(cheatingTrack)._2)
       }}
     }
   }
@@ -150,7 +142,7 @@ object Day20 {
  
     val (track, program) = state
 
-    val (_, shortestPath) = program.dfs(track.end, track.walls)
+    val (_, shortestPath) = program.dfs(track)
     val shortestPathLength = shortestPath.get.length
 
     val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map { case (c, p) => {

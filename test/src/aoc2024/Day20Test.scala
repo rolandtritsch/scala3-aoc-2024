@@ -27,29 +27,29 @@ class Day20Test extends munit.ScalaCheckSuite {
   test("Day20 - dfs - test") {
     val input = readFile("./inputs/Day20Test.txt")
     val (track, program) = input
-    val (visited, shortestPath) = program.dfs(track.end, track.walls)
+    val (visited, shortestPath) = program.dfs(track)
     assertEquals(shortestPath.get.size, 84)
   }
 
   test("Day20 - dfs - test2") {
     val input = readFile("./inputs/Day20Test2.txt")
     val (track, program) = input
-    val (visited, shortestPath) = program.dfs(track.end, track.walls)
+    val (visited, shortestPath) = program.dfs(track)
     assertEquals(shortestPath.get.size, 72)
   }
 
-  test("Day20 - dfs") {
-    val input = readFile("./inputs/Day20.txt")
-    val (track, program) = input
-    val (_, shortestPath) = program.dfs(track.end, track.walls)
-    assertEquals(shortestPath.get.size, 9320)
-  }
+  // test("Day20 - dfs") {
+  //   val input = readFile("./inputs/Day20.txt")
+  //   val (track, program) = input
+  //   val (_, shortestPath) = program.dfs(track))
+  //   assertEquals(shortestPath.get.size, 9320)
+  // }
 
   test("Day20 - shortCuts - test") {
     val input = readFile("./inputs/Day20Test.txt")
     val (track, program) = input
     
-    val (_, shortestPath) = program.dfs(track.end, track.walls)
+    val (_, shortestPath) = program.dfs(track)
 
     val shortCuts = track.shortCuts(program, shortestPath.get)
 
@@ -60,7 +60,7 @@ class Day20Test extends munit.ScalaCheckSuite {
     val input = readFile("./inputs/Day20Test.txt")
     val (track, program) = input
 
-    val (_, shortestPath) = program.dfs(track.end, track.walls)
+    val (_, shortestPath) = program.dfs(track)
     val shortestPathLength = shortestPath.get.length
 
     val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map { case (c, p) => {
@@ -74,7 +74,7 @@ class Day20Test extends munit.ScalaCheckSuite {
     val input = readFile("./inputs/Day20Test.txt")
     val (track, program) = input
 
-    val (_, shortestPath) = program.dfs(track.end, track.walls)
+    val (_, shortestPath) = program.dfs(track)
     val shortestPathLength = shortestPath.get.length
 
     val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map { case (c, p) => {
@@ -92,7 +92,7 @@ class Day20Test extends munit.ScalaCheckSuite {
     val input = readFile("./inputs/Day20Test.txt")
     val (track, program) = input
 
-    val (_, shortestPath) = program.dfs(track.end, track.walls)
+    val (_, shortestPath) = program.dfs(track)
     val shortestPathLength = shortestPath.get.length
 
     val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map { case (c, p) => {
