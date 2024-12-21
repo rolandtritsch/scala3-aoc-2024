@@ -19,6 +19,17 @@ package aoc2024
   *     can just remove the wall)
   * - Find the shortest path (in picoseconds) ... again
   * - Rinse and repeat
+  * 
+  * Part1 (revisted):
+  * 
+  * - Obviously it's not that easy ...
+  * - Thought that I can (just) replace the wall with a space and
+  *   that would be it
+  * - But that is not the case. Instead I need to walk the shortest path
+  *   and and on that shortest need to replace a wall with a space (in
+  *   directionof travel), if the position after the wallcis free and then 
+  *   walk the race track with that wall removed
+  * - Hhhmmm ...
   */
 
 object Day20 {
@@ -75,33 +86,31 @@ object Day20 {
       RaceTrack(walls, end)
     }
 
-    type Cheat = (Position, Position)
-
-    def cheats: Set[Cheat] = {
+    def cheats(shortestPath: Set[Position]): Set[Position] = {
       val Position(x, y) = walls.max
       val (maxX, maxY) = (x + 1, y + 1)
       val horizontals = 
         (1 to maxX - 2).flatMap { x => {
-          (1 to maxY - 3).map { y => {
-            (Position(x, y), Position(x, y + 1))
+          (1 to maxY - 4).map { y => {
+            (Position(x, y), Position(x, y + 1), Position(x, y + 2))
           }}
         }}.toSet
       val verticals = 
         (1 to maxY - 2).flatMap { y => {
-          (1 to maxX - 3).map { x => {
-            (Position(x, y), Position(x + 1, y))
+          (1 to maxX - 4).map { x => {
+            (Position(x, y), Position(x + 1, y), Position(x + 2, y))
           }}
         }}.toSet
-      (horizontals ++ verticals).filter { case (p1, p2) => {
-        (walls.contains(p1) && !walls.contains(p2))
-        || (!walls.contains(p1) && walls.contains(p2))
-      }}
+      (horizontals ++ verticals).filter { case (p1, p2, p3) => {
+        !walls.contains(p1) && walls.contains(p2) && !walls.contains(p3) 
+        && (shortestPath.contains(p1) || shortestPath.contains(p3))
+      }}.map(_._2)
     }
 
-    def shortCuts(program: Position): Set[(Cheat, Option[List[Position]])] = {
-      cheats.map { case (p1, p2) => {
-        val cheatingWalls = walls.diff(Set(p1, p2))
-        ((p1, p2), program.dfs(end, cheatingWalls)._2)
+    def shortCuts(program: Position, shortestPath: List[Position]): Set[(Position, Option[List[Position]])] = {
+      cheats(shortestPath.toSet).map { c => {
+        val cheatingWalls = walls - c
+        (c, program.dfs(end, cheatingWalls)._2)
       }}
     }
   }
@@ -135,7 +144,7 @@ object Day20 {
   }
 
   /** @return the number of short-cuts that save more than 100 picoseconds */
-  def part1(state: State): Int = {
+  def part1(state: State, threshold: Int = 100): Int = {
     require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
     logger.debug(s"state: ${state}")
  
@@ -144,7 +153,7 @@ object Day20 {
     val (_, shortestPath) = program.dfs(track.end, track.walls)
     val shortestPathLength = shortestPath.get.length
 
-    val shortCutsPathLength = track.shortCuts(program).map { case (c, p) => {
+    val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map { case (c, p) => {
       (c, p.getOrElse(List.empty).length)
     }}.toList
 
@@ -154,7 +163,7 @@ object Day20 {
 
     shortCutsValue.groupBy(_._2).map { (cheatValue, cheatList) => {
       (cheatValue, cheatList.size)
-    }}.count(_._2 >= 100)
+    }}.count(_._1 >= threshold)
   }
 
   /** @return the solution for part2 */
