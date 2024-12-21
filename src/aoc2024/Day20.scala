@@ -26,7 +26,9 @@ package aoc2024
 
 object Day20 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
-  
+
+  val visited = scala.collection.mutable.Map.empty[Position, Int].withDefaultValue(Int.MaxValue)
+
   case class Position(x: Int, y: Int) {
     def next(walls: Set[Position]): Seq[Position] = {
       Seq(
@@ -41,15 +43,15 @@ object Day20 {
     def dfs(
       track: RaceTrack,
       path: List[Position] = List.empty, 
-      shortestPath: Option[List[Position]] = None, 
-      visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue)
-    ): (Map[Position, Int], Option[List[Position]]) = {
-      if (this == track.end) (visited, shortestPath.min(path))
-      else if (path.size >= visited(this)) (visited, None)
+      shortestPath: Option[List[Position]] = None
+    ): Option[List[Position]] = {
+      if (this == track.end) shortestPath.min(path)
+      else if (path.size >= visited(this)) None
       else {
-        next(track.walls).foldLeft((visited.updated(this, path.size), shortestPath)) { case ((v, sp), n) => {
-          val (nextv, nextsp) = n.dfs(track, path :+ this, sp, v)
-          if (nextsp.isEmpty) (nextv, sp) else (nextv, nextsp)
+        visited.update(this, path.size)
+        next(track.walls).foldLeft(shortestPath) { case (sp, n) => {
+          val nextsp = n.dfs(track, path :+ this, sp)
+          if (nextsp.isEmpty) sp else nextsp
         }}
       }    
     }
@@ -102,7 +104,9 @@ object Day20 {
       cheats(shortestPath.toSet).map { c => {
         val cheatingWalls = walls - c
         val cheatingTrack = clone(walls = cheatingWalls)
-        (c, program.dfs(cheatingTrack)._2)
+        Day20.visited.clear()
+        val sp = program.dfs(cheatingTrack)
+        (c, sp)
       }}
     }
   }
@@ -142,7 +146,8 @@ object Day20 {
  
     val (track, program) = state
 
-    val (_, shortestPath) = program.dfs(track)
+    Day20.visited.clear()
+    val shortestPath = program.dfs(track)
     val shortestPathLength = shortestPath.get.length
 
     val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map { case (c, p) => {
