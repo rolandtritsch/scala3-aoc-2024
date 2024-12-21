@@ -10,7 +10,7 @@ import mill.contrib.scoverage.ScoverageModule
 
 object main extends ScalaModule with ScoverageModule with ScalafmtModule with ScalafixModule {
   def scalaVersion = "3.6.2"
-  def scalacOptions = Seq("-Wunused:imports", "-deprecation")
+  def scalacOptions = Seq("-Wunused:imports", "-deprecation", "-Xfatal-warnings")
   def scoverageVersion = "2.2.1"
   //def scalaVersion = "3.3.4"
   //override def ammoniteVersion = "3.0.0-2-6342755f"
