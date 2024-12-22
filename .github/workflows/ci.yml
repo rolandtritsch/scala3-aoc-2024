@@ -54,7 +54,7 @@ jobs:
         if: github.ref == 'refs/heads/trunk'
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "./out/docJar.dest/javadoc"
+          path: "./out/main/docJar.dest/javadoc"
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/trunk'
