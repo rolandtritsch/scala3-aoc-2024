@@ -38,13 +38,13 @@ jobs:
       - uses: coursier/cache-action@v6
 
       - name: Run all tests
-        run: ./mill test
+        run: ./mill main.test
 
       - name: Generate html scoverage report
-        run: ./mill scoverage.htmlReport && mv ./out/scoverage/htmlReport.dest ./docs/_docs/scoverage
+        run: ./mill main.scoverage.htmlReport && mv ./out/scoverage/htmlReport.dest ./docs/_docs/scoverage
 
       - name: Generate html docs
-        run: ./mill docJar
+        run: ./mill main.docJar
 
       - name: Setup pages
         if: github.ref == 'refs/heads/trunk'
