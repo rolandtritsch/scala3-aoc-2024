@@ -41,7 +41,7 @@ jobs:
         run: ./mill main.test
 
       - name: Generate html scoverage report
-        run: ./mill main.scoverage.htmlReport && mv ./out/scoverage/htmlReport.dest ./docs/_docs/scoverage
+        run: ./mill main.scoverage.htmlReport && mv ./out/main/scoverage/htmlReport.dest ./docs/_docs/scoverage
 
       - name: Generate html docs
         run: ./mill main.docJar
