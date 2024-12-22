@@ -6,8 +6,10 @@ package aoc2024
 object Day21 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
+  type Code = String
+
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Seq[Int] = {
+  def readFile(filename: String): Set[Code] = {
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -15,30 +17,25 @@ object Day21 {
 
     val source = Source.fromResource(filename)
     try {
-      source.getLines().toSeq.map { line =>
-        logger.debug(s"line: ${line}")
-        val parsed = line.toInt
-        logger.debug(s"parsed: ${parsed}")
-        parsed
-      }
+      source.getLines().toSet
     } finally {
       source.close()
     }
   }
 
-  /** @return the solution for part1 */
-  def part1(is: Seq[Int]): Int = {
-    require(is.nonEmpty, "is.nonEmpty")
-    logger.debug(s"is: ${is}")
+  /** @return the sum of the complexity scores */
+  def part1(codes: Set[Code]): Int = {
+    require(codes.nonEmpty, "codes.nonEmpty")
+    logger.debug(s"codes: ${codes}")
 
-    is(0)
+    codes.map(_.size).sum
   }
 
   /** @return the solution for part2 */
-  def part2(is: Seq[Int]): Int = {
-    require(is.nonEmpty, "is.nonEmpty")
-    logger.debug(s"is: ${is}")
+  def part2(codes: Set[Code]): Int = {
+    require(codes.nonEmpty, "codes.nonEmpty")
+    logger.debug(s"codes: ${codes}")
 
-    is(0)
+    codes.map(_.size).sum
   }
 }
