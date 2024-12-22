@@ -21,7 +21,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
 
     steps:
       - name: Checkout current branch (full)
