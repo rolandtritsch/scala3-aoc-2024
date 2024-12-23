@@ -77,4 +77,10 @@ def solve() = {
 
   println(s"Day21 - part1: ${Day21.part1(Day21.readFile("./inputs/Day21.txt"))}")
   println(s"Day21 - part2: ${Day21.part2(Day21.readFile("./inputs/Day21.txt"))}")
+
+  println(s"Day22 - part1: ${Day22.part1(Day22.readFile("./inputs/Day22.txt"))}")
+  println(s"Day22 - part2: ${Day22.part2(Day22.readFile("./inputs/Day22.txt"))}")
+
+  println(s"Day23 - part1: ${Day23.part1(Day23.readFile("./inputs/Day23.txt"))}")
+  println(s"Day23 - part2: ${Day23.part2(Day23.readFile("./inputs/Day23.txt"))}")
 }
