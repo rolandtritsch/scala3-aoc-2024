@@ -46,7 +46,7 @@ object Day18 {
         Position(x + 1, y),
         Position(x, y - 1),
         Position(x, y + 1)
-      ).filter(!corruptedMemory.contains(_))
+      ).filter(p => !corruptedMemory.contains(p) && p.x >= 0 && p.y >= 0)  // Ensure we don't go into negative coordinates
     }
     
     /** @return the shortest path through the corrupted memory */
@@ -73,6 +73,36 @@ object Day18 {
         case Some(sp) => Some(sp)   
         case None => Some(path)
       }
+    }
+
+    /** @return the shortest path through the corrupted memory using BFS */
+    def bfs(
+      end: Position,
+      memory: Set[Position]
+    ): Option[List[Position]] = {
+      val queue = scala.collection.mutable.Queue[(Position, List[Position])]()
+      val seen = scala.collection.mutable.Set[Position]()
+      
+      queue.enqueue((this, List(this)))
+      seen.add(this)
+      
+      while (queue.nonEmpty) {
+        val (current, path) = queue.dequeue()
+        
+        if (current == end) {
+          return Some(path)  // First path to reach end is guaranteed to be shortest
+        }
+        
+        for {
+          next <- current.next(memory)
+          if !seen.contains(next)
+        } {
+          seen.add(next)
+          queue.enqueue((next, path :+ next))
+        }
+      }
+      
+      None  // No path found
     }
   }
 
@@ -111,18 +141,14 @@ object Day18 {
 
   /** @return the shortest path through the corrupted memory */
   def part1(corruptedMemory: Set[Position], dimensions: (Int, Int)): Int = {
-    require(corruptedMemory.nonEmpty, "corruptedMemory.nonEmpty")
-    logger.debug(s"corruptedMemory: ${corruptedMemory}")
-
-    val (maxX, maxY) = dimensions
-
     val start = Position(0, 0)
-    val end = Position(maxX - 1, maxY - 1)
-
-    val memory = corruptedMemory.surround(dimensions)
-    Day18.visited.clear()
-    val shortestPath = start.dfs(end, memory)
-    shortestPath.get.size
+    val end = Position(dimensions._1 - 1, dimensions._2 - 1)
+    val surroundedMemory = corruptedMemory.surround(dimensions)
+    
+    start.bfs(end, surroundedMemory) match {
+      case Some(path) => path.size - 1  // -1 because we don't count the start position
+      case None => -1  // No path found
+    }
   }
 
   /** @return the solution for part2 */
