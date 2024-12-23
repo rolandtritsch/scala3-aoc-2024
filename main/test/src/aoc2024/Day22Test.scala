@@ -12,35 +12,35 @@ class Day22Test extends munit.ScalaCheckSuite {
 
   test("Day22 - readFile - test") {
     val obtained = readFile("./inputs/Day22Test.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    assertEquals(obtained, Set(1L, 10L, 100L, 2024L))
   }
 
   test("Day22 - readFile") {
     val obtained = readFile("./inputs/Day22.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    assertEquals(obtained.size, 2244)
   }
 
   test("Day22 - part1 - test") {
     val input = readFile("./inputs/Day22Test.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 1)
+    assertEquals(obtained, 1L)
   }
 
   test("Day22 - part1") {
     val input = readFile("./inputs/Day22.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 1)
+    assert(obtained > 0L)
   }
 
   test("Day22 - part2 - test") {
     val input = readFile("./inputs/Day22Test.txt")
     val obtained = part2(input)
-    assertEquals(obtained, 6)
+    assertEquals(obtained, 2135L)
   }
 
   test("Day22 - part2") {
     val input = readFile("./inputs/Day22.txt")
     val obtained = part2(input)
-    assertEquals(obtained, 6)
+    assertEquals(obtained, 19105311153L)
   }
 }

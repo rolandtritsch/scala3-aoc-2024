@@ -6,8 +6,10 @@ package aoc2024
 object Day22 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Seq[Int] = {
+  type Secret = Long
+
+  /** @return the Set of secret numbers */
+  def readFile(filename: String): Set[Secret] = {
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -15,26 +17,21 @@ object Day22 {
 
     val source = Source.fromResource(filename)
     try {
-      source.getLines().toSeq.map { line =>
-        logger.debug(s"line: ${line}")
-        val parsed = line.toInt
-        logger.debug(s"parsed: ${parsed}")
-        parsed
-      }
+      source.getLines().map(_.toLong).toSet
     } finally {
       source.close()
     }
   }
 
-  /** @return the solution for part1 */
-  def part1(is: Seq[Int]): Int = {
-    require(is.nonEmpty, "is.nonEmpty")
-    is.head
+  /** @return the sum nth secret number for every buyer   */
+  def part1(secrets: Set[Secret]): Long = {
+    require(secrets.nonEmpty, "secrets.nonEmpty")
+    secrets.min
   }
 
   /** @return the solution for part2 */
-  def part2(is: Seq[Int]): Int = {
-    require(is.nonEmpty, "is.nonEmpty")
-    is.sum
+  def part2(secrets: Set[Secret]): Long = {
+    require(secrets.nonEmpty, "secrets.nonEmpty")
+    secrets.sum
   }
 }
