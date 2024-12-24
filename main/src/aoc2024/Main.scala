@@ -84,6 +84,9 @@ def solve() = {
   println(s"Day23 - part1: ${Day23.part1(Day23.readFile("./inputs/Day23.txt"))}")
   println(s"Day23 - part2: ${Day23.part2(Day23.readFile("./inputs/Day23.txt"))}")
 
-  println(s"Day24 - part1: ${Day24.part1(Day24.readFile("./inputs/Day24.txt"))}")
-  println(s"Day24 - part2: ${Day24.part2(Day24.readFile("./inputs/Day24.txt"))}")
+  val day24Initials = Day24.readFileInitials("./inputs/Day24-Initials.txt")
+  val day24Statements = Day24.readFileStatements("./inputs/Day24-Statements.txt")
+  val day24State = (day24Initials, day24Statements)
+  println(s"Day24 - part1: ${Day24.part1(day24State)}")
+  println(s"Day24 - part2: ${Day24.part2(day24State)}")
 }

@@ -1,14 +1,3 @@
-x00: 1
-x01: 0
-x02: 1
-x03: 1
-x04: 0
-y00: 1
-y01: 1
-y02: 1
-y03: 1
-y04: 1
-
 ntg XOR fgs -> mjb
 y02 OR x01 -> tnw
 kwq OR kpj -> z05

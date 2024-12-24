@@ -10,37 +10,51 @@ class Day24Test extends munit.ScalaCheckSuite {
     assert(true)
   }
 
-  test("Day24 - readFile - test") {
-    val obtained = readFile("./inputs/Day24Test.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+  test("Day24 - readFileInitials - test") {
+    val obtained = readFileInitials("./inputs/Day24Test-Initials.txt")
+    assertEquals(obtained.head, Assignment(LeftVariable("x01"), Value(false)))
   }
 
-  test("Day24 - readFile") {
-    val obtained = readFile("./inputs/Day24.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+  test("Day24 - readFileStatements - test") {
+    val obtained = readFileStatements("./inputs/Day24Test-Statements.txt")
+    assertEquals(obtained.size, 36)
+  }
+
+  test("Day24 - readFileInitials") {
+    val obtained = readFileInitials("./inputs/Day24-Initials.txt")
+    assertEquals(obtained.size, 90)
+  }
+
+  test("Day24 - readFileStatements") {
+    val obtained = readFileStatements("./inputs/Day24-Statements.txt")
+    assertEquals(obtained.size, 222)
   }
 
   test("Day24 - part1 - test") {
-    val input = readFile("./inputs/Day24Test.txt")
-    val obtained = part1(input)
-    assertEquals(obtained, 1)
+    val initials = readFileInitials("./inputs/Day24Test-Initials.txt")
+    val statements = readFileStatements("./inputs/Day24Test-Statements.txt")
+    val obtained = part1(initials, statements)
+    assertEquals(obtained, 46)
   }
 
   test("Day24 - part1") {
-    val input = readFile("./inputs/Day24.txt")
-    val obtained = part1(input)
-    assertEquals(obtained, 1)
+    val initials = readFileInitials("./inputs/Day24-Initials.txt")
+    val statements = readFileStatements("./inputs/Day24-Statements.txt")
+    val obtained = part1(initials, statements)
+    assertEquals(obtained, 312)
   }
 
   test("Day24 - part2 - test") {
-    val input = readFile("./inputs/Day24Test.txt")
-    val obtained = part2(input)
-    assertEquals(obtained, 1)
+    val initials = readFileInitials("./inputs/Day24Test-Initials.txt")
+    val statements = readFileStatements("./inputs/Day24Test-Statements.txt")
+    val obtained = part2(initials, statements)
+    assertEquals(obtained, 46)
   }
 
   test("Day24 - part2") {
-    val input = readFile("./inputs/Day24.txt")
-    val obtained = part2(input)
-    assertEquals(obtained, 1)
+    val initials = readFileInitials("./inputs/Day24-Initials.txt")
+    val statements = readFileStatements("./inputs/Day24-Statements.txt")
+    val obtained = part2(initials, statements)
+    assertEquals(obtained, 312)
   }
 }
