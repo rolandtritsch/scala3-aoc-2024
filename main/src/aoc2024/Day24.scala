@@ -11,18 +11,28 @@ package aoc2024
   * use a parser combinator and build an AST and then evaluate
   * the AST (e.g. use fastparse).
   * 
-  * Let's try both. Let's use Toolbox for part1 and the parser
-  * combinator for part2.
+  * Let's try both. Let's use runtime evaluation for part1 and
+  * the parser combinator for part2.
+  *
+  * Note: To make the runtime evaluation work we have to downgrade
+  * Scala to 3.4.3 (com.eed3si9n.eval requirement).
+  *
+  * Note: "val" will obviously not work, because of the forward
+  * references. Then I tried "lazy val", but that will fail with
+  * "Platform restriction: a parameter list's length cannot exceed
+  * 254." What obviously works is "def".
   * 
   * Part1:
   * 
   * - Read the input file and build a code file that looks like this ...
   * 
-  *   val y01 = false
-  *   val y02 = true
-  *   val z01 = y01 && y02
-  *   z01
-  * 
+  *   def y01 = false
+  *   def y02 = true
+  *   def z00 = y01 && y02
+  *   def z01 = y01 || y02
+  *   List(z01, z00).map(if(_) 1 else 0).mkString
+  *
+  * - Note: z00 is the lowest bit
   * - Evaluate the code string
    */
 
@@ -30,18 +40,38 @@ object Day24 {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   enum Operation {
-    case AND, OR, XOR
+    case AND
+    case OR
+    case XOR
+  }
+
+  extension (op: Operation) {
+    def str: String = op match {
+      case Operation.AND => "&&"
+      case Operation.OR => "||"
+      case Operation.XOR => "^"
+    }
   }
 
   sealed trait LeftHandSide
-  case class LeftVariable(name: String) extends LeftHandSide
+  case class LeftVariable(name: String) extends LeftHandSide {
+    override def toString(): String = s"${name}"
+  }
 
   sealed trait RightHandSide
-  case class RightVariable(name: String) extends RightHandSide
-  case class Value(value: Boolean) extends RightHandSide
-  case class Expression(left: LeftHandSide, op: Operation, right: RightHandSide) extends RightHandSide
+  case class RightVariable(name: String) extends RightHandSide {
+    override def toString(): String = s"${name}"
+  }
+  case class Value(value: Boolean) extends RightHandSide {
+    override def toString(): String = s"${value}"
+  }
+  case class Expression(left: LeftHandSide, op: Operation, right: RightHandSide) extends RightHandSide {
+    override def toString(): String = s"${left} ${op.str} ${right}"
+  }
 
-  case class Assignment(left: LeftHandSide, right: RightHandSide)
+  case class Assignment(left: LeftHandSide, right: RightHandSide) {
+    override def toString(): String = s"def ${left} = ${right}"
+  }
 
   /** @return the Assignments for the initial values */ 
   def readFileInitials(filename: String): Set[Assignment] = {
@@ -86,7 +116,7 @@ object Day24 {
           LeftVariable(parsed(3)), 
           Expression(
             LeftVariable(parsed(0)), 
-            Operation.valueOf(parsed(1).toUpperCase), 
+            Operation.valueOf(parsed(1)), 
             RightVariable(parsed(2))
           )
         )
@@ -96,15 +126,32 @@ object Day24 {
     }
   }
 
+  /** @return the evaluation of the code */
+  def evaluate(lines: String): String = {
+    import com.eed3si9n.eval
+    eval.Eval().evalInfer(lines).getValue(this.getClass.getClassLoader).toString
+  }
+
+  /** @return the code snippet that needs to be evaluated */
+  def generate(statements: Set[Assignment]): String = {
+    val vars = statements.map { s => s match {
+      case Assignment(LeftVariable(name), _) => name
+    }}.filter(_.startsWith("z")).toList.sorted.reverse.mkString(",")
+    val convertToBitString = s"List(${vars}).map(if(_) 1 else 0).mkString"
+
+    statements.map(_.toString).toList.sorted.mkString("\n") + "\n" + convertToBitString
+  }
+
   /** @return the Int of the resulting bit string */
-  def part1 (s: (Set[Assignment], Set[Assignment])): Int = {
+  def part1 (s: (Set[Assignment], Set[Assignment])): BigInt = {
     require(s._1.nonEmpty, "s._1.nonEmpty")
     require(s._2.nonEmpty, "s._2.nonEmpty")
     logger.debug(s": ${s}")
 
     val statements = s._1 ++ s._2
 
-    statements.size
+    val bits = evaluate(generate(statements))
+    BigInt(bits, 2)
   }
 
   /** @return the solution for part2 */
