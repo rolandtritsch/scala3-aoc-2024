@@ -5,6 +5,8 @@ package util
   * Makes sure it does not loop.
   */
 trait Dfs {
+  import scala.collection.mutable
+
   val logger: com.typesafe.scalalogging.Logger
 
   val end: Position
@@ -19,6 +21,7 @@ trait Dfs {
     *   shape of the grid). And it is slow. 
     */
   def findFirst(current: Position, path: List[Position] = List.empty): Option[List[Position]] = {
+    require(!obstacles.contains(current), s"obstacles.contains(${current}) - path: ${path}")
     logger.debug(s"current: ${current}, path: ${path}")
 
     if (current == end) Some(path :+ current)
@@ -28,6 +31,12 @@ trait Dfs {
       case None => findFirst(n, path :+ current)
     }}
   }
+
+  /** A global map of visited positions and the shortest path found so far.
+    * We need this to cut off the search as soon as we find a path with
+    * a higher score than the one we have found so far.
+    */
+  given mutable.Map[Position, Int] = mutable.Map.empty[Position, Int].withDefaultValue(Int.MaxValue)
 
   /** @return
     *   the cheapest path found from the start to the end or None
@@ -41,20 +50,30 @@ trait Dfs {
     *   The implementation is recursive, but not tail-recursive.
     *   Means it will run out of stack (fast). And it is slow. 
     */
-  def findCheapest(
-    current: Position, 
-    path: List[Position] = List.empty,
-    bestPath: Option[List[Position]] = None
-  ): Option[List[Position]] = {
-    logger.debug(s"current: ${current}, path: ${path}")
+  def findCheapest(start: Position): Option[List[Position]] = {
+    def findCheapest(
+      current: Position, 
+      path: List[Position],
+      bestPath: Option[List[Position]]
+    )(
+      using visited: mutable.Map[Position, Int]
+    )(
+      using score: List[Position] => Int
+    ): Option[List[Position]] = {
+      require(!obstacles.contains(current), s"obstacles.contains(${current}) - path: ${path}")
+      logger.debug(s"current: ${current}, path: ${path}")
 
-    if (current == end) Some(path :+ current).min(bestPath)
-    else if (path.contains(current)) bestPath
-    else current.next(obstacles).foldLeft(bestPath) { case (bp, n) => {
-      findCheapest(n, path :+ current, bp).min(bp)
-    }}
+      if (current == end) Some(path :+ current).min(bestPath)
+      else if (score(path :+ current) >= visited(current)) bestPath
+      else current.next(obstacles).foldLeft(bestPath) { case (bp, n) => {
+        visited.update(current, score(path :+ current))
+        findCheapest(n, path :+ current, bp).min(bp)
+      }}
+    }
+
+    findCheapest(start, List.empty, None)
   }
-  
+
   given (List[Position] => Int) = {
     p => p.size
   }

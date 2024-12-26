@@ -18,29 +18,57 @@ class Grid(val obstacles: Set[Position], val end: Position) {
     s"Grid(obstacles=${obstacles}, end=${end})"
   }
 
+  def toStringPretty(current: Position, path: List[Position]): String = {
+    val grid =
+        (dimensions.minX to dimensions.maxX).map { x =>
+          (dimensions.minY to dimensions.maxY).map { y => {
+            val pos = Position(x, y)
+            if (current == pos) 'X'
+            else if (end == pos) 'E'
+            else if (path.contains(pos)) 'O'
+            else if (obstacles.contains(pos)) '#'
+            else '.'
+          }
+        }.mkString
+      }.mkString("\n")
+      s"${this}\n${grid}\n"
+  }
+
+  case class Dimensions(minX: Int, minY: Int, maxX: Int, maxY: Int)
+
+  private def dimensions: Dimensions = {
+    val minX = obstacles.map(_.x).min
+    val minY = obstacles.map(_.y).min
+    val maxX = obstacles.map(_.x).max
+    val maxY = obstacles.map(_.y).max
+    Dimensions(minX, minY, maxX, maxY)
+  }
+
   /** @return
     *   a new Grid that is surrounded by obstacles. That way we do not have to
     *   constantly check for the boundaries of the grid.
     */
   def surround(): Grid = {
-    val dimX = obstacles.map { case Position(x, _) => x }.max + 1
-    val dimY = obstacles.map { case Position(_, y) => y }.max + 1
-
-    surround((dimX, dimY))
+    surround(dimensions)
   }
 
   /** @return
     *   new Grid that is surrounded by obstacles (with the given dimensions).
     */
-  def surround(dimensions: (Int, Int)): Grid = {
-    val (dimX, dimY) = dimensions
+  def surround(dimensions: Dimensions): Grid = {
+    val corners = Set(
+      Position(dimensions.minX - 1, dimensions.minY - 1),
+      Position(dimensions.maxX + 1, dimensions.minY - 1),
+      Position(dimensions.maxX + 1, dimensions.maxY + 1),
+      Position(dimensions.minX - 1, dimensions.maxY + 1)
+    )
 
-    val left = (0 until dimX).map { x => Position(x, -1) }
-    val right = (0 until dimX).map { x => Position(x, dimY) }
-    val top = (0 until dimY).map { y => Position(-1, y) }
-    val bottom = (0 until dimY).map { y => Position(dimX, y) }
+    val left = (dimensions.minX to dimensions.maxX).map { x => Position(x, dimensions.minY - 1) }
+    val right = (dimensions.minX to dimensions.maxX).map { x => Position(x, dimensions.maxY + 1) }
+    val top = (dimensions.minY to dimensions.maxY).map { y => Position(dimensions.minX - 1, y) }
+    val bottom = (dimensions.minY to dimensions.maxY).map { y => Position(dimensions.maxX + 1, y) }
 
-    Grid(obstacles ++ left ++ right ++ top ++ bottom, end)
+    Grid(obstacles ++ left ++ right ++ top ++ bottom ++ corners, end)
   }
 }
 

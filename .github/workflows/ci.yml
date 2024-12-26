@@ -37,8 +37,8 @@ jobs:
 
       - uses: coursier/cache-action@v6
 
-      - name: Run all tests
-        run: ./mill main.test
+      - name: Run all tests (but the slow ones)
+        run: ./mill main.test.testCached
 
       - name: Generate html scoverage report
         run: ./mill main.scoverage.htmlReport && mv ./out/main/scoverage/htmlReport.dest ./docs/_docs/scoverage

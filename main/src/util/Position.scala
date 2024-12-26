@@ -1,14 +1,18 @@
 package util
 
 case class Position(x: Int, y: Int) {
-  def next(obstacles: Set[Position]): Set[Position] = {
-    Set(
+  def next(obstacles: Set[Position]): List[Position] = {
+    List(
       Position(x - 1, y),
       Position(x + 1, y),
       Position(x, y - 1),
       Position(x, y + 1)
-    ).filter(!obstacles.contains(_))
+    ).filter(!obstacles.contains(_)).sorted
   }
+}
+
+object Position {
+  implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
 }
 
 extension (source: scala.io.BufferedSource) {

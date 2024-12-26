@@ -14,7 +14,8 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
   def scoverageVersion = "2.2.1"
   //def scalaVersion = "3.3.4"
   //override def ammoniteVersion = "3.0.0-2-6342755f"
-
+  override def forkArgs: T[Seq[String]] = Seq("-Xss2G", "-Xmx20G")
+  
   def ivyDeps = Agg(
     ivy"com.typesafe.scala-logging::scala-logging:3.9.5",
     ivy"ch.qos.logback:logback-classic:1.3.5",
@@ -28,12 +29,14 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
   )
 
   object test extends ScoverageTests with TestModule.Munit {
-    def testCachedArgs = Seq("--include-tags=only")
+    //def testCachedArgs = Seq("--include-tags=only")
+    def testCachedArgs = Seq("--exclude-tags=slow")
     //def testCachedArgs = Seq("--exclude-tags=ignore")
     def ivyDeps = Agg(
       ivy"org.scalameta::munit::1.0.0",
       ivy"org.scalameta::munit-scalacheck:1.0.0",
       ivy"org.typelevel::spire:0.18.0",
     )
+    override def forkArgs: T[Seq[String]] = Seq("-Xss1G", "-Xmx10G")
   }
 }
