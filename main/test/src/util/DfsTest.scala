@@ -60,6 +60,16 @@ class DfsTest extends munit.ScalaCheckSuite {
     assertEquals(path.get, expected)
   }
 
+  test("Dfs - findFirst - small") {    
+    val input = scala.io.Source.fromResource("./tests/GridTest-Small.txt")
+    val grid = input.grid
+    val input2 = scala.io.Source.fromResource("./tests/GridTest-Small.txt")
+    val start = input2.start().get
+    val path = new GridWithDfs(grid.obstacles, grid.end).findFirst(start)
+        
+    assertEquals(path.get.size, 23)
+  }
+
   test("Dfs - findFirst - large") {    
     val input = scala.io.Source.fromResource("./tests/GridTest-Large.txt")
     val grid = input.grid
@@ -68,5 +78,15 @@ class DfsTest extends munit.ScalaCheckSuite {
     val path = new GridWithDfs(grid.obstacles, grid.end).findFirst(start)
         
     assertEquals(path.get.size, 4707)
+  }
+
+  test("Dfs - findCheapest - small") {    
+    val input = scala.io.Source.fromResource("./tests/GridTest-Small.txt")
+    val grid = input.grid
+    val input2 = scala.io.Source.fromResource("./tests/GridTest-Small.txt")
+    val start = input2.start().get
+    val path = new GridWithDfs(grid.obstacles, grid.end).findCheapest(start)
+        
+    assertEquals(path.get.size, 15)
   }
 }
