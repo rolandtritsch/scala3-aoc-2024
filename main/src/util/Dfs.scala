@@ -77,13 +77,4 @@ trait Dfs {
   given (List[Position] => Int) = {
     p => p.size
   }
-
-  extension (path: Option[List[Position]]) {
-    def min(thatPath: Option[List[Position]])(using score: List[Position] => Int): Option[List[Position]] = (path, thatPath) match {
-      case (None, None) => None
-      case (Some(_), None) => path
-      case (None, Some(_)) => thatPath
-      case (Some(p), Some(tp)) => if (score(p) < score(tp)) path else thatPath
-    }
-  }
 }
