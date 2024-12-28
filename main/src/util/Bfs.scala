@@ -15,14 +15,14 @@ trait Bfs {
     * @note Bfs ensures that the first path found is the shortest.
     */
   def findFirstIterative(start: Position): Option[List[Position]] = {
-    val bestPathSoFar = mutable.Queue[(Position, List[Position])]()
+    val paths = mutable.Queue[(Position, List[Position])]()
     val visited = mutable.Set[Position]()
     
-    bestPathSoFar.enqueue((start, List(start)))
+    paths.enqueue((start, List(start)))
     visited.add(start)
     
-    while (bestPathSoFar.nonEmpty) {
-      val (current, path) = bestPathSoFar.dequeue()
+    while (paths.nonEmpty) {
+      val (current, path) = paths.dequeue()
       
       if (current == end) {
         return Some(path)
@@ -32,7 +32,7 @@ trait Bfs {
           if !visited.contains(next)
         } {
           visited.add(next)
-          bestPathSoFar.enqueue((next, path :+ next))
+          paths.enqueue((next, path :+ next))
         }
       }
     }
@@ -44,27 +44,22 @@ trait Bfs {
     * 
     * @note This is the recursive version of bfs.
     */
-  def findFirstRecursive(start: Position): Option[List[Position]] = {
-    val paths = mutable.Queue[(Position, List[Position])]()
-    
-    def findFirst(current: Position, visited: Set[Position] = Set.empty): Option[List[Position]] = {
-      if (paths.isEmpty) None
-      else {
-        val (current, path) = paths.dequeue()
-        
-        if (current == end) Some(path)
-        else current.next(obstacles, visited).foldLeft(Option.empty[List[Position]]) { (bp, n) => {
-          paths.enqueue((n, path :+ n))
-          findFirst(n, visited + n).min(bp)
+  @scala.annotation.tailrec
+  final def findFirstRecursive(paths: Set[List[Position]], visited: Set[Position]): Option[List[Position]] = {
+    val foundOne = paths.find(_.last == end)
+    if (foundOne.nonEmpty) foundOne
+    else {
+      val (nextPaths, nexts) = paths.foldLeft((Set.empty[Option[List[Position]]], Set.empty[Position])) { case ((nextPaths, nexts), p) => {
+        val nss = p.last.next(obstacles, visited)
+        val nps = if (nss.isEmpty) None
+        else nss.map { n => {
+          Some(p :+ n)
         }}
-      }
-    }
-    
-    paths.enqueue((start, List(start)))
-    findFirst(start)
-  }
+        (nextPaths ++ nps, nexts ++ nss)
+      }}
 
-  given (List[Position] => Int) = {
-    p => p.size
+      if (nextPaths.isEmpty) None
+      else findFirstRecursive(nextPaths.flatten, visited ++ nexts)
+    } 
   }
 }
