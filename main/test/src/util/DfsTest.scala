@@ -73,32 +73,17 @@ class DfsTest extends munit.ScalaCheckSuite {
     assertEquals(path.get.size, 23)
   }
 
-  // test("Dfs - findFirst - smallMedium") {    
-  //   val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-SmallMedium.txt")
-  //   val path = grid.findFirst(grid.start.get)
-
-  //   assertEquals(path.get.size, 53)        
-  // }
-
   test("Dfs - findCheapest - small") {    
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-Small.txt")
-    val path = grid.findFirst(grid.start.get)
+    val path = grid.findCheapest(grid.start.get)
 
-    //assertEquals(path.get.size, 15)
-    assertEquals(path.get.size, 23)
+    assertEquals(path.get.size, 15)
   }
 
-  // test("Dfs - findCheapest - smallMedium") {
-  //   val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-SmallMedium.txt")
-  //   val path = grid.findCheapest(grid.start.get)
+  test("Dfs - findCheapest - smallMedium") {
+    val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-SmallMedium.txt")
+    val path = grid.findCheapest(grid.start.get)
 
-  //   assertEquals(path.get.size, 25)
-  // }
-
-  // test("Dfs - findCheapest - medium") {
-  //   val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-Medium.txt")
-  //   val path = grid.findCheapest(grid.start.get)
-  //   //println(grid.toStringPretty(path.get)) 
-  //   assertEquals(path.get.size, 95)
-  // }
+    assertEquals(path.get.size, 25)
+  }
 }

@@ -62,7 +62,7 @@ trait Dfs {
       require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
       logger.debug(s"current: ${current}, path: ${path}")
 
-      if (current == end) Some(path :+ current).min(bestPath)
+      if (current == end.get) Some(path :+ current).min(bestPath)
       else if (score(path :+ current) >= visited(current)) bestPath
       else adjacent(current).foldLeft(bestPath) { case (bp, n) => {
         visited.update(current, score(path :+ current))

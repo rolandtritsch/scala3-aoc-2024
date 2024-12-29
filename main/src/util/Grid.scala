@@ -61,11 +61,11 @@ object Grid {
     val source = scala.io.Source.fromResource(filename)
     try {
       val init = (Set.empty[Position], Set.empty[Position], Option.empty[Position], Option.empty[Position], (0, 0))
-      val (free, blocked, start, end, dimensions) = source.getLines().toSeq.zipWithIndex.foldLeft(init) { case (grid, (line, x)) => {
+      val (free, blocked, start, end, max) = source.getLines().toSeq.zipWithIndex.foldLeft(init) { case (grid, (line, x)) => {
         logger.debug(s"grid: ${grid}, line: ${line}")
 
         line.zipWithIndex.foldLeft(grid) { case (grid, (c, y)) => {
-          val (free, blocked, start, end, dimensions) = grid
+          val (free, blocked, start, end, _) = grid
           c match {
             case '.' => (free + Position(x, y), blocked, start, end, (x, y))
             case '#' => (free, blocked + Position(x, y), start, end, (x, y))
@@ -76,7 +76,8 @@ object Grid {
         }}
       }}
 
-      factory.create(free, blocked, start, end, dimensions)
+      val (maxX, maxY) = max
+      factory.create(free, blocked, start, end, (maxX + 1, maxY + 1))
     } finally {
       source.close()
     }

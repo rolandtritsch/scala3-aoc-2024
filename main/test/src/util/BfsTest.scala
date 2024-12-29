@@ -34,7 +34,7 @@ class BfsTest extends munit.ScalaCheckSuite {
     )
 
     assertEquals(pathIterative.get, expected)
-    //assertEquals(pathRecursive.get, expected)
+    assertEquals(pathRecursive.get, expected)
   }
 
   test("Bfs - findFirst - no-path") {
@@ -50,7 +50,7 @@ class BfsTest extends munit.ScalaCheckSuite {
     val grid = Grid.fromResource[GridWithBfs]("./tests/GridTest-NoBoundaries.txt")
     val pathIterative = grid.findFirstIterative()
     val pathRecursive = grid.findFirstRecursive(Set(List(grid.start.get)), Set(grid.start.get))
-    val expected = List(
+    val expectedIterative = List(
       Position(0, 0),
       Position(1, 0),
       Position(2, 0),
@@ -61,9 +61,20 @@ class BfsTest extends munit.ScalaCheckSuite {
       Position(4, 3),
       Position(4, 4),
     )
+    val expectedRecursive = List(
+      Position(0, 0),
+      Position(1, 0),
+      Position(2, 0),
+      Position(2, 1),
+      Position(3, 1),
+      Position(3, 2),
+      Position(4, 2),
+      Position(4, 3),
+      Position(4, 4),
+    )
     
-    assertEquals(pathIterative.get, expected)
-    //assertEquals(pathRecursive.get, expected)
+    assertEquals(pathIterative.get, expectedIterative)
+    assertEquals(pathRecursive.get, expectedRecursive)
   }
 
   test("Bfs - findFirst - small") {    
@@ -72,7 +83,7 @@ class BfsTest extends munit.ScalaCheckSuite {
     val pathRecursive = grid.findFirstRecursive(Set(List(grid.start.get)), Set(grid.start.get))
 
     assertEquals(pathIterative.get.size, 15)
-    //assertEquals(pathRecursive.get.size, 15)
+    assertEquals(pathRecursive.get.size, 15)
   }
 
   test("Bfs - findFirst - smallMedium") {
@@ -81,7 +92,7 @@ class BfsTest extends munit.ScalaCheckSuite {
     val pathRecursive = grid.findFirstRecursive(Set(List(grid.start.get)), Set(grid.start.get))
 
     assertEquals(pathIterative.get.size, 25)
-    //assertEquals(pathRecursive.get.size, 25)
+    assertEquals(pathRecursive.get.size, 25)
   }
 
   test("Bfs - findFirst - medium") {
@@ -96,7 +107,7 @@ class BfsTest extends munit.ScalaCheckSuite {
   test("Bfs - findFirst - large") {
     val grid = Grid.fromResource[GridWithBfs]("./tests/GridTest-Large.txt")
     val pathIterative = grid.findFirstIterative()
-    val pathRecursive = grid.findFirstRecursive(Set(List(grid.start.get)), Set(grid.start.get))
+    //val pathRecursive = grid.findFirstRecursive(Set(List(grid.start.get)), Set(grid.start.get))
     //println(grid.toStringPretty(start, path.get)) 
     assertEquals(pathIterative.get.size, 195)
     //assertEquals(pathRecursive.get.size, 195)

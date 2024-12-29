@@ -50,15 +50,15 @@ trait Bfs {
     */
   @scala.annotation.tailrec
   final def findFirstRecursive(paths: Set[Path], visited: Set[Position]): Option[Path] = {
-    val foundOne = paths.find(_.last == end)
+    logger.debug(s"paths: ${paths}")
+    val foundOne = paths.find(_.last == end.get)
     if (foundOne.nonEmpty) foundOne
     else {
       val (nextPaths, nexts) = paths.foldLeft((Set.empty[Option[Path]], Set.empty[Position])) { case ((nextPaths, nexts), p) => {
         val nss = adjacent(p.last, visited)
-        val nps = if (nss.isEmpty) None
-        else nss.map { n => {
-          Some(p :+ n)
-        }}
+        val nps =
+          if (nss.isEmpty) None
+          else nss.map(n => Some(p :+ n))
         (nextPaths ++ nps, nexts ++ nss)
       }}
 
