@@ -11,6 +11,7 @@ class GridTest extends munit.ScalaCheckSuite {
 
   test("Grid - source") {
     val grid = Grid.fromResource("./tests/GridTest.txt")
+
     assertEquals(grid.free.size, 8)
     assertEquals(grid.blocked.size, 17)
     assertEquals(grid.start.get, Position(1, 1))
@@ -20,11 +21,13 @@ class GridTest extends munit.ScalaCheckSuite {
 
   test("Grid - adjacent") {
     val grid = Grid.fromResource("./tests/GridTest.txt")
+
     assertEquals(grid.adjacent(Position(1, 1)), Set(Position(1, 2), Position(2, 1)))
   }
 
   test("Grid - neighbors") {
     val grid = Grid.fromResource("./tests/GridTest.txt")
+    
     assertEquals(grid.neighbors(Position(1, 1)), Set(Position(1, 2), Position(2, 1)))
     assertEquals(grid.neighbors(Position(1, 2)), Set(Position(1, 1), Position(1, 3)))
   }
