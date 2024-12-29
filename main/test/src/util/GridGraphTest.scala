@@ -22,4 +22,36 @@ class GridGraphTest extends munit.ScalaCheckSuite {
     assertEquals(graph.nodes.size, 8) // 8 traversable positions (excluding walls)
     assertEquals(graph.edges.size, 8) // 8 possible moves between positions (undirected)
   }
+
+  test("GridGraph - shortestPath - small") {    
+    val input = scala.io.Source.fromResource("./tests/GridTest-Small.txt")
+    val grid = input.grid
+    val graph = GridGraph.fromGrid(grid)
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    assertEquals(path.size, 15)
+  }
+
+  test("GridGraph - shortestPath - smallMedium") {    
+    val input = scala.io.Source.fromResource("./tests/GridTest-SmallMedium.txt")
+    val grid = input.grid
+    val graph = GridGraph.fromGrid(grid)
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    assertEquals(path.size, 25)
+  }
+
+  test("GridGraph - shortestPath - medium") {    
+    val input = scala.io.Source.fromResource("./tests/GridTest-Medium.txt")
+    val grid = input.grid
+    val graph = GridGraph.fromGrid(grid)
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    assertEquals(path.size, 95)
+  }
+
+  test("GridGraph - shortestPath - large") {    
+    val input = scala.io.Source.fromResource("./tests/GridTest-Large.txt")
+    val grid = input.grid
+    val graph = GridGraph.fromGrid(grid)
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    assertEquals(path.size, 195)
+  }
 }
