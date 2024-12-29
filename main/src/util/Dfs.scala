@@ -1,16 +1,15 @@
 package util
 
 /** Trait for depth first search. 
-  * 
-  * Makes sure it does not loop.
   */
 trait Dfs {
   import scala.collection.mutable
 
   val logger: com.typesafe.scalalogging.Logger
 
-  val end: Position
-  val obstacles: Set[Position]
+  val end: Option[Position]
+  val blocked: Set[Position]
+  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[Position]
 
   /** @return 
     *   the first path found from the start to the end or None 
@@ -20,13 +19,13 @@ trait Dfs {
     *   Means it might run out of stack (depending on the size and 
     *   shape of the grid). And it is slow. 
     */
-  def findFirst(current: Position, path: List[Position] = List.empty): Option[List[Position]] = {
-    require(!obstacles.contains(current), s"obstacles.contains(${current}) - path: ${path}")
+  def findFirst(current: Position, path: Path = List.empty): Option[Path] = {
+    require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
     logger.debug(s"current: ${current}, path: ${path}")
 
-    if (current == end) Some(path :+ current)
+    if (current == end.get) Some(path :+ current)
     else if (path.contains(current)) None
-    else current.next(obstacles).foldLeft(Option.empty[List[Position]]) { case (p, n) => p match {
+    else adjacent(current).foldLeft(Option.empty[Path]) { case (p, n) => p match {
       case Some(_) => p
       case None => findFirst(n, path :+ current)
     }}
@@ -50,22 +49,22 @@ trait Dfs {
     *   The implementation is recursive, but not tail-recursive.
     *   Means it will run out of stack (fast). And it is slow. 
     */
-  def findCheapest(start: Position): Option[List[Position]] = {
+  def findCheapest(start: Position): Option[Path] = {
     def findCheapest(
       current: Position, 
-      path: List[Position],
-      bestPath: Option[List[Position]]
+      path: Path,
+      bestPath: Option[Path]
     )(
       using visited: mutable.Map[Position, Int]
     )(
-      using score: List[Position] => Int
-    ): Option[List[Position]] = {
-      require(!obstacles.contains(current), s"obstacles.contains(${current}) - path: ${path}")
+      using score: Path => Int
+    ): Option[Path] = {
+      require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
       logger.debug(s"current: ${current}, path: ${path}")
 
       if (current == end) Some(path :+ current).min(bestPath)
       else if (score(path :+ current) >= visited(current)) bestPath
-      else current.next(obstacles).foldLeft(bestPath) { case (bp, n) => {
+      else adjacent(current).foldLeft(bestPath) { case (bp, n) => {
         visited.update(current, score(path :+ current))
         findCheapest(n, path :+ current, bp).min(bp)
       }}
@@ -74,7 +73,7 @@ trait Dfs {
     findCheapest(start, List.empty, None)
   }
 
-  given (List[Position] => Int) = {
+  given (Path => Int) = {
     p => p.size
   }
 }

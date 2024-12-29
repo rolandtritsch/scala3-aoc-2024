@@ -4,9 +4,13 @@ class GridGraphTest extends munit.ScalaCheckSuite {
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
 
-  test("GridGraph - source") {    
-    val input = scala.io.Source.fromResource("./tests/GridTest.txt")
-    val grid = input.grid
+  given Grid.GridFactory[Grid] with {
+    def create(free: Set[Position], blocked: Set[Position], start: Option[Position], end: Option[Position], dimensions: (Int, Int)): Grid =
+      new Grid(free, blocked, start, end, dimensions)
+  }
+
+  test("GridGraph - source") {
+    val grid = Grid.fromResource("./tests/GridTest.txt")
     val graph = GridGraph.fromGrid(grid)
 
     assert(!graph.isAcyclic) // The grid has cycles as you can move back and forth
@@ -24,34 +28,30 @@ class GridGraphTest extends munit.ScalaCheckSuite {
   }
 
   test("GridGraph - shortestPath - small") {    
-    val input = scala.io.Source.fromResource("./tests/GridTest-Small.txt")
-    val grid = input.grid
+    val grid = Grid.fromResource("./tests/GridTest-Small.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
     assertEquals(path.size, 15)
   }
 
   test("GridGraph - shortestPath - smallMedium") {    
-    val input = scala.io.Source.fromResource("./tests/GridTest-SmallMedium.txt")
-    val grid = input.grid
+    val grid = Grid.fromResource("./tests/GridTest-SmallMedium.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
     assertEquals(path.size, 25)
   }
 
-  test("GridGraph - shortestPath - medium") {    
-    val input = scala.io.Source.fromResource("./tests/GridTest-Medium.txt")
-    val grid = input.grid
+  test("GridGraph - shortestPath - medium") {
+    val grid = Grid.fromResource("./tests/GridTest-Medium.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
     assertEquals(path.size, 95)
   }
 
   test("GridGraph - shortestPath - large") {    
-    val input = scala.io.Source.fromResource("./tests/GridTest-Large.txt")
-    val grid = input.grid
+    val grid = Grid.fromResource("./tests/GridTest-Large.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
     assertEquals(path.size, 195)
   }
 }

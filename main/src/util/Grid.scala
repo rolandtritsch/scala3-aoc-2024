@@ -1,106 +1,91 @@
 package util
 
-/** A Grid. Defined by a set of obstacles and an end position.
-  */
-class Grid(val obstacles: Set[Position], val end: Position) {
+/** A Grid. The datastructure we use to read a grid from a file.
+  * 
+  * The file has ...
+  * 
+  * - a number of rows and a number of columns
+  * - every position is either a free space (.) or an obstacle (#) 
+  *   or the start (S) or the end (E)
+  * - the start and end positions are optional
+  * - the dimensions of the grid are detemined by the number of 
+  *   rows and columns
+    */
+class Grid(val free: Set[Position], val blocked: Set[Position], val start: Option[Position], val end: Option[Position], val dimensions: (Int, Int)) {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  def this() = this(Set.empty, Position(0, 0))
-
-  def clone(
-      obstacles: Set[Position] = this.obstacles,
-      end: Position = this.end
-  ): Grid = {
-    Grid(obstacles, end)
-  }
-
   override def toString: String = {
-    s"Grid(obstacles=${obstacles}, end=${end})"
+    s"Grid(free: ${free}, blocked: ${blocked}, start: ${start}, end: ${end}, dimensions: ${dimensions})"
   }
 
-  def toStringPretty(current: Position, path: List[Position]): String = {
+  def toStringPretty(current: Option[Position] = None, path: List[Position] = List.empty): String = {
+    val (dimX, dimY) = dimensions
     val grid =
-      (dimensions.minX to dimensions.maxX).map { x => {
-        (dimensions.minY to dimensions.maxY).map { y => {
+      (0 until dimX).map { x => {
+        (0 until dimY).map { y => {
           val pos = Position(x, y)
-          if (current == pos) 'X'
-          else if (end == pos) 'E'
+          if (current.getOrElse(Position(-1, -1)) == pos) 'X'
+          else if (start.getOrElse(Position(-1, -1)) == pos) 'S'
+          else if (end.getOrElse(Position(-1, -1)) == pos) 'E'
           else if (path.contains(pos)) 'O'
-          else if (obstacles.contains(pos)) '#'
-          else '.'
+          else if (blocked.contains(pos)) '#'
+          else if (free.contains(pos)) '.'
+          else new RuntimeException("Unexpected case")
         }}.mkString
       }}.mkString.mkString("\n")
     s"${this}\n${grid}\n"
   }
 
-  case class Dimensions(minX: Int, minY: Int, maxX: Int, maxY: Int)
-
-  private def dimensions: Dimensions = {
-    val minX = obstacles.map(_.x).min
-    val minY = obstacles.map(_.y).min
-    val maxX = obstacles.map(_.x).max
-    val maxY = obstacles.map(_.y).max
-    Dimensions(minX, minY, maxX, maxY)
-  }
-
-  /** @return
-    *   a new Grid that is surrounded by obstacles. That way we do not have to
-    *   constantly check for the boundaries of the grid.
-    */
-  def surround(): Grid = {
-    surround(dimensions)
-  }
-
-  /** @return
-    *   new Grid that is surrounded by obstacles (with the given dimensions).
-    */
-  def surround(dimensions: Dimensions): Grid = {
-    val corners = Set(
-      Position(dimensions.minX - 1, dimensions.minY - 1),
-      Position(dimensions.maxX + 1, dimensions.minY - 1),
-      Position(dimensions.maxX + 1, dimensions.maxY + 1),
-      Position(dimensions.minX - 1, dimensions.maxY + 1)
-    )
-
-    val left = (dimensions.minX to dimensions.maxX).map { x => Position(x, dimensions.minY - 1) }
-    val right = (dimensions.minX to dimensions.maxX).map { x => Position(x, dimensions.maxY + 1) }
-    val top = (dimensions.minY to dimensions.maxY).map { y => Position(dimensions.minX - 1, y) }
-    val bottom = (dimensions.minY to dimensions.maxY).map { y => Position(dimensions.maxX + 1, y) }
-
-    Grid(obstacles ++ left ++ right ++ top ++ bottom ++ corners, end)
-  }
-
   def neighbors: Map[Position, Set[Position]] = {
-    (dimensions.minX to dimensions.maxX).flatMap { x => {
-      (dimensions.minY to dimensions.maxY).map { y => {
-        val pos = Position(x, y)
-        (pos, pos.next(obstacles).toSet)
-      }}
-    }}.filter { case (pos, _) => !obstacles.contains(pos) }.toMap
+    free.map(p => (p, adjacent(p))).toMap
+  }
+
+  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[Position] = {
+    Set(
+      Position(p.x - 1, p.y),
+      Position(p.x + 1, p.y),
+      Position(p.x, p.y - 1),
+      Position(p.x, p.y + 1),
+    ).filter(p => free.contains(p) && !visited.contains(p))
   }
 }
 
-extension (source: scala.io.BufferedSource) {
-  def grid: Grid = {
+object Grid {
+  trait GridFactory[G] {
+    def create(free: Set[Position], blocked: Set[Position], start: Option[Position], end: Option[Position], dimensions: (Int, Int)): G
+  }
+
+  def fromResource[G](filename: String)(using factory: GridFactory[G]): G = {
     val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
+    val source = scala.io.Source.fromResource(filename)
     try {
-      source.getLines().toSeq.zipWithIndex.foldLeft(new Grid()) {
-        case (grid, (line, x)) => {
-          logger.debug(s"line: ${line}")
+      val init = (Set.empty[Position], Set.empty[Position], Option.empty[Position], Option.empty[Position], (0, 0))
+      val (free, blocked, start, end, dimensions) = source.getLines().toSeq.zipWithIndex.foldLeft(init) { case (grid, (line, x)) => {
+        logger.debug(s"grid: ${grid}, line: ${line}")
 
-          line.zipWithIndex.foldLeft(grid) { case (grid, (c, y)) =>
-            c match {
-              case '#' =>
-                grid.clone(obstacles = grid.obstacles + Position(x, y))
-              case 'E' => grid.clone(end = Position(x, y))
-              case _   => grid
-            }
+        line.zipWithIndex.foldLeft(grid) { case (grid, (c, y)) => {
+          val (free, blocked, start, end, dimensions) = grid
+          c match {
+            case '.' => (free + Position(x, y), blocked, start, end, (x, y))
+            case '#' => (free, blocked + Position(x, y), start, end, (x, y))
+            case 'S' => (free + Position(x, y), blocked, Some(Position(x, y)), end, (x, y))
+            case 'E' => (free + Position(x, y), blocked, start, Some(Position(x, y)), (x, y))
+            case _   => throw new RuntimeException("Unexpected case")
           }
-        }
-      }
+        }}
+      }}
+
+      factory.create(free, blocked, start, end, dimensions)
     } finally {
       source.close()
+    }
+  }
+
+  object Factory {
+    given GridFactory[Grid] with {
+      def create(free: Set[Position], blocked: Set[Position], start: Option[Position], end: Option[Position], dimensions: (Int, Int)): Grid =
+        new Grid(free, blocked, start, end, dimensions)
     }
   }
 }
