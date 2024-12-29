@@ -20,18 +20,17 @@ class Grid(val obstacles: Set[Position], val end: Position) {
 
   def toStringPretty(current: Position, path: List[Position]): String = {
     val grid =
-        (dimensions.minX to dimensions.maxX).map { x =>
-          (dimensions.minY to dimensions.maxY).map { y => {
-            val pos = Position(x, y)
-            if (current == pos) 'X'
-            else if (end == pos) 'E'
-            else if (path.contains(pos)) 'O'
-            else if (obstacles.contains(pos)) '#'
-            else '.'
-          }
-        }.mkString
-      }.mkString("\n")
-      s"${this}\n${grid}\n"
+      (dimensions.minX to dimensions.maxX).map { x => {
+        (dimensions.minY to dimensions.maxY).map { y => {
+          val pos = Position(x, y)
+          if (current == pos) 'X'
+          else if (end == pos) 'E'
+          else if (path.contains(pos)) 'O'
+          else if (obstacles.contains(pos)) '#'
+          else '.'
+        }}.mkString
+      }}.mkString.mkString("\n")
+    s"${this}\n${grid}\n"
   }
 
   case class Dimensions(minX: Int, minY: Int, maxX: Int, maxY: Int)
@@ -69,6 +68,15 @@ class Grid(val obstacles: Set[Position], val end: Position) {
     val bottom = (dimensions.minY to dimensions.maxY).map { y => Position(dimensions.maxX + 1, y) }
 
     Grid(obstacles ++ left ++ right ++ top ++ bottom ++ corners, end)
+  }
+
+  def neighbors: Map[Position, Set[Position]] = {
+    (dimensions.minX to dimensions.maxX).flatMap { x => {
+      (dimensions.minY to dimensions.maxY).map { y => {
+        val pos = Position(x, y)
+        (pos, pos.next(obstacles).toSet)
+      }}
+    }}.filter { case (pos, _) => !obstacles.contains(pos) }.toMap
   }
 }
 
