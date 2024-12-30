@@ -76,7 +76,21 @@ object Day18 {
   }
 
   /** @return the solution for part2 */
-  def part2(grids: (util.Grid, Seq[util.Position])): Int = { 
-    0
+  def part2(grids: (util.Grid, Seq[util.Position])): String = {
+    import util.GridGraph.shortestPath
+
+    def findNoPath(grid: util.Grid, remainingBytes: Seq[util.Position]): Option[Position] = remainingBytes match {
+      case Nil => None
+      case b :: bs => {
+        val g = grid.clone(free = grid.free - b, blocked = grid.blocked + b)
+        val memory = GridGraph.fromGrid(g)
+        val path = memory.shortestPath(g.start.get, g.end.get)
+        if (path.isEmpty) Some(b) else findNoPath(g, bs)
+      }
+    }
+
+    val (grid, remainingBytes) = grids
+    val byte = findNoPath(grid, remainingBytes).get
+    (byte.y, byte.x).toString
   }
 }

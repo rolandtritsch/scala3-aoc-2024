@@ -51,12 +51,12 @@ class Day18Test extends munit.ScalaCheckSuite {
   test("Day18 - part2 - test") {
     val input = fromResource("./inputs/Day18Test.txt", 12)
     val obtained = part2(input)
-    assertEquals(obtained, 0)
+    assertEquals(obtained, "(6,1)")
   }
 
   test("Day18 - part2") {
     val input = fromResource("./inputs/Day18.txt", 1024)
     val obtained = part2(input)
-    assertEquals(obtained, 0)
+    assertEquals(obtained, "(56,29)")
   }
 }

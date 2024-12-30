@@ -27,7 +27,8 @@ object GridGraph extends mutable.TypedGraphFactory[Position, edges.UnDiEdge[Posi
     def shortestPath(from: Position, to: Position): List[Position] = {
       val start = g.get(from)
       val end = g.get(to)
-      start.shortestPathTo(end).get.nodes.map(_.outer).toList.tail
+      val path = start.shortestPathTo(end)
+      if (path.isEmpty) List() else path.get.nodes.map(_.outer).toList.tail
     }
   }
 }

@@ -14,6 +14,16 @@ package util
 class Grid(val free: Set[Position], val blocked: Set[Position], val start: Option[Position], val end: Option[Position], val dimensions: (Int, Int)) {
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
+  def clone(
+    free: Set[Position] = this.free,
+    blocked: Set[Position] = this.blocked,
+    start: Option[Position] = this.start,
+    end: Option[Position] = this.end,
+    dimensions: (Int, Int) = this.dimensions
+  ): Grid = {
+    Grid(free, blocked, start, end, dimensions)
+  }
+
   override def toString: String = {
     s"Grid(free: ${free}, blocked: ${blocked}, start: ${start}, end: ${end}, dimensions: ${dimensions})"
   }
