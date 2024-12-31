@@ -7,6 +7,8 @@ class Day13Test extends munit.ScalaCheckSuite {
 
   import aoc2024.Day13._
 
+  val errorCorrection = 10000000000000L
+
   test("Day13 - dummy".tag(ignore)) {
     assert(true)
   }
@@ -22,7 +24,7 @@ class Day13Test extends munit.ScalaCheckSuite {
   }
 
   test("Day13 - readFile - test") {
-    val obtained = Day13.readFile("./inputs/Day13Test.txt", "1000000000")
+    val obtained = Day13.readFile("./inputs/Day13Test.txt", errorCorrection)
     val expected = ClawMachine(
       Button(Position(94, 34), 3),
       Button(Position(22, 67), 1),
@@ -75,15 +77,43 @@ class Day13Test extends munit.ScalaCheckSuite {
     assertEquals(obtained, 34393L)
   }
 
+  test("Day13 - solve - simple") {
+    val machine = ClawMachine(
+      Button(Position(94, 34), 3),
+      Button(Position(22, 67), 1),
+      Position(8400, 5400)
+    )
+
+    assertEquals(machine.solve, Some(80L, 40L))
+  }
+
+  test("Day13 - solve - test") {
+    val machines = Day13.readFile("./inputs/Day13Test.txt").toList
+    assertEquals(machines.size, 4)
+    assertEquals(machines(0).solve, Some(80L, 40L))
+    assertEquals(machines(1).solve, None)
+    assertEquals(machines(2).solve, Some(38L, 86L))
+    assertEquals(machines(3).solve, None)
+  }
+
+  test("Day13 - solve - test - p2".tag(only)) {
+    val machines = Day13.readFile("./inputs/Day13Test.txt", errorCorrection).toList
+    assertEquals(machines.size, 4)
+    assertEquals(machines(0).solve, None)
+    assertEquals(machines(1).solve, Some(118679050709L, 103199174542L))
+    assertEquals(machines(2).solve, None)
+    assertEquals(machines(3).solve, Some(102851800151L, 107526881786L))
+  }
+
   test("Day13 - part2 - test") {
-    val input = Day13.readFile("./inputs/Day13Test.txt", "1000000000")
+    val input = Day13.readFile("./inputs/Day13Test.txt", errorCorrection)
     val obtained = Day13.part2(input)
-    assertEquals(obtained, 0L)
+    assertEquals(obtained, 875318608908L)
   }
 
   test("Day13 - part2") {
-    val input = Day13.readFile("./inputs/Day13.txt", "1000000000")
+    val input = Day13.readFile("./inputs/Day13.txt", errorCorrection)
     val obtained = Day13.part2(input)
-    assertEquals(obtained, 0L)
+    assertEquals(obtained, 83551068361379L)
   }
 }

@@ -21,6 +21,7 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
     ivy"org.scala-lang.modules::scala-collection-contrib:0.4.0",
     ivy"com.eed3si9n.eval:eval_3.4.0:0.3.0",
     ivy"org.scala-graph:graph-core_2.13:2.0.2",
+    ivy"org.scalanlp::breeze:2.1.0",
   )
   
   def scalafixIvyDeps = Agg(

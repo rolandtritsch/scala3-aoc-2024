@@ -31,9 +31,9 @@ package aoc2024
   * - what if there is not restriction on the number of combinations
   * - ...
   *
-  * part2:
+  * Part2:
   *
-  * LOL ... it is on of these again ...
+  * LOL ... it is one of these again ...
   *
   * Tried running my solution with a depth of Int.MaxValue and ... (you
   * can guess what happened).
@@ -51,7 +51,10 @@ package aoc2024
   * - A * 94 + B * 22 = 8400
   * - A * 34 + B * 67 = 5400
   *
-  * ... and then :).
+  * ... and then :) ...
+  * 
+  * - using breeze
+  * - making sure to only consider solutions that are positive and are whole numbers
   */
 
 object Day13 {
@@ -96,6 +99,22 @@ object Day13 {
       logger.debug(s"result: ${result}")
       result._2
     }
+
+    import breeze.linalg._
+
+    def solve: Option[(Long, Long)] = {
+      def isWhole(n: Double): Boolean = BigDecimal(n).setScale(3, BigDecimal.RoundingMode.HALF_UP).isWhole()
+      def isPositive(n: Double): Boolean = n > 0
+
+      val coefficients = DenseMatrix(
+        (A.diff.x.toDouble, B.diff.x.toDouble), 
+        (A.diff.y.toDouble, B.diff.y.toDouble)
+      )
+      val constants = DenseVector(target.x.toDouble, target.y.toDouble)
+      val solution = coefficients \ constants
+      assert(solution.length == 2)
+      if (solution.forall(n => isWhole(n) && isPositive(n))) Some((solution(0).round, solution(1).round)) else None
+    }
   }
 
   extension (minCost: (Option[Long], Option[Long])) {
@@ -113,14 +132,14 @@ object Day13 {
     // Button A: X+65, Y+27!Button B: X+32, Y+70!Prize: X=305, Y=4371!
     val parser: matching.Regex = """Button A\: X\+(\d+), Y\+(\d+)!Button B\: X\+(\d+), Y\+(\d+)!Prize\: X\=(\d+), Y\=(\d+)!""".r
 
-    def parse(line: String, targetPrefix: String): (Position, Position, Position) = line match {
-      case parser(ax, ay, bx, by, tx, ty) => (Position(ax.toLong, ay.toLong), Position(bx.toLong, by.toLong), Position((targetPrefix + tx).toLong, (targetPrefix + ty).toLong))
+    def parse(line: String, errorCorrection: Long): (Position, Position, Position) = line match {
+      case parser(ax, ay, bx, by, tx, ty) => (Position(ax.toLong, ay.toLong), Position(bx.toLong, by.toLong), Position(tx.toLong + errorCorrection, ty.toLong + errorCorrection))
       case _ => throw new RuntimeException("Unexpected case")
     }
   }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String, targetPrefix: String = ""): Set[ClawMachine] = {
+  def readFile(filename: String, errorCorrection: Long = 0L): Set[ClawMachine] = {
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -131,7 +150,7 @@ object Day13 {
       val lines = source.getLines().grouped(4).map(_.mkString("!")).toSet
       lines.map { line =>
         logger.debug(s"line: ${line}")
-        val (a, b, target) = Parser.parse(line, targetPrefix)
+        val (a, b, target) = Parser.parse(line, errorCorrection)
         ClawMachine(Button(a, 3), Button(b, 1), target)
       }
     } finally {
@@ -145,7 +164,7 @@ object Day13 {
      }
   }
 
-  /** @return fewest tokens to win all prices */
+  /** @return the fewest tokens to win all prices */
   def part1(machines: Set[ClawMachine]): Long = {
     require(machines.nonEmpty, "machines.nonEmpty")
     logger.debug(s"machines: ${machines}")
@@ -153,11 +172,11 @@ object Day13 {
     machines.cheapestWaysToWin(200)
   }
 
-  /** @return the solution for part2 */
+  /** @return the fewest tokens to win all prices */
   def part2(machines: Set[ClawMachine]): Long = {
     require(machines.nonEmpty, "machines.nonEmpty")
     logger.debug(s"machines: ${machines}")
 
-    machines.cheapestWaysToWin(200)
+    machines.flatMap(_.solve).map { case (a, b) => (a * 3) + (b * 1) }.sum
   }
 }
