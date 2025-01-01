@@ -44,11 +44,274 @@ package aoc2024
   * Means the only thing that we need to figure out is the number
   * of corners per Plot (or per Region).
   *
-  * And you calculate that from the neighbors a Position has ...
+  * Let's take a step back. Let's take a look at a 3 by 3 grid and let's see,
+  * if we can figure out the number of corners by pattern matching against 
+  * a set of patterns.
+  * 
+  * Note: These patterns need to be rotated 4 times.
+  * 
+  * Note: For the cells that are on the edge we will create extra cells/padding
+  * so that the edge cells are not an "edge" case any more and can be handled
+  * like the other cells.
+  * 
+  * - X the cell must be different
+  * - O the cell must be the same
+  * - ? the cell can be either
+  * 
+  * ?X?
+  * XOX
+  * ?X?
+  * 
+  * - 4 corners
+  * 
+  * ?X?
+  * OOX
+  * ?X?
+  * 
+  * - 2 corners
+  * 
+  * ?O?
+  * OOX
+  * ?X?
+  * 
+  * - 1 corners
+  * 
+  * ?X?
+  * OOO
+  * ?X?
+  * 
+  * - 0 corners
+  * 
+  * XOX
+  * OOO
+  * ?X?
+  * 
+  * - 2 corners
+  * 
+  * XOX
+  * OOO
+  * XOX
+  * 
+  * - 4 corners
+  * 
+  * for the cell in the middle from 
+  * the number of neighbors and/or the relative positions of the neighbors. 
+  * 
+  * Note: I think for this to work we also need to take a look at the diagonal 
+  * neighbors (and maybe even at the value of the neighbors itself).
   *
-  * - 4 neighbors means 4 corners
+  * OXO
+  * XOX
+  * OXO
+  * 
+  * - if the number of non-diagonal neighbors is 0, then the number of corners is 4
+  * 
+  * OOO
+  * XOX
+  * OXO
+  * 
+  * - if the number of non-diagonal neighbors is 1 
+  *   and the number of diagonal neighbors >= 1, 
+  *   then the number of corners is 3
+  * 
+  * XXX
+  * OOO
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are opposite to each other, 
+  *   and the number of diagonal neighbors = 0, 
+  *   then the number of corners is 0
+  * 
+  * XOX
+  * OOX
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are not opposite to each other, 
+  *   and the number of diagonal neighbors = 0, 
+  *   then the number of corners is 2
+  * 
+  * XXO
+  * OOO
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are opposite to each other, 
+  *   and the number of diagonal neighbors = 1,
+  *   then the number of corners is 0
+  * 
+  * XOO
+  * OOX
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are not opposite to each other, 
+  *   and the number of diagonal neighbors = 1,
+  *   and the neighbor is upper-right or lower-left,  
+  *   then the number of corners is 2
+  * 
+  * OOX
+  * OOX
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are not opposite to each other, 
+  *   and the number of diagonal neighbors = 1,
+  *   and the neighbor is upper-left,  
+  *   then the number of corners is 1
+  * 
+  * XOX
+  * OOX
+  * XXO
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are not opposite to each other, 
+  *   and the number of diagonal neighbors = 1,
+  *   and the neighbor is lower-right,  
+  *   then the number of corners is 2
+  * 
+  * XXO
+  * OOO
+  * OXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are opposite to each other, 
+  *   and the number of diagonal neighbors = 2, 
+  *   and they are opposite to each other, 
+  *   then the number of corners is 0
+  * 
+  * OXO
+  * OOO
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are opposite to each other, 
+  *   and the number of diagonal neighbors = 2, 
+  *   and they are not opposite to each other, 
+  *   then the number of corners is 0
+  * 
+  * XOO
+  * OOX
+  * OXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are not opposite to each other, 
+  *   and the number of diagonal neighbors = 2, 
+  *   and they are opposite to each other, 
+  *   then the number of corners is 2
+  * 
+  * OOO
+  * OOX
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 2 
+  *   and they are not opposite to each other, 
+  *   and the number of diagonal neighbors = 2, 
+  *   and they are not opposite to each other, 
+  *   then the number of corners is 1
+  * 
+  * XOX
+  * OOO
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 3 
+  *   and the number of diagonal neighbors = 0, 
+  *   then the number of corners is 2
+  * 
+  * OOX
+  * OOO
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 3 
+  *   and the number of diagonal neighbors = 1, 
+  *   then the number of corners is 1
+  * 
+  * XOO
+  * OOO
+  * OXX
+  * 
+  * - if the number of non-diagonal neighbors is 3 
+  *   and the number of diagonal neighbors = 2,
+  *   and they are opposite to each other, 
+  *   then the number of corners is 2
+  * 
+  * OOO
+  * OOO
+  * XXX
+  * 
+  * - if the number of non-diagonal neighbors is 3 
+  *   and the number of diagonal neighbors = 2,
+  *   and they are not opposite to each other, 
+  *   then the number of corners is 0
+  * 
+  * OOO
+  * OOO
+  * OXX
+  * 
+  * - if the number of non-diagonal neighbors is 3 
+  *   and the number of diagonal neighbors = 3,
+  *   then the number of corners is 0
+  * 
+  * OOO
+  * OOO
+  * OXO
+  * 
+  * - if the number of non-diagonal neighbors is 3 
+  *   and the number of diagonal neighbors = 4,
+  *   then the number of corners is 0
+  * 
+  * XOX
+  * OOO
+  * XOX
+  * 
+  * - if the number of non-diagonal neighbors is 4 
+  *   and the number of diagonal neighbors = 0,
+  *   then the number of corners is 4
+  * 
+  * OOX
+  * OOO
+  * XOX
+  * 
+  * - if the number of non-diagonal neighbors is 4 
+  *   and the number of diagonal neighbors = 1,
+  *   then the number of corners is 3
+  * 
+  * OOX
+  * OOO
+  * XOO
+  * 
+  * - if the number of non-diagonal neighbors is 4 
+  *   and the number of diagonal neighbors = 2,
+  *   then the number of corners is 2
+  * 
+  * OOO
+  * OOO
+  * OOX
+  * 
+  * - if the number of non-diagonal neighbors is 4 
+  *   and the number of diagonal neighbors = 3,
+  *   then the number of corners is 1
+  * 
+  * ... and last, but not least ...
+  * 
+  * - if the number of non-diagonal neighbors is 4 
+  *   and the number of diagonal neighbors = 4,
+  *   then the number of corners is 0
+  * 
+  * - if the number of non-diagonal neighbors is 2, then the number of corners is 1
+  * - if the number of non-diagonal neighbors is 3, then the number of corners is 0
+  * 
+  * - if the number of diagonal neighbors is 0, then the number of corners is 4
+  *
   * - 0 neighbors means 0 corners
-  * - ... and now it gets tricky
+  *
+  * - 1 neighbor means 0 corners
+  *
+  * - 2 neighbors means 1 corner
+  *
+  * - 3 neighbors means 2 corners
+  * 
   */
 
 object Day12 {
