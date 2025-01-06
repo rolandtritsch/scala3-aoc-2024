@@ -1,5 +1,3 @@
-/** Package containing solutions for Advent of Code 2024.
-  */
+/** Package containing solutions for Advent of Code 2024. */
 
-package object aoc2024 {
-}
+package object aoc2024 {}

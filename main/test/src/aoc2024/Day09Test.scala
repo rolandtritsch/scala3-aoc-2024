@@ -1,7 +1,7 @@
 package aoc2024
 
 class Day09Test extends munit.ScalaCheckSuite:
-  val only = new munit.Tag("only")
+  val only   = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
 
   test("Day09 - dummy".tag(ignore)):
@@ -17,19 +17,19 @@ class Day09Test extends munit.ScalaCheckSuite:
     assertEquals(obtained.blocks.size, 95482)
 
   test("Day09p1 - defragment"):
-    val disk = Day09p1.readFile("./inputs/Day09Test.txt")
+    val disk     = Day09p1.readFile("./inputs/Day09Test.txt")
     val obtained = disk.defragment
     val expected = "0099811188827773336446555566.............."
 
     assertEquals(obtained.toString, expected)
 
   test("Day09p1 - part1 - test"):
-    val input = Day09p1.readFile("./inputs/Day09Test.txt")
+    val input    = Day09p1.readFile("./inputs/Day09Test.txt")
     val obtained = Day09p1.part1(input)
     assertEquals(obtained, BigInt("1928"))
 
   test("Day09p1 - part1"):
-    val input = Day09p1.readFile("./inputs/Day09.txt")
+    val input    = Day09p1.readFile("./inputs/Day09.txt")
     val obtained = Day09p1.part1(input)
     assertEquals(obtained, BigInt("6432869891895"))
 
@@ -60,7 +60,7 @@ class Day09Test extends munit.ScalaCheckSuite:
     assertEquals(disk.findFirstFreeSpaceIndex(2), 1)
 
   test("Day09p2 - split"):
-    val disk = Day09p2.readFile("./inputs/Day09Test.txt")
+    val disk     = Day09p2.readFile("./inputs/Day09Test.txt")
     disk.split(1, 2)
     val expected = "00...111...2...333.44.5555.6666.777.888899"
 
@@ -95,11 +95,11 @@ class Day09Test extends munit.ScalaCheckSuite:
     assertEquals(disk.toString, "00992111777.44.333....5555.6666.....8888..")
 
   test("Day09p2 - part2 - test"):
-    val input = Day09p2.readFile("./inputs/Day09Test.txt")
+    val input    = Day09p2.readFile("./inputs/Day09Test.txt")
     val obtained = Day09p2.part2(input)
     assertEquals(obtained, BigInt("2858"))
 
   test("Day09p2 - part2"):
-    val input = Day09p2.readFile("./inputs/Day09.txt")
+    val input    = Day09p2.readFile("./inputs/Day09.txt")
     val obtained = Day09p2.part2(input)
     assertEquals(obtained, BigInt("6467290479134"))

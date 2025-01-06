@@ -17,7 +17,7 @@ def solve() =
   println(s"Day04 - part1: ${Day04.part1(Day04.readFile("./inputs/Day04.txt"))}")
   println(s"Day04 - part2: ${Day04.part2(Day04.readFile("./inputs/Day04.txt"))}")
 
-  val day05Rules = Day05.readFileRules("./inputs/Day05-Rules.txt")
+  val day05Rules   = Day05.readFileRules("./inputs/Day05-Rules.txt")
   val day05Updates = Day05.readFileUpdates("./inputs/Day05-Updates.txt")
   println(s"Day05 - part1: ${Day05.part1(day05Rules, day05Updates)}")
   println(s"Day05 - part2: ${Day05.part2(day05Rules, day05Updates)}")
@@ -31,8 +31,12 @@ def solve() =
   println(s"Day08 - part1: ${Day08.part1(Day08.readFile("./inputs/Day08.txt"))}")
   println(s"Day08 - part2: ${Day08.part2(Day08.readFile("./inputs/Day08.txt"))}")
 
-  println(s"Day09 - part1: ${Day09p1.part1(Day09p1.readFile("./inputs/Day09.txt"))}")
-  println(s"Day09 - part2: ${Day09p2.part2(Day09p2.readFile("./inputs/Day09.txt"))}")
+  println(
+    s"Day09 - part1: ${Day09p1.part1(Day09p1.readFile("./inputs/Day09.txt"))}",
+  )
+  println(
+    s"Day09 - part2: ${Day09p2.part2(Day09p2.readFile("./inputs/Day09.txt"))}",
+  )
 
   println(s"Day10 - part1: ${Day10.part1(Day10.readFile("./inputs/Day10.txt"))}")
   println(s"Day10 - part2: ${Day10.part2(Day10.readFile("./inputs/Day10.txt"))}")
@@ -44,23 +48,28 @@ def solve() =
   println(s"Day12 - part2: ${Day12.part2(Day12.readFile("./inputs/Day12.txt"))}")
 
   println(s"Day13 - part1: ${Day13.part1(Day13.readFile("./inputs/Day13.txt"))}")
-  println(s"Day13 - part2: ${Day13.part2(Day13.readFile("./inputs/Day13.txt", 10000000000000L))}")
+  println(
+    s"Day13 - part2: ${Day13.part2(Day13.readFile("./inputs/Day13.txt", 10000000000000L))}",
+  )
 
   println(s"Day14 - part1: ${Day14.part1(Day14.readFile("./inputs/Day14.txt"))}")
   println(s"Day14 - part2: ${Day14.part2(Day14.readFile("./inputs/Day14.txt"))}")
 
   val day15Warehose = Day15.readFileWarehouse("./inputs/Day15-Warehouse.txt")
-  val day15Moves = Day15.readFileMoves("./inputs/Day15-Moves.txt")
-  val day15State = (day15Warehose, day15Moves)
+  val day15Moves    = Day15.readFileMoves("./inputs/Day15-Moves.txt")
+  val day15State    = (day15Warehose, day15Moves)
   println(s"Day15 - part1: ${Day15.part1(day15State)}")
   println(s"Day15 - part2: ${Day15.part2(day15State)}")
 
-  println(s"Day16 - part1: ${Day16.part1(Day16.readFile("./inputs/Day16Test.txt"))}")
+  println(
+    s"Day16 - part1: ${Day16.part1(Day16.readFile("./inputs/Day16Test.txt"))}",
+  )
   println(s"Day16 - part2: ${Day16.part2(Day16.readFile("./inputs/Day16.txt"))}")
 
   val day17Registers = Day17.readFileRegisters("./inputs/Day17-Registers.txt")
-  val day17Instructions = Day17.readFileInstructions("./inputs/Day17-Instructions.txt")
-  val day17State = (day17Registers, day17Instructions)
+  val day17Instructions = Day17
+    .readFileInstructions("./inputs/Day17-Instructions.txt")
+  val day17State        = (day17Registers, day17Instructions)
   println(s"Day17 - part1: ${Day17.part1(day17State)}")
   println(s"Day17 - part2: ${Day17.part2(day17State)}")
 
@@ -72,8 +81,11 @@ def solve() =
   println(s"Day19 - part1: ${Day19.part1(Day19.readFile("./inputs/Day19.txt"))}")
   println(s"Day19 - part2: ${Day19.part2(Day19.readFile("./inputs/Day19.txt"))}")
 
-  // println(s"Day20 - part1: ${Day20.part1(Day20.readFile("./inputs/Day20.txt"))}")
-  println(s"Day20 - part1: ${Day20.part1(Day20.readFile("./inputs/Day20Test.txt"))}")
+  /* println(s"Day20 - part1:
+   * ${Day20.part1(Day20.readFile("./inputs/Day20.txt"))}") */
+  println(
+    s"Day20 - part1: ${Day20.part1(Day20.readFile("./inputs/Day20Test.txt"))}",
+  )
   println(s"Day20 - part2: ${Day20.part2(Day20.readFile("./inputs/Day20.txt"))}")
 
   println(s"Day21 - part1: ${Day21.part1(Day21.readFile("./inputs/Day21.txt"))}")

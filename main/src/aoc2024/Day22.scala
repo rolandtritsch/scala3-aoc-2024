@@ -1,7 +1,6 @@
 package aoc2024
 
-/** Day22 - Monkey Market
-  */
+/** Day22 - Monkey Market */
 
 object Day22:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
@@ -16,12 +15,10 @@ object Day22:
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try
-      source.getLines().map(_.toLong).toSet
-    finally
-      source.close()
+    try source.getLines().map(_.toLong).toSet
+    finally source.close()
 
-  /** @return the sum nth secret number for every buyer   */
+  /** @return the sum nth secret number for every buyer */
   def part1(secrets: Set[Secret]): Long =
     require(secrets.nonEmpty, "secrets.nonEmpty")
     secrets.min

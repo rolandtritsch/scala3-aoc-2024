@@ -4,16 +4,16 @@ package aoc2024
   *
   * part1:
   *
-  * - count all the safe reports
-  * - a report is safe, when is has a minimum count of safe levels
+  *   - count all the safe reports
+  *   - a report is safe, when is has a minimum count of safe levels
   *
   * part2:
   *
-  * - same as part1
-  * - but additionally count the reports that can be made safe,
-  *   by removing one element
-  * - we will do this by going through the list and try isSafe
-  *   on all possible (shorter by one) lists
+  *   - same as part1
+  *   - but additionally count the reports that can be made safe, by removing
+  *     one element
+  *   - we will do this by going through the list and try isSafe on all possible
+  *     (shorter by one) lists
   */
 
 object Day02:
@@ -29,8 +29,7 @@ object Day02:
     logger.debug(s"${filename}")
 
     val source = Source.fromResource(filename)
-    try
-      source.getLines().toSeq.map { line =>
+    try source.getLines().toSeq.map { line =>
         logger.debug(s"line: ${line}")
 
         val parsed = line.split("\\s+").map(_.toInt)
@@ -38,49 +37,41 @@ object Day02:
 
         parsed.toSeq
       }
-    finally
-      source.close()
+    finally source.close()
 
-  extension (report: Report)
+  extension(report: Report)
+
     def isSafe: Boolean =
       require(report.size >= 2, "report.size >= 2")
       logger.debug(s"report: ${report}")
 
       def levelIsSafe(isIncreasing: Boolean, prevLevel: Int, level: Int) =
-        val levelDiff = math.abs(prevLevel - level)
+        val levelDiff       = math.abs(prevLevel - level)
         val levelDiffIsSafe = (1 to 3).contains(levelDiff)
 
-        if (isIncreasing)
-          prevLevel < level && levelDiffIsSafe
-        else
-          prevLevel > level && levelDiffIsSafe
+        if isIncreasing then prevLevel < level && levelDiffIsSafe
+        else prevLevel > level && levelDiffIsSafe
 
-      val (_, _, countOfSafeLevels) =
-        report.tail.foldLeft(report(0) < report(1), report(0), 0):
-          (soFar, level) =>
-            {
-              logger.debug(s"soFar: ${soFar}, level: ${level}")
+      val (_, _, countOfSafeLevels) = report.tail
+        .foldLeft(report(0) < report(1), report(0), 0): (soFar, level) =>
+          logger.debug(s"soFar: ${soFar}, level: ${level}")
 
-              val (isIncreasing, prevLevel, safeCounter) = soFar
+          val (isIncreasing, prevLevel, safeCounter) = soFar
 
-              val thisIsSafe = levelIsSafe(isIncreasing, prevLevel, level)
-              val nextLevel = if (thisIsSafe) level else prevLevel
-              val nextSafeCounter =
-                if (thisIsSafe) safeCounter + 1 else safeCounter
+          val thisIsSafe      = levelIsSafe(isIncreasing, prevLevel, level)
+          val nextLevel       = if thisIsSafe then level else prevLevel
+          val nextSafeCounter =
+            if thisIsSafe then safeCounter + 1 else safeCounter
 
-              (isIncreasing, nextLevel, nextSafeCounter)
-            }
+          (isIncreasing, nextLevel, nextSafeCounter)
 
-      logger.debug(
-        s"report: ${report}, countOfSafeLevels: ${countOfSafeLevels}"
-      )
+      logger.debug(s"report: ${report}, countOfSafeLevels: ${countOfSafeLevels}")
       countOfSafeLevels == report.size - 1
 
-    def isSafe0: Boolean =
-      report.indices.exists { i => {
-        val reportWithOneRemoved = report.take(i) ++ report.drop(i + 1)
-        reportWithOneRemoved.isSafe
-      }}
+    def isSafe0: Boolean = report.indices.exists { i =>
+      val reportWithOneRemoved = report.take(i) ++ report.drop(i + 1)
+      reportWithOneRemoved.isSafe
+    }
 
   /** @return the solution for part1 */
   def part1(reports: Seq[Report]): Int =
@@ -94,6 +85,4 @@ object Day02:
     require(reports.nonEmpty, "reports.nonEmpty")
     logger.debug(s"reports: ${reports}")
 
-    reports.count { r => {
-      r.isSafe || r.isSafe0
-    }}
+    reports.count { r => r.isSafe || r.isSafe0 }

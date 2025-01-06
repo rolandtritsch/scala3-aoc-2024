@@ -1,6 +1,7 @@
 package aoc2024
 
 class Day02Test extends munit.ScalaCheckSuite:
+
   test("Day02 - readFile"):
     val obtained = Day02.readFile("./inputs/Day02.txt")
     assertEquals(obtained(0), Seq(16, 17, 18, 21, 23, 24, 27, 24))
@@ -19,7 +20,7 @@ class Day02Test extends munit.ScalaCheckSuite:
     assertEquals(obtained, 2)
 
   test("Day02 - part1"):
-    val input = Day02.readFile("./inputs/Day02.txt")
+    val input    = Day02.readFile("./inputs/Day02.txt")
     val obtained = Day02.part1(input)
     assertEquals(obtained, 585)
 
@@ -28,6 +29,6 @@ class Day02Test extends munit.ScalaCheckSuite:
     assertEquals(obtained, 4)
 
   test("Day02 - part2"):
-    val input = Day02.readFile("./inputs/Day02.txt")
+    val input    = Day02.readFile("./inputs/Day02.txt")
     val obtained = Day02.part2(input)
     assertEquals(obtained, 626)

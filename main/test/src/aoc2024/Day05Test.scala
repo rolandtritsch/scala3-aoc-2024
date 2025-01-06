@@ -1,7 +1,7 @@
 package aoc2024
 
 class Day05Test extends munit.ScalaCheckSuite:
-  val testRules = Day05.readFileRules("./inputs/Day05Test-Rules.txt")
+  val testRules   = Day05.readFileRules("./inputs/Day05Test-Rules.txt")
   val testUpdates = Day05.readFileUpdates("./inputs/Day05Test-Updates.txt")
 
   test("Day05 - readFile - Rules - Test"):
@@ -21,9 +21,9 @@ class Day05Test extends munit.ScalaCheckSuite:
     assert(obtained.contains(expected))
 
   test("Day05 - factBuilder"):
-    import aoc2024.Day05._
+    import aoc2024.Day05.*
 
-    val input = List(75, 47, 61, 53, 29)
+    val input    = List(75, 47, 61, 53, 29)
     val obtained = input.facts
     val expected = Set(
       (75, 47),
@@ -41,13 +41,13 @@ class Day05Test extends munit.ScalaCheckSuite:
     assertEquals(obtained, expected)
 
   test("Day05 - isValid"):
-    import aoc2024.Day05._
+    import aoc2024.Day05.*
 
     val input = List(97, 13, 75, 29, 47)
 
     assert(!input.isValid(testRules))
 
-  val rules = Day05.readFileRules("./inputs/Day05-Rules.txt")
+  val rules   = Day05.readFileRules("./inputs/Day05-Rules.txt")
   val updates = Day05.readFileUpdates("./inputs/Day05-Updates.txt")
 
   test("Day05 - part1 - test"):
@@ -65,5 +65,5 @@ class Day05Test extends munit.ScalaCheckSuite:
   test("Day05 - part2"):
     val obtained = Day05.part2(rules, updates)
     // TODO: This used to work. Fix it. Make it work again.
-    //assertEquals(obtained, 4145)
+    // assertEquals(obtained, 4145)
     assertEquals(obtained, 3514)
