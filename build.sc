@@ -29,7 +29,7 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
     ivy"com.github.xuwei-k::scalafix-rules:0.4.3",
   )
 
-  object test extends ScoverageTests with TestModule.Munit {
+  object test extends ScoverageTests with TestModule.Munit with ScalafmtModule {
     //def testCachedArgs = Seq("--include-tags=only")
     //def testCachedArgs = Seq("--exclude-tags=slow")
     //def testCachedArgs = Seq("--exclude-tags=ignore")
