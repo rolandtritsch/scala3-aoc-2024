@@ -40,4 +40,14 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
     )
     override def forkArgs: T[Seq[String]] = Seq("-Xss1G", "-Xmx10G")
   }
+
+  object migrate extends ScalaModule {
+    def scalaVersion = main.scalaVersion
+    def scalacOptions = Seq(
+      "-rewrite",
+      "-indent",
+    )
+    override def sources = main.sources
+    override def ivyDeps = main.ivyDeps
+  }
 }
