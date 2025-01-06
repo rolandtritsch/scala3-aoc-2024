@@ -38,7 +38,7 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
       ivy"org.scalameta::munit-scalacheck:1.0.0",
       ivy"org.typelevel::spire:0.18.0",
     )
-    override def forkArgs: T[Seq[String]] = Seq("-Xss1G", "-Xmx10G")
+    def forkArgs: T[Seq[String]] = Seq("-Xss1G", "-Xmx10G")
   }
 
   object migrate extends ScalaModule {
@@ -47,7 +47,12 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
       "-rewrite",
       "-indent",
     )
-    override def sources = main.sources
-    override def ivyDeps = main.ivyDeps
+    //def sources = main.sources
+    def sources = T {
+      main.sources() ++ test.sources()
+    }
+    def ivyDeps = T {
+      main.ivyDeps() ++ test.ivyDeps()
+    }
   }
 }
