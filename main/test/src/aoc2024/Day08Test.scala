@@ -1,24 +1,21 @@
 package aoc2024
 
-class Day08Test extends munit.ScalaCheckSuite {
+class Day08Test extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
 
-  test("Day08 - dummy".tag(ignore)) {
+  test("Day08 - dummy".tag(ignore)):
     assert(true)
-  }
 
-  test("Day08 - readFile - test") {
+  test("Day08 - readFile - test"):
     val obtained = Day08.readFile("./inputs/Day08Test.txt")
     assertEquals(obtained.dimensions, (12, 12))
-  }
 
-  test("Day08 - readFile") {
+  test("Day08 - readFile"):
     val obtained = Day08.readFile("./inputs/Day08.txt")
     assertEquals(obtained.dimensions, (50, 50))
-  }
 
-  test("Day08 - anntenna.pairs") {
+  test("Day08 - anntenna.pairs"):
     import aoc2024.Day08._
 
     val input = Set(
@@ -34,9 +31,8 @@ class Day08Test extends munit.ScalaCheckSuite {
     )
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day08 - anntenna.pairs - test") {
+  test("Day08 - anntenna.pairs - test"):
     import aoc2024.Day08._
 
     val input = Day08.readFile("./inputs/Day08Test.txt")
@@ -54,9 +50,8 @@ class Day08Test extends munit.ScalaCheckSuite {
     )
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day08 - anntenna.pairs - test2") {
+  test("Day08 - anntenna.pairs - test2"):
     import aoc2024.Day08._
 
     val input = Day08.readFile("./inputs/Day08Test2.txt")
@@ -68,7 +63,6 @@ class Day08Test extends munit.ScalaCheckSuite {
     )
 
     assertEquals(obtained, expected)
-  }
 
   // test("Day08 - positioning") {
   //   import aoc2024.Day08._
@@ -87,7 +81,7 @@ class Day08Test extends munit.ScalaCheckSuite {
   //   assertEquals(b2.positioning(b1), LOWER_LEFT)
   // }
 
-  test("Day08 - antiNode") {
+  test("Day08 - antiNode"):
     import aoc2024.Day08._
 
     val a1 = Antenna('A', Position(0, 0))
@@ -95,9 +89,8 @@ class Day08Test extends munit.ScalaCheckSuite {
 
     assertEquals(a1.antiNode(a2), Position(-1, -1))
     assertEquals(a2.antiNode(a1), Position(2, 2))
-  }
 
-  test("Day08 - antiNodes") {
+  test("Day08 - antiNodes"):
     import aoc2024.Day08._
 
     val input = (Antenna('A', Position(0, 0)), Antenna('A', Position(1, 1)))
@@ -105,9 +98,8 @@ class Day08Test extends munit.ScalaCheckSuite {
     val expected = Set(Position(-1, -1), Position(2, 2))
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day08 - antiNodes0") {
+  test("Day08 - antiNodes0"):
     import aoc2024.Day08._
 
     val input = (Antenna('A', Position(4, 4)), Antenna('A', Position(5, 5)))
@@ -124,35 +116,28 @@ class Day08Test extends munit.ScalaCheckSuite {
     )
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day08 - part1 - test") {
+  test("Day08 - part1 - test"):
     val input = Day08.readFile("./inputs/Day08Test.txt")
     val obtained = Day08.part1(input)
     assertEquals(obtained, 14)
-  }
 
-  test("Day08 - part1") {
+  test("Day08 - part1"):
     val input = Day08.readFile("./inputs/Day08.txt")
     val obtained = Day08.part1(input)
     assertEquals(obtained, 228)
-  }
 
-  test("Day08 - part2 - test") {
+  test("Day08 - part2 - test"):
     val input = Day08.readFile("./inputs/Day08Test.txt")
     val obtained = Day08.part2(input)
     assertEquals(obtained, 34)
-  }
 
-  test("Day08 - part2 - test2") {
+  test("Day08 - part2 - test2"):
     val input = Day08.readFile("./inputs/Day08Test2.txt")
     val obtained = Day08.part2(input)
     assertEquals(obtained, 9)
-  }
 
-  test("Day08 - part2") {
+  test("Day08 - part2"):
     val input = Day08.readFile("./inputs/Day08.txt")
     val obtained = Day08.part2(input)
     assertEquals(obtained, 766)
-  }
-}

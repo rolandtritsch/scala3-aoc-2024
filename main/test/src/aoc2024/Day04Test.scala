@@ -1,16 +1,15 @@
 package aoc2024
 
-class Day04Test extends munit.ScalaCheckSuite {
-  test("Day04 - findAll") {
+class Day04Test extends munit.ScalaCheckSuite:
+  test("Day04 - findAll"):
     import aoc2024.Day04._
 
     val obtained = Seq("..XMASXMAS.XMAS", "XMAS").findAll("XMAS")
     val expected = 4
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day04 - rotate") {
+  test("Day04 - rotate"):
     import aoc2024.Day04._
 
     val input = Seq(
@@ -26,9 +25,8 @@ class Day04Test extends munit.ScalaCheckSuite {
     assertEquals(obtained, expected)
 
     assertEquals(obtained.rotate.rotate.rotate, input)
-  }
 
-  test("Day04 - transpose") {
+  test("Day04 - transpose"):
     import aoc2024.Day04._
 
     val input = Seq("123", "ABC", "abc")
@@ -38,9 +36,8 @@ class Day04Test extends munit.ScalaCheckSuite {
     assertEquals(obtained, expected)
 
     assertEquals(obtained.transposed, input)
-  }
 
-  test("Day04 - diagonalize - tlbr") {
+  test("Day04 - diagonalize - tlbr"):
     import aoc2024.Day04._
 
     val input = Seq(
@@ -61,9 +58,8 @@ class Day04Test extends munit.ScalaCheckSuite {
     )
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day04 - diagonalize - trbl") {
+  test("Day04 - diagonalize - trbl"):
     import aoc2024.Day04._
 
     val input = Seq(
@@ -84,15 +80,13 @@ class Day04Test extends munit.ScalaCheckSuite {
     )
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day04 - findAllPos - String") {
+  test("Day04 - findAllPos - String"):
     import aoc2024.Day04._
 
     assertEquals(".MAS.MAS".findAllPos("MAS"), Seq(1,5))
-  }
 
-  test("Day04 - findAllPos - TLBR - Puzzle") {
+  test("Day04 - findAllPos - TLBR - Puzzle"):
     import aoc2024.Day04._
 
     val input = Seq(
@@ -104,9 +98,8 @@ class Day04Test extends munit.ScalaCheckSuite {
     val expected = Seq((0, 0))
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day04 - findAllPos - TRBL - Puzzle") {
+  test("Day04 - findAllPos - TRBL - Puzzle"):
     import aoc2024.Day04._
 
     val input = Seq(
@@ -118,13 +111,11 @@ class Day04Test extends munit.ScalaCheckSuite {
     val expected = Seq((0, 2))
 
     assertEquals(obtained, expected)
-  }
 
-  test("Day04 - readFile") {
+  test("Day04 - readFile"):
     val obtained = Day04.readFile("./inputs/Day04.txt")
     val expected = "XMXXMSSSMSXSXMMXSAMMXXSXMASMSSXXMAMXAMXSXMXSMAMMASXXASMMXMASXMSSXMMMXMXSXXSXMXXSAMXSXSXSAMXMSAMXMAXXXMXMAMSASXMSSXMSXSXXMAXXSSSMXMXMXMMAASXM"
     assertEquals(obtained(0), expected)
-  }
 
   val input = Seq(
     "MMMSXXMASM",
@@ -139,25 +130,20 @@ class Day04Test extends munit.ScalaCheckSuite {
     "MXMXAXMASX",
   )
 
-  test("Day04 - part1 - test") {
+  test("Day04 - part1 - test"):
     val obtained = Day04.part1(input)
     assertEquals(obtained, 18)
-  }
 
-  test("Day04 - part1") {
+  test("Day04 - part1"):
     val input = Day04.readFile("./inputs/Day04.txt")
     val obtained = Day04.part1(input)
     assertEquals(obtained, 2536)
-  }
 
-  test("Day04 - part2 - test") {
+  test("Day04 - part2 - test"):
     val obtained = Day04.part2(input)
     assertEquals(obtained, 9)
-  }
 
-  test("Day04 - part2") {
+  test("Day04 - part2"):
     val input = Day04.readFile("./inputs/Day04.txt")
     val obtained = Day04.part2(input)
     assertEquals(obtained, 1875)
-  }
-}

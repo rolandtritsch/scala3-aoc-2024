@@ -1,6 +1,6 @@
 package util
 
-class DfsTest extends munit.ScalaCheckSuite {
+class DfsTest extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
   val slow = new munit.Tag("slow")
@@ -12,16 +12,14 @@ class DfsTest extends munit.ScalaCheckSuite {
     start: Option[Position], 
     end: Option[Position], 
     dimensions: (Int, Int)
-  ) extends Grid(free, blocked, start, end, dimensions) with Dfs {
+  ) extends Grid(free, blocked, start, end, dimensions) with Dfs:
     def this() = this(Set.empty, Set.empty, None, None, (0, 0))
-  }
 
-  given Grid.GridFactory[GridWithDfs] with {
+  given Grid.GridFactory[GridWithDfs] with
     def create(free: Set[Position], blocked: Set[Position], start: Option[Position], end: Option[Position], dimensions: (Int, Int)): GridWithDfs =
       new GridWithDfs(free, blocked, start, end, dimensions)
-  }
 
-  test("Dfs - findFirst") {
+  test("Dfs - findFirst"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest.txt")
     val path = grid.findFirst(grid.start.get)
     val expected = List(
@@ -33,16 +31,14 @@ class DfsTest extends munit.ScalaCheckSuite {
     )
 
     assertEquals(path.get, expected)
-  }
 
-  test("Dfs - findFirst - no-path") {    
+  test("Dfs - findFirst - no-path"):    
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-NoPath.txt")
     val path = grid.findFirst(grid.start.get)
 
     assert(path.isEmpty)
-  }
 
-  test("Dfs - findFirst - no-boundaries") {    
+  test("Dfs - findFirst - no-boundaries"):    
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-NoBoundaries.txt")
     val path = grid.findFirst(grid.start.get)
     val expected = List(
@@ -64,26 +60,21 @@ class DfsTest extends munit.ScalaCheckSuite {
     )
     
     assertEquals(path.get, expected)
-  }
 
-  test("Dfs - findFirst - small") {    
+  test("Dfs - findFirst - small"):    
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-Small.txt")
     val path = grid.findFirst(grid.start.get)
 
     assertEquals(path.get.size, 23)
-  }
 
-  test("Dfs - findCheapest - small") {    
+  test("Dfs - findCheapest - small"):    
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-Small.txt")
     val path = grid.findCheapest(grid.start.get)
 
     assertEquals(path.get.size, 15)
-  }
 
-  test("Dfs - findCheapest - smallMedium") {
+  test("Dfs - findCheapest - smallMedium"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-SmallMedium.txt")
     val path = grid.findCheapest(grid.start.get)
 
     assertEquals(path.get.size, 25)
-  }
-}
