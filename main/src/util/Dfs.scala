@@ -2,7 +2,7 @@ package util
 
 /** Trait for depth first search. 
   */
-trait Dfs {
+trait Dfs:
   import scala.collection.mutable
 
   val logger: com.typesafe.scalalogging.Logger
@@ -19,7 +19,7 @@ trait Dfs {
     *   Means it might run out of stack (depending on the size and 
     *   shape of the grid). And it is slow. 
     */
-  def findFirst(current: Position, path: Path = List.empty): Option[Path] = {
+  def findFirst(current: Position, path: Path = List.empty): Option[Path] =
     require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
     logger.debug(s"current: ${current}, path: ${path}")
 
@@ -29,7 +29,6 @@ trait Dfs {
       case Some(_) => p
       case None => findFirst(n, path :+ current)
     }}
-  }
 
   /** A global map of visited positions and the shortest path found so far.
     * We need this to cut off the search as soon as we find a path with
@@ -49,7 +48,7 @@ trait Dfs {
     *   The implementation is recursive, but not tail-recursive.
     *   Means it will run out of stack (fast). And it is slow. 
     */
-  def findCheapest(start: Position): Option[Path] = {
+  def findCheapest(start: Position): Option[Path] =
     def findCheapest(
       current: Position, 
       path: Path,
@@ -58,7 +57,7 @@ trait Dfs {
       using visited: mutable.Map[Position, Int]
     )(
       using score: Path => Int
-    ): Option[Path] = {
+    ): Option[Path] =
       require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
       logger.debug(s"current: ${current}, path: ${path}")
 
@@ -68,12 +67,8 @@ trait Dfs {
         visited.update(current, score(path :+ current))
         findCheapest(n, path :+ current, bp).min(bp)
       }}
-    }
 
     findCheapest(start, List.empty, None)
-  }
 
-  given (Path => Int) = {
+  given (Path => Int) =
     p => p.size
-  }
-}

@@ -54,57 +54,51 @@ package aoc2024
   * - calculate price of the fence from the areas and the sides of the regions
   */
 
-object Day12 {
+object Day12:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   case class Position(x: Int, y: Int)
 
-  object Position {
+  object Position:
     implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
-  }
 
   case class Plot(plant: Char, position: Position, neighbors: Set[Position])
 
-  object Plot {
+  object Plot:
     implicit val ordering: Ordering[Plot] = Ordering.by(_.position)
-  }
 
-  case class Region(location: Position, plant: Char, plots: Set[Position], area: Int,  perimeter: Int, sides: Int) {
+  case class Region(location: Position, plant: Char, plots: Set[Position], area: Int,  perimeter: Int, sides: Int):
     require(plant.isLetter, "plant.isLetter")
     require(plots.nonEmpty, "plots.nonEmpty")
     require(area > 0, "area > 0")
     require(perimeter > 0, "perimeter > 0")
-  }
 
   type Dimensions = (Int, Int)
 
-  class Garden (plots: Set[Plot], dimensions: Dimensions) {
+  class Garden (plots: Set[Plot], dimensions: Dimensions):
     val plotsByPlant = plots.groupBy(_.plant)
     val regions = plotsByPlant.values.foldLeft(Set.empty[Region]) { (regions, plots) =>
       regions ++ collectRegions(plots, Set.empty[Region])
     }
 
-    def collectRegion(plots: Set[Plot]): (Region, Set[Plot]) = {
+    def collectRegion(plots: Set[Plot]): (Region, Set[Plot]) =
       val validPositions = plots.map(_.position)
 
-      def neighbors(p: Position): Set[Position] = {
+      def neighbors(p: Position): Set[Position] =
         Set(
           Position(p.x - 1, p.y),
           Position(p.x + 1, p.y),
           Position(p.x, p.y - 1),
           Position(p.x, p.y + 1),
         ).filter(validPositions.contains)
-      }
 
-      def dfs(position: Position, visited: Set[Position]): Set[Position] = {
+      def dfs(position: Position, visited: Set[Position]): Set[Position] =
         if (visited.contains(position)) visited
-        else {
+        else
           val newVisited = visited + position
           neighbors(position).foldLeft(newVisited) { (acc, neighbor) =>
             dfs(neighbor, acc)
           }
-        }
-      }
 
       val location = validPositions.toList.sorted.head
       val regionPositions = dfs(location, Set.empty)
@@ -116,22 +110,18 @@ object Day12 {
       val sides = countSides(regionPositions, regionPlots.head.plant)
 
       (Region(location, plots.head.plant, regionPositions, area, perimeter, sides), remainingPlots)
-    }
 
-    def countSides(positions: Set[Position], plant: Char) = {
+    def countSides(positions: Set[Position], plant: Char) =
       val ps = positions.toList.map { case Position(x, y) => {
         ((x, y), plant) 
       }}.toMap.withDefault(_ => '.')
       new corner.CornerCounter(ps).corners.map(_._2).sum
-    }
 
-    def collectRegions(plots: Set[Plot], regions: Set[Region]): Set[Region] = {
+    def collectRegions(plots: Set[Plot], regions: Set[Region]): Set[Region] =
       if(plots.isEmpty) regions
-      else {
+      else
         val (region, remainingPlots) = collectRegion(plots)
         collectRegions(remainingPlots, regions + region)
-      }
-    }
 
     def price: Int = regions.toList.map { region =>
       region.area * region.perimeter
@@ -140,13 +130,12 @@ object Day12 {
     def price0: Int = regions.toList.map { region =>
       region.area * region.sides
     }.sum
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Garden = {
+  def readFile(filename: String): Garden =
     import scala.io.Source
 
-    def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] = {
+    def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] =
       val (maxX, maxY) = (garden.size, garden(0).size)
       val thisPlant = garden(p.x)(p.y)
       val positionsToCheck = Set(
@@ -165,13 +154,12 @@ object Day12 {
         p.x < 0 || p.x >= maxX || p.y < 0 || p.y >= maxY 
       }
       inGardenNeigbors ++ outOfGardenNeighbors
-    }
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       val garden = source.getLines().toSeq.map { line =>
         line.toCharArray()
       }.toArray
@@ -186,24 +174,19 @@ object Day12 {
       }.toSet
 
       Garden(plots, dimensions)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the price to fence the garden */
-  def part1(garden: Garden): Int = {
+  def part1(garden: Garden): Int =
     require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
     logger.debug(s"garden: ${garden}")
   
     garden.price
-  }
 
   /** @return the solution for part2 */
-  def part2(garden: Garden): Int = {
+  def part2(garden: Garden): Int =
     require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
     logger.debug(s"garden: ${garden}")
 
     garden.price0
-  }
-}

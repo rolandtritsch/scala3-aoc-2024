@@ -30,12 +30,12 @@ package aoc2024
   * then check (based on the x and y), if the other ones are there too).
   */
 
-object Day14 {
+object Day14:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   /** A position in the 2-dimensional space */
-  case class Position(x: Int, y: Int) {
-    private[Day14] def add(v: Velocity, dimensions: (Int, Int)): Position = {
+  case class Position(x: Int, y: Int):
+    private[Day14] def add(v: Velocity, dimensions: (Int, Int)): Position =
       val (maxX, maxY) = dimensions
       val newX =
         if(this.x + v.dx >= maxX) this.x + v.dx - maxX
@@ -46,12 +46,9 @@ object Day14 {
         else if(this.y + v.dy < 0) this.y + v.dy + maxY
         else this.y + v.dy
       Position(newX, newY)
-    }
-  }
 
-  object Position {
+  object Position:
     implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
-  }
   import scala.math.Ordering.Implicits._
 
   /** A velocity in the 2-dimensional space */
@@ -60,55 +57,48 @@ object Day14 {
   /** A robot with an id, a position and a velocity */
   case class Robot(id: Int, position: Position, velocity: Velocity)
 
-  extension (robots: Set[Robot]) {
-    def move(dimensions: (Int, Int)): Set[Robot] = {
+  extension (robots: Set[Robot])
+    def move(dimensions: (Int, Int)): Set[Robot] =
       robots.map { robot =>
         val newPosition = robot.position.add(robot.velocity, dimensions)
         Robot(robot.id, newPosition, robot.velocity)
       }
-    }
-  }
 
   /** A simulation with a set of robots and dimensions */
-  class Simulation(robots: Set[Robot], dimensions: (Int, Int)) {
+  class Simulation(robots: Set[Robot], dimensions: (Int, Int)):
     /** @return a new simulation after running for the given seconds */
-    def run(seconds: Int): Simulation = {
+    def run(seconds: Int): Simulation =
       val newRobots = (1 to seconds).foldLeft(robots) { (rs, _) =>
         rs.move(dimensions)
       }
 
       Simulation(newRobots, dimensions)
-    }
 
     /** @return the number of robots in each quadrant */
-    def quadrants(): Map[(Int, Int), Int] = {
-      def isValid(robot: Robot): Boolean = {
+    def quadrants(): Map[(Int, Int), Int] =
+      def isValid(robot: Robot): Boolean =
         val (midX, midY) = (dimensions._1 / 2, dimensions._2 / 2)
         robot.position.x != midX && robot.position.y != midY
-      }
 
-      def byQuadrant(robot: Robot): (Int, Int) = {
+      def byQuadrant(robot: Robot): (Int, Int) =
         val (midX, midY) = (dimensions._1 / 2, dimensions._2 / 2)
         val qX = if(robot.position.x < midX) 0 else 1
         val qY = if(robot.position.y < midY) 0 else 1
         (qX, qY)
-      }
 
       robots.filter(isValid).groupBy(byQuadrant).map { case (k, v) =>
         (k, v.size)
       }
-    }
 
-    override def toString(): String = {
+    override def toString(): String =
       val (maxX, maxY) = dimensions
       val rs =
         robots.toList.sortBy(_.position).map { r =>
           s"Robot(${r.id}, ${r.position}, ${r.velocity})"
         }.mkString("\n")
       s"Simulation(${robots.size}/${dimensions}):\n${rs}\n"
-    }
 
-    def toStringPretty(): String = {
+    def toStringPretty(): String =
       val (maxX, maxY) = dimensions
       val rs =
         (0 until maxX).map { x =>
@@ -117,11 +107,9 @@ object Day14 {
           }.mkString
         }.mkString("\n")
       s"Simulation(${robots.size}/${dimensions}):\n${rs}\n"
-    }
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Simulation = {
+  def readFile(filename: String): Simulation =
     import scala.io.Source
     import scala.util.matching
 
@@ -130,7 +118,7 @@ object Day14 {
 
     var dimensions = (0, 0)
     val source = Source.fromResource(filename)
-    try {
+    try
       val robots = source.getLines().toSeq.zipWithIndex.map { (line, robot) =>
         logger.debug(s"line: ${line}")
 
@@ -148,24 +136,19 @@ object Day14 {
       }.toSet
 
       Simulation(robots, dimensions)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the safety factor */
-  def part1(simulation: Simulation): Int = {
+  def part1(simulation: Simulation): Int =
     //require(simulation.robots.nonEmpty, "simulation.robots.nonEmpty")
     logger.debug(s"simulation: ${simulation}")
 
     simulation.run(100).quadrants().values.product
-  }
 
   /** @return the solution for part2 */
-  def part2(simulation: Simulation): Int = {
+  def part2(simulation: Simulation): Int =
     //require(simulation.robots.nonEmpty, "simulation.robots.nonEmpty")
     logger.debug(s"simulation: ${simulation}")
 
     simulation.run(100).quadrants().values.product
-  }
-}

@@ -43,12 +43,11 @@ package aoc2024
   * - Return the lowest score found
   */
 
-object Day16 {
+object Day16:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  enum Move {
+  enum Move:
     case FORWARD, ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE
-  }
   import Move._
 
   val cost = Map(
@@ -57,23 +56,19 @@ object Day16 {
     ROTATE_COUNTERCLOCKWISE -> 1000
   )
 
-  extension (path: List[(Reindeer, Move)]) {
+  extension (path: List[(Reindeer, Move)])
     def score: Int = path.map(p => cost(p._2)).sum
-  }
 
-  enum Orientation {
+  enum Orientation:
     case EAST, WEST, NORTH, SOUTH
-  }
   import Orientation._
 
-  case class Position(x: Int, y: Int) {
-    def next(orienation: Orientation): Position = orienation match {
+  case class Position(x: Int, y: Int):
+    def next(orienation: Orientation): Position = orienation match
       case EAST => Position(x, y + 1)
       case WEST => Position(x, y - 1)
       case NORTH => Position(x - 1, y)
       case SOUTH => Position(x + 1, y)
-    }
-  }
 
   val rotate = Map(
     (ROTATE_CLOCKWISE, SOUTH) -> WEST,
@@ -86,28 +81,25 @@ object Day16 {
     (ROTATE_COUNTERCLOCKWISE, WEST) -> SOUTH,
   ) 
 
-  case class Reindeer(val position: Position, val orientation: Orientation) {
-    extension (bestPath: Option[List[(Reindeer, Move)]]) {
-      def min(path: List[(Reindeer, Move)]): Option[List[(Reindeer, Move)]] = bestPath match {
+  case class Reindeer(val position: Position, val orientation: Orientation):
+    extension (bestPath: Option[List[(Reindeer, Move)]])
+      def min(path: List[(Reindeer, Move)]): Option[List[(Reindeer, Move)]] = bestPath match
         case Some(bp) if (bp.score > path.score) => Some(path)
         case Some(bp) => bestPath
         case None => Some(path)
-      }
-      def min(path: Option[List[(Reindeer, Move)]]): Option[List[(Reindeer, Move)]] = bestPath match {
+      def min(path: Option[List[(Reindeer, Move)]]): Option[List[(Reindeer, Move)]] = bestPath match
         case Some(bp) => path.min(bp)
         case None => path
-      }
-    }
 
     def dfs(
       maze: Maze, 
       path: List[(Reindeer, Move)] = List.empty, 
       bestPath: Option[List[(Reindeer, Move)]] = None, 
       visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue)
-    ): (Map[Position, Int], Option[List[(Reindeer, Move)]]) = {
+    ): (Map[Position, Int], Option[List[(Reindeer, Move)]]) =
       if (position == maze.exit) (visited, bestPath.min(path))
       else if (path.score >= visited(this.position)) (visited, None)
-      else {
+      else
         val nextForward = next(maze, visited)
         val nextClockwise = Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation)).next(maze, visited)
         val nextCounterClockwise = Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)).next(maze, visited)
@@ -126,45 +118,38 @@ object Day16 {
             nextCounterClockwise.get.dfs(maze, (Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_COUNTERCLOCKWISE) :: path, bpClockwise.min(bpForward), vClockwise) 
           else (vClockwise, bpClockwise.min(bpForward))
         (vCounterClockwise, bpCounterClockwise.min(bpClockwise))
-      }
-    }
 
-    def next(maze: Maze, visited: Map[Position, Int]): Option[Reindeer] = {
+    def next(maze: Maze, visited: Map[Position, Int]): Option[Reindeer] =
       logger.debug(s"next: this: ${this}, visited: ${visited}")
 
       val nextPosition = position.next(orientation)
-      if (!maze.walls.contains(nextPosition)) {
+      if (!maze.walls.contains(nextPosition))
         Some(Reindeer(nextPosition, orientation))
-      } else None
-    }
+      else None
 
-    def walk(maze: Maze): Int = {
+    def walk(maze: Maze): Int =
       val (_, bestPath) = dfs(maze)
       bestPath.get.score
-    }
-  }
 
-  class Maze(val walls: Set[Position], val exit: Position) {
+  class Maze(val walls: Set[Position], val exit: Position):
     def this() = this(Set.empty, Position(0, 0))
     def clone(
       walls: Set[Position] = this.walls,
       exit: Position = this.exit
-    ): Maze = {
+    ): Maze =
       Maze(walls, exit)
-    }
-  }
 
   type State = (Maze, Reindeer)
 
   /** @return the Maze and the Reindeer (in its starting position) */ 
-  def readFile(filename: String): State = {
+  def readFile(filename: String): State =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       val (maze, reindeer) = source.getLines().toSeq.zipWithIndex.foldLeft((new Maze(), Option.empty[Reindeer])) { case (state, (line, x)) => {
         logger.debug(s"line: ${line}")
         line.zipWithIndex.foldLeft(state) { case ((maze, reindeer), (c, y)) => c match {
@@ -177,26 +162,21 @@ object Day16 {
       }}
 
       (maze, reindeer.get)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the score for the least expensive path to the exit */
-  def part1(state: State): Int = {
+  def part1(state: State): Int =
     require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
     logger.debug(s"state: ${state}")
 
     val (maze, reindeer) = state
     reindeer.walk(maze)
-  }
 
   /** @return the solution for part2 */
-  def part2(state: State): Int = {
+  def part2(state: State): Int =
     require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
     logger.debug(s"state: ${state}")
 
     val (maze, reindeer) = state
     maze.exit.y
-  }
-}

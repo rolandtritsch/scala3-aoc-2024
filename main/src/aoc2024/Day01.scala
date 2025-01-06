@@ -16,11 +16,11 @@ package aoc2024
   * - done
   */
 
-object Day01 {
+object Day01:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   /** @return the sum of distances. */
-  def part1(locations: Seq[(Int, Int)]): Int = {
+  def part1(locations: Seq[(Int, Int)]): Int =
     require(locations.nonEmpty, "locations.nonEmpty")
     logger.debug(s"${locations}")
 
@@ -31,10 +31,9 @@ object Day01 {
     locationsSorted.foldLeft(0) {(acc, location) => {
       acc + math.abs(location._1 - location._2)
     }}
-  }
 
   /** @return the similarity score. */
-  def part2(locations: Seq[(Int, Int)]): Int = {
+  def part2(locations: Seq[(Int, Int)]): Int =
     require(locations.nonEmpty, "locations.nonEmpty")
     logger.debug(s"${locations}")
 
@@ -45,20 +44,16 @@ object Day01 {
       val c = l2.count(_ == l)
       acc + (l * c)
     }}
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Seq[(Int, Int)] = {
+  def readFile(filename: String): Seq[(Int, Int)] =
     import scala.io.Source
 
     val source = Source.fromResource(filename)
-    try {
+    try
       source.getLines().toSeq.map { line =>
         val parsed = line.split("\\s+").map(_.toInt)
         (parsed(0), parsed(1))
       }
-    } finally {
+    finally
       source.close()
-    }
-  }
-}

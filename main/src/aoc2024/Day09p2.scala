@@ -27,7 +27,7 @@ package aoc2024
   * that uses a mutable list.
   */
 
-object Day09p2 {
+object Day09p2:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   import scala.collection.mutable
@@ -36,57 +36,52 @@ object Day09p2 {
   type Block = (Int, Int, Option[Int])
 
   /** The Disk */
-  class Disk (val blocks: mutable.ListBuffer[Block]) {
-    override def toString(): String = {
+  class Disk (val blocks: mutable.ListBuffer[Block]):
+    override def toString(): String =
       blocks.map { (_, blockSize, id) => id match {
         case None => '.'.toString * blockSize
         case Some(id) => id.toString * blockSize
       }}.mkString
-    }
     
     /** @return true, if the file system is valid */
-    def fileSystemCheck: Boolean = {
+    def fileSystemCheck: Boolean =
       val firstBlock = blocks.head
       blocks.tail.foldLeft(firstBlock, true) { case((pb, c), b) => {
         val (poffset, psize, pid) = pb
         val (offset, _, id) = b
 
-        val check =if (offset != poffset + psize) {
+        val check =if (offset != poffset + psize)
           logger.warn(s"Offset corrupted - offset: ${offset}, poffset: ${poffset}, psize: ${psize}, id: ${id}")
           false
-        } else if (id.getOrElse(-99) == pid.getOrElse(-99)) {
+        else if (id.getOrElse(-99) == pid.getOrElse(-99))
           logger.warn(s"Id corrupted - offset: ${offset}, poffset: ${poffset}, psize: ${psize}, id: ${id}")
           false
-        } else {
+        else
           true
-        }
         (b, c && check)
       }}._2
-    }
 
     /** map to look up the size of the file by file id */
     val fileSizes = blocks.filter(_._3.isDefined).map((_, size, id) => (id.get, size)).toMap
 
     /** @return the index of the file */
-    def findFileIndex(id0: Int): Int = {
+    def findFileIndex(id0: Int): Int =
       val index = blocks.indexWhere { (_, _, id1) => id1 match {
         case Some(id2) if(id2 == id0) => true
         case _ => false
       }}
       assert(index >= 0, "file id not found")
       index
-    }
 
     /** @return the index of the first free space of minSize size */
-    def findFirstFreeSpaceIndex(minSize: Int): Int = {
+    def findFirstFreeSpaceIndex(minSize: Int): Int =
       blocks.indexWhere { (_, size, id) => id match {
         case None if(size >= minSize) => true
         case _ => false
       }}
-    }
 
     /** update the block list with the free space rightsized to be swapped */
-    def split(freeIndex: Int, minSize: Int): Unit = {
+    def split(freeIndex: Int, minSize: Int): Unit =
       val block = blocks(freeIndex)
       val (offset, size, id) = block
       val splitBlocks =
@@ -95,63 +90,52 @@ object Day09p2 {
 
       blocks.remove(freeIndex)
       blocks.insertAll(freeIndex, splitBlocks)
-    }
 
     /** update the block list with the swapped blocks */
-    def swap(freeIndex: Int, fileIndex: Int): Unit = {
+    def swap(freeIndex: Int, fileIndex: Int): Unit =
       val (fileOffset, fileSize, fileId) = blocks.remove(fileIndex)
       val (freeOffset, freeSize, freeId) = blocks.remove(freeIndex)
   
       blocks.insert(freeIndex, (freeOffset, fileSize, fileId))
       blocks.insert(fileIndex, (fileOffset, freeSize, freeId))
-      }
 
     /** merge the two block, if they are both free space */
-    def merge(index0: Int, index1: Int): Unit = {
-      if (index0 >= 0 && index1 < blocks.size) {
+    def merge(index0: Int, index1: Int): Unit =
+      if (index0 >= 0 && index1 < blocks.size)
         val (offset0, size0, id0) = blocks(index0)
         val (offset1, size1, id1) = blocks(index1)
         // if both blocks are free space
-        if (!id0.isDefined && !id1.isDefined) {
+        if (!id0.isDefined && !id1.isDefined)
           blocks.remove(index1)
           blocks.remove(index0)
           blocks.insert(index0, (offset0, size0 + size1, id0))
-        }
-      }
-    }
 
     private def foundFreeSpace(index: Int): Boolean = index >= 0
 
     /** defragment the file on the disk */
-    def defragment(id: Int): Unit = {
+    def defragment(id: Int): Unit =
       val freeIndex = findFirstFreeSpaceIndex(fileSizes(id))
-      if (foundFreeSpace(freeIndex)) {
+      if (foundFreeSpace(freeIndex))
         split(freeIndex, fileSizes(id))
         // Note: We need to get the file index after the split!!!
         val fileIndex = findFileIndex(id)
         // Note: We only swap if the freeSpace is before the file!!!
-        if (freeIndex < fileIndex) {
+        if (freeIndex < fileIndex)
           swap(freeIndex, fileIndex)
           // Merge on the left and on the right
           merge(fileIndex, fileIndex + 1)
           merge(fileIndex - 1, fileIndex)
-        }
-      }
-    }
 
-    def maxId: Int = {
+    def maxId: Int =
       val (_, _, Some(id)) = blocks.last: @unchecked
       id
-    }
 
-    def checksum: BigInt = {
+    def checksum: BigInt =
       val ids = blocks.flatMap((_, size, id) => List.fill(size)(BigInt(id.getOrElse(0))))
       ids.zipWithIndex.map(_ * _).sum
-    }
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Disk = {
+  def readFile(filename: String): Disk =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -159,7 +143,7 @@ object Day09p2 {
 
     val blocks = mutable.ListBuffer[Block]()
     val source = Source.fromResource(filename)
-    try {
+    try
       val line = source.getLines.toSeq.head
       logger.debug(s"line: ${line}")
 
@@ -179,18 +163,14 @@ object Day09p2 {
       }}
 
       Disk(blocks)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the checksum for the defragmented disk */
-  def part2(disk: Disk): BigInt = {
+  def part2(disk: Disk): BigInt =
     require(disk.blocks.nonEmpty, "disk.blocks.nonEmpty")
     logger.debug(s"disk: ${disk}")
 
     (disk.maxId to 1 by -1).foreach(disk.defragment(_))
     //disk.fileSystemCheck
     disk.checksum
-  }
-}

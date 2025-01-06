@@ -28,23 +28,22 @@ import util.GridGraph
   * - Find and return the first one/byte that has no (shortest) path (anymore)
   */
 
-object Day18 {
+object Day18:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   import util.Grid._
   import util.Position
 
-  def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(using factory: GridFactory[G]): (G, Seq[Position]) = {
+  def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(using factory: GridFactory[G]): (G, Seq[Position]) =
     val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-    def parseLine(line: String): Position = {
+    def parseLine(line: String): Position =
       val parsed = line.split(",").map(_.toInt)
       assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
       Position(parsed(1), parsed(0))
-    }
 
     val source = scala.io.Source.fromResource(filename)
-    try {
+    try
       val lines = source.getLines().toSeq
       val (initialBytes, remainingBytes) = lines.splitAt(initialGridBytes)
 
@@ -60,26 +59,23 @@ object Day18 {
       val grid = factory.create(free, blocked, Some(Position(0, 0)), Some(Position(dimX - 1, dimY - 1)), dimensions)
       val bytes = remainingBytes.map(parseLine)
       (grid, bytes)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the shortest path through the corrupted memory */
-  def part1(grids: (util.Grid, Seq[util.Position])): Int = {
+  def part1(grids: (util.Grid, Seq[util.Position])): Int =
     import util.GridGraph.shortestPath
 
     val (grid, _) = grids
     val memory = GridGraph.fromGrid(grid)
 
     memory.shortestPath(grid.start.get, grid.end.get).size
-  }
 
   /** @return the solution for part2 */
-  def part2(grids: (util.Grid, Seq[util.Position])): String = {
+  def part2(grids: (util.Grid, Seq[util.Position])): String =
     import util.GridGraph.shortestPath
 
-    def findNoPath(grid: util.Grid, remainingBytes: Seq[util.Position]): Option[Position] = remainingBytes match {
+    def findNoPath(grid: util.Grid, remainingBytes: Seq[util.Position]): Option[Position] = remainingBytes match
       case Nil => None
       case b :: bs => {
         val g = grid.clone(free = grid.free - b, blocked = grid.blocked + b)
@@ -87,10 +83,7 @@ object Day18 {
         val path = memory.shortestPath(g.start.get, g.end.get)
         if (path.isEmpty) Some(b) else findNoPath(g, bs)
       }
-    }
 
     val (grid, remainingBytes) = grids
     val byte = findNoPath(grid, remainingBytes).get
     (byte.y, byte.x).toString
-  }
-}

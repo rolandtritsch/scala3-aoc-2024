@@ -36,52 +36,44 @@ package aoc2024
   * - Evaluate the code string
    */
 
-object Day24 {
+object Day24:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  enum Operation {
+  enum Operation:
     case AND
     case OR
     case XOR
-  }
 
-  extension (op: Operation) {
-    def str: String = op match {
+  extension (op: Operation)
+    def str: String = op match
       case Operation.AND => "&&"
       case Operation.OR => "||"
       case Operation.XOR => "^"
-    }
-  }
 
   sealed trait LeftHandSide
-  case class LeftVariable(name: String) extends LeftHandSide {
+  case class LeftVariable(name: String) extends LeftHandSide:
     override def toString(): String = s"${name}"
-  }
 
   sealed trait RightHandSide
-  case class RightVariable(name: String) extends RightHandSide {
+  case class RightVariable(name: String) extends RightHandSide:
     override def toString(): String = s"${name}"
-  }
-  case class Value(value: Boolean) extends RightHandSide {
+  case class Value(value: Boolean) extends RightHandSide:
     override def toString(): String = s"${value}"
-  }
-  case class Expression(left: LeftHandSide, op: Operation, right: RightHandSide) extends RightHandSide {
+  case class Expression(left: LeftHandSide, op: Operation, right: RightHandSide) extends RightHandSide:
     override def toString(): String = s"${left} ${op.str} ${right}"
-  }
 
-  case class Assignment(left: LeftHandSide, right: RightHandSide) {
+  case class Assignment(left: LeftHandSide, right: RightHandSide):
     override def toString(): String = s"def ${left} = ${right}"
-  }
 
   /** @return the Assignments for the initial values */ 
-  def readFileInitials(filename: String): Set[Assignment] = {
+  def readFileInitials(filename: String): Set[Assignment] =
     import scala.io.Source
     
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       source.getLines().toSeq.map { line =>
         logger.debug(s"line: ${line}")
         // x00: 1
@@ -91,20 +83,18 @@ object Day24 {
         logger.debug(s"parsed: ${parsed}")
         Assignment(LeftVariable(parsed(0)), Value(parsed(1).toInt == 1))
       }.toSet
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the Assignments for the statements */ 
-  def readFileStatements(filename: String): Set[Assignment] = {
+  def readFileStatements(filename: String): Set[Assignment] =
     import scala.io.Source
     
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       source.getLines().toSeq.map { line =>
         logger.debug(s"line: ${line}")
         // x00 AND y00 -> z00 
@@ -121,29 +111,25 @@ object Day24 {
           )
         )
       }.toSet
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the evaluation of the code */
-  def evaluate(lines: String): String = {
+  def evaluate(lines: String): String =
     import com.eed3si9n.eval
     eval.Eval().evalInfer(lines).getValue(this.getClass.getClassLoader).toString
-  }
 
   /** @return the code snippet that needs to be evaluated */
-  def generate(statements: Set[Assignment]): String = {
+  def generate(statements: Set[Assignment]): String =
     val vars = statements.map { s => s match {
       case Assignment(LeftVariable(name), _) => name
     }}.filter(_.startsWith("z")).toList.sorted.reverse.mkString(",")
     val convertToBitString = s"List(${vars}).map(if(_) 1 else 0).mkString"
 
     statements.map(_.toString).toList.sorted.mkString("\n") + "\n" + convertToBitString
-  }
 
   /** @return the Int of the resulting bit string */
-  def part1 (s: (Set[Assignment], Set[Assignment])): BigInt = {
+  def part1 (s: (Set[Assignment], Set[Assignment])): BigInt =
     require(s._1.nonEmpty, "s._1.nonEmpty")
     require(s._2.nonEmpty, "s._2.nonEmpty")
     logger.debug(s": ${s}")
@@ -152,10 +138,9 @@ object Day24 {
 
     val bits = evaluate(generate(statements))
     BigInt(bits, 2)
-  }
 
   /** @return the solution for part2 */
-  def part2(s: (Set[Assignment], Set[Assignment])): Int = {
+  def part2(s: (Set[Assignment], Set[Assignment])): Int =
     require(s._1.nonEmpty, "s._1.nonEmpty")
     require(s._2.nonEmpty, "s._2.nonEmpty")
     logger.debug(s": ${s}")
@@ -163,5 +148,3 @@ object Day24 {
     val statements = s._1 ++ s._2
 
     statements.size
-  }
-}

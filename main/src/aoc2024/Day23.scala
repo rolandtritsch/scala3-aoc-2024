@@ -3,7 +3,7 @@ package aoc2024
 /** Day23 - LAN Party
   */
 
-object Day23 {
+object Day23:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   type Computer = String
@@ -11,14 +11,14 @@ object Day23 {
   case class Connection(thiz: Computer, thaz: Computer)
 
   /** @return the Set of connections */
-  def readFile(filename: String): Seq[Connection] = {
+  def readFile(filename: String): Seq[Connection] =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       source.getLines().toSeq.map { line =>
         logger.debug(s"line: ${line}")
         val Array(thiz, thaz) = line.split("-")
@@ -26,15 +26,13 @@ object Day23 {
         logger.debug(s"connection: ${connection}")
         connection
       }
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the number of all sets of three inter-connected computers 
     * where at least one computer starts with 't' 
     */
-  def part1(connections: Seq[Connection]): Int = {
+  def part1(connections: Seq[Connection]): Int =
     require(connections.nonEmpty, "connections.nonEmpty")
     logger.debug(s"connections: ${connections}")
 
@@ -56,13 +54,10 @@ object Day23 {
 
     // Count triplets containing at least one computer starting with 't'
     triplets.count(triplet => triplet.exists(_.startsWith("t")))
-  }
 
   /** @return the solution for part2 */
-  def part2(connections: Seq[Connection]): Int = {
+  def part2(connections: Seq[Connection]): Int =
     require(connections.nonEmpty, "connections.nonEmpty")
     logger.debug(s"connections: ${connections}")
 
     0 // TODO: Implement part 2
-  }
-}

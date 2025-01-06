@@ -56,34 +56,30 @@ package aoc2024
   *   of all the boxes.
   */
 
-object Day15 {
+object Day15:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   /** A case class to represent a Position */
-  case class Position(x: Int, y: Int) {
+  case class Position(x: Int, y: Int):
     def gpsCoordinate: Int = (x * 100) + y
-    def next(move: Move): Position = move match {
+    def next(move: Move): Position = move match
       case Move.Up => Position(x - 1, y)
       case Move.Down => Position(x + 1, y)
       case Move.Left => Position(x, y - 1)
       case Move.Right => Position(x, y + 1)
-    }
     def isBlockedByWall(walls: Set[Position]): Boolean = walls.contains(this)
     def isBlockedByBox(boxes: Set[Position]): Boolean = boxes.contains(this)
-  }
 
-  object Position {
+  object Position:
     implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
-  }
   import scala.math.Ordering.Implicits._
 
   /** An enumeration to represent the possible moves */
-  enum Move {
+  enum Move:
     case Up, Down, Left, Right
-  }
 
   /** A class to represent the Warehouse */
-  class Warehouse(val robot: Position, val boxes: Set[Position], val spaces: Set[Position], val walls: Set[Position]) {
+  class Warehouse(val robot: Position, val boxes: Set[Position], val spaces: Set[Position], val walls: Set[Position]):
     def this() = this(Position(0, 0), Set.empty, Set.empty, Set.empty)
 
     def clone(
@@ -91,33 +87,29 @@ object Day15 {
       boxes: Set[Position] = this.boxes,
       spaces: Set[Position] = this.spaces,
       walls: Set[Position] = this.walls
-    ): Warehouse = {
+    ): Warehouse =
       Warehouse(robot, boxes, spaces, walls)
-    }
 
     /** @return the next Warehouse after the given Move */
-    def move(move: Move): Warehouse = {
+    def move(move: Move): Warehouse =
       logger.debug(s"move: ${move}, this: ${this}")
 
       val nextRobot = robot.next(move)
       if (nextRobot.isBlockedByWall(walls)) this
-      else if (nextRobot.isBlockedByBox(boxes)) {
+      else if (nextRobot.isBlockedByBox(boxes))
         val (nextSpaces, nextBoxes, movedIt) =
           spaces.push(nextRobot, nextRobot, boxes, walls, move)
         logger.debug(s"nextSpaces: ${nextSpaces}, nextBoxes: ${nextBoxes}, movedIt: ${movedIt}")
-        if (movedIt) {
+        if (movedIt)
           val (finalSpaces, nextRobot) = nextSpaces.move(robot, move)
           this.clone(robot = nextRobot, boxes = nextBoxes, spaces = finalSpaces)
-        }
         else this
-      } else this.clone(robot = nextRobot)
-    }
+      else this.clone(robot = nextRobot)
 
-    override def toString(): String = {
+    override def toString(): String =
       s"Warehouse(robot: ${robot}, boxes: ${boxes}, walls: ${walls})"
-    }
 
-    def toStringPretty(): String = {
+    def toStringPretty(): String =
       val Position(maxX, maxY) = walls.toList.max
       val wh =
         (0 to maxX).map { x =>
@@ -131,50 +123,42 @@ object Day15 {
         }.mkString
         }.mkString("\n")
       s"\n${wh}\n"
-    }
-  }
 
-  extension (spaces: Set[Position]) {
+  extension (spaces: Set[Position])
     /** @return the next Position/Spaces after the given Move */
-    def move(robot: Position, move: Move): (Set[Position], Position) = {
+    def move(robot: Position, move: Move): (Set[Position], Position) =
       (spaces - robot.next(move) + robot, robot.next(move))
-    }
 
     /** @return update Spaces/Boxes after the box was moved (if possible) */
-    def push(box: Position, currentBox: Position, boxes: Set[Position], walls: Set[Position], move: Move): (Set[Position], Set[Position], Boolean) = {
+    def push(box: Position, currentBox: Position, boxes: Set[Position], walls: Set[Position], move: Move): (Set[Position], Set[Position], Boolean) =
       logger.debug(s"box: ${box}, currentBox: ${currentBox}, move: ${move}, boxes: ${boxes}, spaces: ${spaces}, walls: ${walls}")
 
       if (currentBox.next(move).isBlockedByWall(walls)) (spaces, boxes, false)
       else if (currentBox.next(move).isBlockedByBox(boxes)) spaces.push(box, currentBox.next(move), boxes, walls, move)
       else (spaces - currentBox.next(move) + box, boxes + currentBox.next(move) - box, true)
-    }
-  }
 
   type State = (Warehouse, List[Move])
 
-  extension (state: State) {
-    def next: State = {
+  extension (state: State)
+    def next: State =
       logger.debug(s"state: ${state}")
       
       val (wh, moves) = state
       (wh.move(moves.head), moves.tail)
-    }
 
-    def finalState: State = state match {
+    def finalState: State = state match
       case (_, Nil) => state
       case _ => state.next.finalState
-    }
-  }
 
   /** @return the Warehouse from the given file */ 
-  def readFileWarehouse(filename: String): Warehouse = {
+  def readFileWarehouse(filename: String): Warehouse =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       source.getLines().toSeq.zipWithIndex.foldLeft(new Warehouse()) { case (wh, (line, x)) => {
         logger.debug(s"line: ${line}")
         line.zipWithIndex.foldLeft(wh) { case (wh, (c, y)) => c match {
@@ -185,20 +169,18 @@ object Day15 {
           case _ => throw new RuntimeException(s"Unexpected case")
         }}
       }}
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the Moves from the given file */ 
-  def readFileMoves(filename: String): List[Move] = {
+  def readFileMoves(filename: String): List[Move] =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       val moves = source.getLines().mkString
       moves.map { case c => c match {
         case '^' => Move.Up
@@ -207,25 +189,20 @@ object Day15 {
         case '>' => Move.Right
         case _ => throw new RuntimeException(s"Unexpected case")
       }}.toList
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the sum of all GPS coordinates */
-  def part1(state: State): Int = {
+  def part1(state: State): Int =
     require(state._2.nonEmpty, "state._2.nonEmpty")
     logger.debug(s"state: ${state}")
 
     val (wh, _) = state.finalState
     wh.boxes.toList.map(_.gpsCoordinate).sum
-  }
 
   /** @return the solution for part2 */
-  def part2(state: State): Int = {
+  def part2(state: State): Int =
     require(state._2.nonEmpty, "state._2.nonEmpty")
     logger.debug(s"state: ${state}")
 
     state._1.robot.x
-  }
-}

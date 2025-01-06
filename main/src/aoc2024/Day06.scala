@@ -31,31 +31,29 @@ package aoc2024
   * - do this for all positions in the lab
   */
 
-object Day06 {
+object Day06:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  enum State {
+  enum State:
     case FREE, BLOCKED, OUTOFBOUNDS
-  }
   import State._
 
-  enum Direction {
+  enum Direction:
     case UP, DOWN, LEFT, RIGHT
-  }
   import Direction._
 
   case class Position(val row: Int, val col: Int, direction: Direction = UP)
 
-  class Grid(val grid: Array[Array[State]], var guard: Position) {
+  class Grid(val grid: Array[Array[State]], var guard: Position):
     val rows = grid.size
     val cols = grid(0).size
     var done = false
     var looped = false
     val visited = scala.collection.mutable.Set.empty[Position]
 
-    private def nextPosition: State = {
+    private def nextPosition: State =
       val Position(row, col, direction) = guard
-      direction match {
+      direction match
         case UP if(row - 1 < 0) => OUTOFBOUNDS
         case DOWN if(row + 1 >= rows) => OUTOFBOUNDS
         case LEFT if(col - 1 < 0) => OUTOFBOUNDS
@@ -64,17 +62,15 @@ object Day06 {
         case DOWN => grid(row + 1)(col)
         case LEFT => grid(row)(col - 1)
         case RIGHT => grid(row)(col + 1)
-      }
-    }
 
-    private def step: Unit = {
-      if(visited.contains(guard)) {
+    private def step: Unit =
+      if(visited.contains(guard))
         done = true
         looped = true
-      } else {
+      else
         val Position(row, col, direction) = guard
         visited.add(guard)
-        guard = direction match {
+        guard = direction match
           case UP if(nextPosition == FREE) => Position(row - 1, col, UP)
           case UP if(nextPosition == BLOCKED) => Position(row, col, RIGHT)
           case DOWN if(nextPosition == FREE) => Position(row + 1, col, DOWN)
@@ -88,18 +84,13 @@ object Day06 {
             guard
           }
           case _ => throw new RuntimeException("Unexpected case")
-        }
-      }
-    }
 
     /** Walk the lab until done */
-    def walk: Unit = {
+    def walk: Unit =
       while(!done) step
-    }
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Grid = {
+  def readFile(filename: String): Grid =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
@@ -107,7 +98,7 @@ object Day06 {
 
     var guard = Position(0, 0)
     val source = Source.fromResource(filename)
-    val grid = try {
+    val grid = try
       source.getLines().zipWithIndex.map { (line, row) =>
         logger.debug(s"line: ${line}")
         val parsed = line.zipWithIndex.map { (c, col) => c match {
@@ -120,14 +111,12 @@ object Day06 {
         }}.toArray
         parsed
       }.toArray
-    } finally {
+    finally
       source.close()
-    }
     Grid(grid, guard)
-  }
 
   /** @return the number of positions that create loops */
-  private def findLoops(lab: Grid): Int = {
+  private def findLoops(lab: Grid): Int =
     var counter = 0
     (0 until lab.rows).map { row => {
       (0 until lab.cols).map { col => {
@@ -138,32 +127,27 @@ object Day06 {
       }}
     }}
     counter
-  }
 
   /** @return a clone lab with a new BLOCK at the given position */
-  private def clone(lab: Grid, labRow: Int, labCol: Int, state: State): Array[Array[State]] = {
+  private def clone(lab: Grid, labRow: Int, labCol: Int, state: State): Array[Array[State]] =
     (0 until lab.rows).map { row => {
       (0 until lab.cols).map { col => {
         if (row == labRow && col == labCol) state else lab.grid(row)(col)
       }}.toArray
     }}.toArray
-  }
 
   /** @return the number of positions covered while walking the grid */
-  def part1(lab: Grid): Int = {
+  def part1(lab: Grid): Int =
     require(!lab.done, "!lab.done")
     logger.debug(s"lab: ${lab}")
 
     lab.walk
     assert(!lab.looped)
     lab.visited.map { case Position(row, col, _) => (row, col) }.size
-  }
 
   /** @return the number of ways you can create loops */
-  def part2(lab: Grid): Int = {
+  def part2(lab: Grid): Int =
     require(!lab.done, "!lab.done")
     logger.debug(s"lab: ${lab}")
 
     findLoops(lab)
-  }
-}

@@ -2,7 +2,7 @@ package util
 
 /** Trait for breadth first search.
   */
-trait Bfs {
+trait Bfs:
   import scala.collection.mutable
 
   val logger: com.typesafe.scalalogging.Logger
@@ -16,7 +16,7 @@ trait Bfs {
     * 
     * @note Bfs ensures that the first path found is the shortest.
     */
-  def findFirstIterative(): Option[Path] = {
+  def findFirstIterative(): Option[Path] =
     val paths = mutable.Queue[(Position, Path)]()
     val visited = mutable.Set[Position]()
     
@@ -25,35 +25,31 @@ trait Bfs {
     paths.enqueue((start.get, List(start.get)))
     visited.add(start.get)
     
-    while (paths.nonEmpty) {
+    while (paths.nonEmpty)
       val (current, path) = paths.dequeue()
       
-      if (current == end.get) {
+      if (current == end.get)
         return Some(path)
-      } else {
+      else
         for {
           next <- adjacent(current)  
           if !visited.contains(next)
-        } {
+        }
           visited.add(next)
           paths.enqueue((next, path :+ next))
-        }
-      }
-    }
     
     None
-  }
 
   /** @return the shortest path from start to end (or None if no path exists)
     * 
     * @note This is the recursive version of bfs.
     */
   @scala.annotation.tailrec
-  final def findFirstRecursive(paths: Set[Path], visited: Set[Position]): Option[Path] = {
+  final def findFirstRecursive(paths: Set[Path], visited: Set[Position]): Option[Path] =
     logger.debug(s"paths: ${paths}")
     val foundOne = paths.find(_.last == end.get)
     if (foundOne.nonEmpty) foundOne
-    else {
+    else
       val (nextPaths, nexts) = paths.foldLeft((Set.empty[Option[Path]], Set.empty[Position])) { case ((nextPaths, nexts), p) => {
         val nss = adjacent(p.last, visited)
         val nps =
@@ -64,6 +60,3 @@ trait Bfs {
 
       if (nextPaths.isEmpty) None
       else findFirstRecursive(nextPaths.flatten, visited ++ nexts)
-    } 
-  }
-}

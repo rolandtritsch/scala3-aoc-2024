@@ -11,7 +11,7 @@ package util
   * - the dimensions of the grid are detemined by the number of 
   *   rows and columns
     */
-class Grid(val free: Set[Position], val blocked: Set[Position], val start: Option[Position], val end: Option[Position], val dimensions: (Int, Int)) {
+class Grid(val free: Set[Position], val blocked: Set[Position], val start: Option[Position], val end: Option[Position], val dimensions: (Int, Int)):
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   def clone(
@@ -20,15 +20,13 @@ class Grid(val free: Set[Position], val blocked: Set[Position], val start: Optio
     start: Option[Position] = this.start,
     end: Option[Position] = this.end,
     dimensions: (Int, Int) = this.dimensions
-  ): Grid = {
+  ): Grid =
     Grid(free, blocked, start, end, dimensions)
-  }
 
-  override def toString: String = {
+  override def toString: String =
     s"Grid(free: ${free}, blocked: ${blocked}, start: ${start}, end: ${end}, dimensions: ${dimensions})"
-  }
 
-  def toStringPretty(current: Option[Position] = None, path: List[Position] = List.empty): String = {
+  def toStringPretty(current: Option[Position] = None, path: List[Position] = List.empty): String =
     val (dimX, dimY) = dimensions
     val grid =
       (0 until dimX).map { x => {
@@ -44,59 +42,48 @@ class Grid(val free: Set[Position], val blocked: Set[Position], val start: Optio
         }}.mkString
       }}.mkString.mkString("\n")
     s"${this}\n${grid}\n"
-  }
 
-  def neighbors: Map[Position, Set[Position]] = {
+  def neighbors: Map[Position, Set[Position]] =
     free.map(p => (p, adjacent(p))).toMap
-  }
 
-  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[Position] = {
+  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[Position] =
     Set(
       Position(p.x - 1, p.y),
       Position(p.x + 1, p.y),
       Position(p.x, p.y - 1),
       Position(p.x, p.y + 1),
     ).filter(p => free.contains(p) && !visited.contains(p))
-  }
-}
 
-object Grid {
-  trait GridFactory[G] {
+object Grid:
+  trait GridFactory[G]:
     def create(free: Set[Position], blocked: Set[Position], start: Option[Position], end: Option[Position], dimensions: (Int, Int)): G
-  }
 
-  def fromResource[G](filename: String)(using factory: GridFactory[G]): G = {
+  def fromResource[G](filename: String)(using factory: GridFactory[G]): G =
     val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
     val source = scala.io.Source.fromResource(filename)
-    try {
+    try
       val init = (Set.empty[Position], Set.empty[Position], Option.empty[Position], Option.empty[Position], (0, 0))
       val (free, blocked, start, end, max) = source.getLines().toSeq.zipWithIndex.foldLeft(init) { case (grid, (line, x)) => {
         logger.debug(s"grid: ${grid}, line: ${line}")
 
         line.zipWithIndex.foldLeft(grid) { case (grid, (c, y)) => {
           val (free, blocked, start, end, _) = grid
-          c match {
+          c match
             case '.' => (free + Position(x, y), blocked, start, end, (x, y))
             case '#' => (free, blocked + Position(x, y), start, end, (x, y))
             case 'S' => (free + Position(x, y), blocked, Some(Position(x, y)), end, (x, y))
             case 'E' => (free + Position(x, y), blocked, start, Some(Position(x, y)), (x, y))
             case _   => throw new RuntimeException("Unexpected case")
-          }
         }}
       }}
 
       val (maxX, maxY) = max
       factory.create(free, blocked, start, end, (maxX + 1, maxY + 1))
-    } finally {
+    finally
       source.close()
-    }
-  }
 
-  object Factory {
-    given GridFactory[Grid] with {
+  object Factory:
+    given GridFactory[Grid] with
       def create(free: Set[Position], blocked: Set[Position], start: Option[Position], end: Option[Position], dimensions: (Int, Int)): Grid =
         new Grid(free, blocked, start, end, dimensions)
-    }
-  }
-}

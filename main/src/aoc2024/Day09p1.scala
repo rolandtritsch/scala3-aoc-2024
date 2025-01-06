@@ -21,52 +21,46 @@ package aoc2024
   * this time I am creating two objects for part1 and part2.
   */
 
-object Day09p1 {
+object Day09p1:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   type Block = Option[Int]
 
   /** The disk */
-  class Disk (val blocks: Vector[Block]) {
+  class Disk (val blocks: Vector[Block]):
     val usedBlocks = blocks.flatten
 
-    override def toString(): String = {
+    override def toString(): String =
       blocks.map { b => b match {
         case None => '.'
         case Some(id) => id.toString.head
       }}.mkString
-    }
 
-    def defragment: Disk = {
-      def defragmentor(fragmentedBlocks: Vector[Block], defragmentedBlocks: Vector[Block], blocksAvailableForDefragmentation: Vector[Int], n: Int): Vector[Block] = {
+    def defragment: Disk =
+      def defragmentor(fragmentedBlocks: Vector[Block], defragmentedBlocks: Vector[Block], blocksAvailableForDefragmentation: Vector[Int], n: Int): Vector[Block] =
         logger.debug(s"fragmentedBlocks: ${fragmentedBlocks}, defragmentedBlocks: ${defragmentedBlocks}, blocksAvailableForDefragmentation: ${blocksAvailableForDefragmentation}, n: ${n}")
 
-        if(n >= usedBlocks.size) {
+        if(n >= usedBlocks.size)
           defragmentedBlocks ++ Vector.fill(blocks.size - usedBlocks.size)(None)
-        } else fragmentedBlocks match {
+        else fragmentedBlocks match
           case Vector(None, _*) => defragmentor(fragmentedBlocks.tail, defragmentedBlocks :+ Some(blocksAvailableForDefragmentation.head), blocksAvailableForDefragmentation.tail, n + 1)
           case Vector(Some(id), _*) =>  defragmentor(fragmentedBlocks.tail, defragmentedBlocks :+ Some(id), blocksAvailableForDefragmentation, n + 1)
           case _ => throw new RuntimeException("Unexpected case")
-        }
-      }
 
       Disk(defragmentor(blocks, Vector(), usedBlocks.reverse, 0))
-    }
 
-    def checksum: BigInt = {
+    def checksum: BigInt =
       usedBlocks.map(BigInt(_)).zipWithIndex.map(_ * _).sum
-    }
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): Disk = {
+  def readFile(filename: String): Disk =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       val line = source.getLines.toSeq.head
       logger.debug(s"line: ${line}")
       val firstBlockSize = line(0).toString.toInt
@@ -82,16 +76,12 @@ object Day09p1 {
         (bs ++ freeBlocks ++ usedBlocks, id + 1)
       }}
       Disk(blocks)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the checksum for the defragmented disk */
-  def part1(disk: Disk): BigInt = {
+  def part1(disk: Disk): BigInt =
     require(disk.blocks.nonEmpty, "disk.blocks.nonEmpty")
     logger.debug(s"disk: ${disk}")
 
     disk.defragment.checksum
-  }
-}

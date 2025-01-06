@@ -31,11 +31,11 @@ package aoc2024
   * Now I only need to add the extra case of ||.
   */
 
-object Day07 {
+object Day07:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  case class Equation(val result: BigInt, val numbers: List[BigInt]) {
-    private def check(current: BigInt, result: BigInt, numbers: List[BigInt], checkConcat: Boolean): Boolean = numbers match {
+  case class Equation(val result: BigInt, val numbers: List[BigInt]):
+    private def check(current: BigInt, result: BigInt, numbers: List[BigInt], checkConcat: Boolean): Boolean = numbers match
       case Nil => if(current == result) true else false
       case number :: remainingNumbers => {
         logger.debug(s"current: ${current}, result: ${result}, numbers: ${numbers}, checkConcat: ${checkConcat}")
@@ -44,23 +44,20 @@ object Day07 {
         || check(current * number, result, remainingNumbers, checkConcat)
         || (check(BigInt(current.toString + number.toString), result, remainingNumbers, checkConcat) && checkConcat)
       }
-    }
 
     /** @return true, if the equation is valid */
-    def isValid(checkConcat: Boolean = false): Boolean = {
+    def isValid(checkConcat: Boolean = false): Boolean =
       check(numbers.head, result, numbers.tail, checkConcat)
-    }
-  }
 
   /** @return the file for the given filename as parsed elements */ 
-  def readFile(filename: String): List[Equation] = {
+  def readFile(filename: String): List[Equation] =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       source.getLines().toList.map { line =>
         logger.debug(s"line: ${line}")
 
@@ -72,26 +69,21 @@ object Day07 {
 
         Equation(result, numbers)
       }
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the sum of valid equation results */
-  def part1(equations: List[Equation]): BigInt = {
+  def part1(equations: List[Equation]): BigInt =
     require(equations.nonEmpty, "equations.nonEmpty")
     logger.debug(s"equations: ${equations}")
 
     val validEquations = equations.filter(_.isValid())
     validEquations.map(_.result).sum
-  }
 
   /** @return the sum of valid equation results (with concat) */
-  def part2(equations: List[Equation]): BigInt = {
+  def part2(equations: List[Equation]): BigInt =
     require(equations.nonEmpty, "equations.nonEmpty")
     logger.debug(s"equations: ${equations}")
 
     val validEquations = equations.filter(_.isValid(true))
     validEquations.map(_.result).sum
-  }
-}

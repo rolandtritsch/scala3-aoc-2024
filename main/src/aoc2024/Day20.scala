@@ -24,62 +24,54 @@ package aoc2024
   * - Rinse and repeat
   */
 
-object Day20 {
+object Day20:
   val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
   val visited = scala.collection.mutable.Map.empty[Position, Int].withDefaultValue(Int.MaxValue)
 
-  case class Position(x: Int, y: Int) {
-    def next(walls: Set[Position]): Seq[Position] = {
+  case class Position(x: Int, y: Int):
+    def next(walls: Set[Position]): Seq[Position] =
       Seq(
         Position(x - 1, y),
         Position(x + 1, y),
         Position(x, y - 1),
         Position(x, y + 1)
       ).filter(!walls.contains(_))
-    }
     
     /** @return the shortest path through the race track */
     def dfs(
       track: RaceTrack,
       path: List[Position] = List.empty, 
       shortestPath: Option[List[Position]] = None
-    ): Option[List[Position]] = {
+    ): Option[List[Position]] =
       if (this == track.end) shortestPath.min(path)
       else if (path.size >= visited(this)) None
-      else {
+      else
         visited.update(this, path.size)
         next(track.walls).foldLeft(shortestPath) { case (sp, n) => {
           val nextsp = n.dfs(track, path :+ this, sp)
           if (nextsp.isEmpty) sp else nextsp
         }}
-      }    
-    }
 
-    extension (shortestPath: Option[List[Position]]) {
-      def min(path: List[Position]): Option[List[Position]] = shortestPath match {
+    extension (shortestPath: Option[List[Position]])
+      def min(path: List[Position]): Option[List[Position]] = shortestPath match
         case Some(sp) if (sp.size > path.size) => Some(path)
         case Some(sp) => Some(sp)   
         case None => Some(path)
-      }
-    }
-  }
 
-  object Position {
+  object Position:
     implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
-  }
   import scala.math.Ordering.Implicits._
 
-  class RaceTrack(val walls: Set[Position], val end: Position) {
+  class RaceTrack(val walls: Set[Position], val end: Position):
     def this() = this(Set.empty, Position(0, 0))
     def clone(
       walls: Set[Position] = this.walls,
       end: Position = this.end
-    ): RaceTrack = {
+    ): RaceTrack =
       RaceTrack(walls, end)
-    }
 
-    def cheats(shortestPath: Set[Position]): Set[Position] = {
+    def cheats(shortestPath: Set[Position]): Set[Position] =
       val Position(x, y) = walls.max
       val (maxX, maxY) = (x + 1, y + 1)
       val horizontals = 
@@ -98,9 +90,8 @@ object Day20 {
         !walls.contains(p1) && walls.contains(p2) && !walls.contains(p3) 
         && (shortestPath.contains(p1) || shortestPath.contains(p3))
       }}.map(_._2)
-    }
 
-    def shortCuts(program: Position, shortestPath: List[Position]): Set[(Position, Option[List[Position]])] = {
+    def shortCuts(program: Position, shortestPath: List[Position]): Set[(Position, Option[List[Position]])] =
       cheats(shortestPath.toSet).map { c => {
         val cheatingWalls = walls - c
         val cheatingTrack = clone(walls = cheatingWalls)
@@ -108,20 +99,18 @@ object Day20 {
         val sp = program.dfs(cheatingTrack)
         (c, sp)
       }}
-    }
-  }
 
   type State = (RaceTrack, Position)
 
   /** @return the RaceTrack and the Program (in its starting position) */ 
-  def readFile(filename: String): State = {
+  def readFile(filename: String): State =
     import scala.io.Source
 
     require(filename.nonEmpty, "filename.nonEmpty")
     logger.debug(s"filename: ${filename}")
 
     val source = Source.fromResource(filename)
-    try {
+    try
       val (track, program) = source.getLines().toSeq.zipWithIndex.foldLeft((new RaceTrack(), Option.empty[Position])) { case (state, (line, x)) => {
         logger.debug(s"line: ${line}")
         line.zipWithIndex.foldLeft(state) { case ((track, program), (c, y)) => c match {
@@ -134,13 +123,11 @@ object Day20 {
       }}
 
       (track, program.get)
-    } finally {
+    finally
       source.close()
-    }
-  }
 
   /** @return the number of short-cuts that save more than 100 picoseconds */
-  def part1(state: State, threshold: Int = 100): Int = {
+  def part1(state: State, threshold: Int = 100): Int =
     require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
     logger.debug(s"state: ${state}")
  
@@ -161,13 +148,10 @@ object Day20 {
     shortCutsValue.groupBy(_._2).map { (cheatValue, cheatList) => {
       (cheatValue, cheatList.size)
     }}.count(_._1 >= threshold)
-  }
 
   /** @return the solution for part2 */
-  def part2(state: State): Int = {
+  def part2(state: State): Int =
     require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
     logger.debug(s"state: ${state}")
 
     state._1.walls.size
-  }
-}
