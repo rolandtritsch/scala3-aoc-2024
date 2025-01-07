@@ -28,132 +28,156 @@ package aoc2024
   */
 
 object Day04:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  /** @return the file for the given filename as parsed elements */
-  def readFile(filename: String): Seq[String] =
-    import scala.io.Source
+    /** @return the file for the given filename as parsed elements */
+    def readFile(filename: String): Seq[String] =
+        import scala.io.Source
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromResource(filename)
-    try source.getLines().toSeq.map { line =>
-        logger.debug(s"line: ${line}")
-        line
-      }
-    finally source.close()
+        val source = Source.fromResource(filename)
+        try
+            source.getLines().toSeq.map: line =>
+                logger.debug(s"line: ${line}")
+                line
+        finally source.close()
+        end try
+    end readFile
 
-  type Position = (Int, Int)
+    type Position = (Int, Int)
 
-  object Position:
-    /** move through the grid TL to BR */
-    def nextTLBR(position: Position, inc: Int = 1): Position =
-      (position._1 + inc, position._2 + inc)
+    object Position:
+        /** move through the grid TL to BR */
+        def nextTLBR(position: Position, inc: Int = 1): Position =
+            (position._1 + inc, position._2 + inc)
 
-    /** move through the grid TR to BL */
-    def nextTRBL(position: Position, inc: Int = 1): Position =
-      (position._1 + inc, position._2 - inc)
+        /** move through the grid TR to BL */
+        def nextTRBL(position: Position, inc: Int = 1): Position =
+            (position._1 + inc, position._2 - inc)
+    end Position
 
-  extension(line: String)
+    extension (line: String)
+        /** @return all positions the what occurs in the line */
+        def findAllPos(what: String): Seq[Int] =
+            val parser: scala.util.matching.Regex = what.r
+            parser.findAllIn(line).matchData.map(_.start).toSeq
 
-    /** @return all positions the what occurs in the line */
-    def findAllPos(what: String): Seq[Int] =
-      val parser: scala.util.matching.Regex = what.r
-      parser.findAllIn(line).matchData.map(_.start).toSeq
+    extension (lines: Seq[(Position, String)])
+        /** @return all positions of all what occurences on all lines */
+        def findAllPos(
+            what: String,
+            next: (Position, Int) => Position,
+        ): Seq[Position] = lines.flatMap { (position, line) =>
+            line.findAllPos(what).map(offset => next(position, offset))
+        }
 
-  extension(lines: Seq[(Position, String)])
+    extension (lines: Seq[String])
+        /** @return the number of what occurences in the lines */
+        def findAll(what: String): Int =
+            lines.foldLeft(0): (matchCount, line) =>
+                val parser: scala.util.matching.Regex = what.r
+                matchCount + parser.findAllIn(line).size
 
-    /** @return all positions of all what occurences on all lines */
-    def findAllPos(
-      what: String,
-      next: (Position, Int) => Position,
-    ): Seq[Position] = lines.flatMap { (position, line) =>
-      line.findAllPos(what).map { offset => next(position, offset) }
-    }
+        /** @return the lines transposed */
+        def rotate: Seq[String] =
+            lines.map(_.toSeq).transpose.map(_.reverse).map(_.mkString)
 
-  extension(lines: Seq[String])
+        /** @return the lines transposed */
+        def transposed: Seq[String] =
+            lines.map(_.toSeq).transpose.map(_.mkString)
 
-    def findAll(what: String): Int = lines.foldLeft(0) { (matchCount, line) =>
-      val parser: scala.util.matching.Regex = what.r
-      matchCount + parser.findAllIn(line).size
-    }
+        /** @return all diagonals (top-left to bottom-right) */
+        def diagonalizeTLBR: Seq[(Position, String)] =
+            val grid = lines.map(_.toSeq)
+            val rows = grid.length
+            val cols = grid(0).length
 
-    def rotate: Seq[String] = lines.map(_.toSeq).transpose.map(_.reverse)
-      .map(_.mkString)
+            def collectDiagonal(startPosition: Position): (Position, String) =
+                def collectDiagonal(position: Position, line: String): String =
+                    val (row, col) = position
+                    if row >= rows || col >= cols then line
+                    // format: off
+                    else collectDiagonal(Position.nextTLBR(position), line + grid(row)(col))
+                    // format: on
+                end collectDiagonal
 
-    def transposed: Seq[String] = lines.map(_.toSeq).transpose.map(_.mkString)
+                val line = collectDiagonal(startPosition, "")
+                (startPosition, line)
+            end collectDiagonal
 
-    def diagonalizeTLBR: Seq[(Position, String)] =
-      val grid = lines.map(_.toSeq)
-      val rows = grid.length
-      val cols = grid(0).length
+            val diagonals = (0 until cols)
+                .map(col => collectDiagonal(0, col)) ++ (1 until rows)
+                .map(row => collectDiagonal(row, 0))
+            diagonals
+        end diagonalizeTLBR
 
-      def collectDiagonal(startPosition: Position): (Position, String) =
-        def collectDiagonal(position: Position, line: String): String =
-          position match
-            case (row, col) if (row >= rows || col >= cols) => line
-            case (row, col)                                 =>
-              collectDiagonal(Position.nextTLBR(position), line + grid(row)(col))
+        /** @return all diagonals (top-right to bottom-left) */
+        def diagonalizeTRBL: Seq[(Position, String)] =
+            val grid = lines.map(_.toSeq)
+            val rows = grid.length
+            val cols = grid(0).length
 
-        val line = collectDiagonal(startPosition, "")
-        (startPosition, line)
+            def collectDiagonal(startPosition: Position): (Position, String) =
+                def collectDiagonal(position: Position, line: String): String =
+                    val (row, col) = position
+                    if row >= rows || col < 0 then line
+                    // format: off
+                    else collectDiagonal(Position.nextTRBL(position), line + grid(row)(col))
+                    // format: on
+                end collectDiagonal
 
-      val diagonals = (0 until cols).map(col => collectDiagonal(0, col)) ++
-        (1 until rows).map(row => collectDiagonal(row, 0))
-      diagonals
+                val line = collectDiagonal(startPosition, "")
+                (startPosition, line)
+            end collectDiagonal
 
-    def diagonalizeTRBL: Seq[(Position, String)] =
-      val grid = lines.map(_.toSeq)
-      val rows = grid.length
-      val cols = grid(0).length
+            val diagonals = (0 until rows)
+                .map(row => collectDiagonal(row, cols - 1)) ++
+                (0 until cols - 1).map(col => collectDiagonal(0, col))
+            diagonals
+        end diagonalizeTRBL
+    end extension
 
-      def collectDiagonal(startPosition: Position): (Position, String) =
-        def collectDiagonal(position: Position, line: String): String =
-          position match
-            case (row, col) if (row >= rows || col < 0) => line
-            case (row, col)                             =>
-              collectDiagonal(Position.nextTRBL(position), line + grid(row)(col))
+    /** @return the number of XMASes in the puzzle/grid */
+    def part1(puzzle: Seq[String]): Int =
+        require(puzzle.nonEmpty, "puzzle.nonEmpty")
+        logger.debug(s"puzzle: ${puzzle}")
 
-        val line = collectDiagonal(startPosition, "")
-        (startPosition, line)
+        val what = "XMAS"
 
-      val diagonals = (0 until rows)
-        .map(row => collectDiagonal(row, cols - 1)) ++ (0 until cols - 1)
-        .map(col => collectDiagonal(0, col))
-      diagonals
+        puzzle.findAll(what) + puzzle.findAll(what.reverse) +
+            puzzle.transposed.findAll(what) +
+            puzzle.transposed.findAll(what.reverse) +
+            puzzle.diagonalizeTLBR.map(_._2).findAll(what) +
+            puzzle.diagonalizeTLBR.map(_._2).findAll(what.reverse) +
+            puzzle.diagonalizeTRBL.map(_._2).findAll(what) +
+            puzzle.diagonalizeTRBL.map(_._2).findAll(what.reverse)
+    end part1
 
-  /** @return the number of XMASes in the puzzle/grid */
-  def part1(puzzle: Seq[String]): Int =
-    require(puzzle.nonEmpty, "puzzle.nonEmpty")
-    logger.debug(s"puzzle: ${puzzle}")
+    /** @return the number of X-MASes in the puzzle/grid */
+    def part2(puzzle: Seq[String]): Int =
+        require(puzzle.nonEmpty, "puzzle.nonEmpty")
+        logger.debug(s"puzzle: ${puzzle}")
 
-    val what = "XMAS"
+        val what = "MAS"
 
-    puzzle.findAll(what) + puzzle.findAll(what.reverse) +
-      puzzle.transposed.findAll(what) +
-      puzzle.transposed.findAll(what.reverse) + puzzle.diagonalizeTLBR.map(_._2)
-        .findAll(what) + puzzle.diagonalizeTLBR.map(_._2)
-        .findAll(what.reverse) + puzzle.diagonalizeTRBL.map(_._2)
-        .findAll(what) + puzzle.diagonalizeTRBL.map(_._2).findAll(what.reverse)
+        // format: off
+        val positionsTLBR =
+            puzzle.diagonalizeTLBR.findAllPos(what, Position.nextTLBR) ++
+            puzzle.diagonalizeTLBR.findAllPos(what.reverse, Position.nextTLBR)
+        val positionsTRBL =
+            puzzle.diagonalizeTRBL.findAllPos(what, Position.nextTRBL) ++
+            puzzle.diagonalizeTRBL.findAllPos(what.reverse, Position.nextTRBL)
+        // format: on
 
-  /** @return the number of X-MASes in the puzzle/grid */
-  def part2(puzzle: Seq[String]): Int =
-    require(puzzle.nonEmpty, "puzzle.nonEmpty")
-    logger.debug(s"puzzle: ${puzzle}")
+        // A little bit of a hack. We know that the A is the next character
+        // from the start of the string. So we can just look for the As
+        // on the TLBR and TRBL, intersect them and then get the size of the
+        // intersection.
+        val positionsOfAsTLBR = positionsTLBR.map(p => Position.nextTLBR(p))
+        val positionsOfAsTRBL = positionsTRBL.map(p => Position.nextTRBL(p))
 
-    val what = "MAS"
-
-    val positionsTLBR     = puzzle.diagonalizeTLBR
-      .findAllPos(what, Position.nextTLBR) ++
-      puzzle.diagonalizeTLBR.findAllPos(what.reverse, Position.nextTLBR)
-    // A little bit of a hack. We know that the A is the next character
-    // from the start of the string
-    val positionsOfAsTLBR = positionsTLBR.map(p => Position.nextTLBR(p))
-
-    val positionsTRBL     = puzzle.diagonalizeTRBL
-      .findAllPos(what, Position.nextTRBL) ++
-      puzzle.diagonalizeTRBL.findAllPos(what.reverse, Position.nextTRBL)
-    val positionsOfAsTRBL = positionsTRBL.map(p => Position.nextTRBL(p))
-
-    positionsOfAsTRBL.intersect(positionsOfAsTLBR).size
+        positionsOfAsTRBL.intersect(positionsOfAsTLBR).size
+    end part2
+end Day04

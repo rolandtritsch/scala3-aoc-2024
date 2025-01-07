@@ -2,7 +2,8 @@ package aoc2024
 
 /** Day12 - Garden Groups
   *
-  * @see https://adventofcode.com/2024/day/12
+  * @see
+  *   https://adventofcode.com/2024/day/12
   *
   * This is going to be interesting. First we have to build/collect the regions.
   * We can do this with flood-fill depth-first traversal.
@@ -55,154 +56,169 @@ package aoc2024
   */
 
 object Day12:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  case class Position(x: Int, y: Int)
+    case class Position(x: Int, y: Int)
 
-  object Position:
-    implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
+    object Position:
+        implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
 
-  case class Plot(plant: Char, position: Position, neighbors: Set[Position])
+    case class Plot(plant: Char, position: Position, neighbors: Set[Position])
 
-  object Plot:
-    implicit val ordering: Ordering[Plot] = Ordering.by(_.position)
+    object Plot:
+        implicit val ordering: Ordering[Plot] = Ordering.by(_.position)
 
-  case class Region(
-    location: Position,
-    plant: Char,
-    plots: Set[Position],
-    area: Int,
-    perimeter: Int,
-    sides: Int,
-  ):
-    require(plant.isLetter, "plant.isLetter")
-    require(plots.nonEmpty, "plots.nonEmpty")
-    require(area > 0, "area > 0")
-    require(perimeter > 0, "perimeter > 0")
+    case class Region(
+        location: Position,
+        plant: Char,
+        plots: Set[Position],
+        area: Int,
+        perimeter: Int,
+        sides: Int,
+    ):
+        require(plant.isLetter, "plant.isLetter")
+        require(plots.nonEmpty, "plots.nonEmpty")
+        require(area > 0, "area > 0")
+        require(perimeter > 0, "perimeter > 0")
+    end Region
 
-  type Dimensions = (Int, Int)
+    type Dimensions = (Int, Int)
 
-  class Garden(plots: Set[Plot], dimensions: Dimensions):
-    val plotsByPlant = plots.groupBy(_.plant)
+    class Garden(plots: Set[Plot], dimensions: Dimensions):
+        val plotsByPlant = plots.groupBy(_.plant)
 
-    val regions      = plotsByPlant.values
-      .foldLeft(Set.empty[Region]) { (regions, plots) =>
-        regions ++ collectRegions(plots, Set.empty[Region])
-      }
+        val regions = plotsByPlant.values
+            .foldLeft(Set.empty[Region]) { (regions, plots) =>
+                regions ++ collectRegions(plots, Set.empty[Region])
+            }
 
-    def collectRegion(plots: Set[Plot]): (Region, Set[Plot]) =
-      val validPositions = plots.map(_.position)
+        def collectRegion(plots: Set[Plot]): (Region, Set[Plot]) =
+            val validPositions = plots.map(_.position)
 
-      def neighbors(p: Position): Set[Position] = Set(
-        Position(p.x - 1, p.y),
-        Position(p.x + 1, p.y),
-        Position(p.x, p.y - 1),
-        Position(p.x, p.y + 1),
-      ).filter(validPositions.contains)
+            def neighbors(p: Position): Set[Position] = Set(
+              Position(p.x - 1, p.y),
+              Position(p.x + 1, p.y),
+              Position(p.x, p.y - 1),
+              Position(p.x, p.y + 1),
+            ).filter(validPositions.contains)
 
-      def dfs(position: Position, visited: Set[Position]): Set[Position] =
-        if visited.contains(position) then visited
-        else
-          val newVisited = visited + position
-          neighbors(position).foldLeft(newVisited) { (acc, neighbor) =>
-            dfs(neighbor, acc)
-          }
+            def dfs(position: Position, visited: Set[Position]): Set[Position] =
+                if visited.contains(position) then visited
+                else
+                    val newVisited = visited + position
+                    neighbors(position).foldLeft(newVisited): (acc, neighbor) =>
+                        dfs(neighbor, acc)
 
-      val location        = validPositions.toList.sorted.head
-      val regionPositions = dfs(location, Set.empty)
-      val regionPlots = plots.filter(p => regionPositions.contains(p.position))
-      val remainingPositions = validPositions.diff(regionPositions)
-      val remainingPlots     = plots
-        .filter(p => remainingPositions.contains(p.position))
-      val area               = regionPlots.size
-      val perimeter          = regionPlots.toList.map(_.neighbors.size).sum
-      val sides = countSides(regionPositions, regionPlots.head.plant)
+            val location = validPositions.toList.sorted.head
+            val regionPositions = dfs(location, Set.empty)
+            val regionPlots = plots
+                .filter(p => regionPositions.contains(p.position))
+            val remainingPositions = validPositions.diff(regionPositions)
+            val remainingPlots = plots
+                .filter(p => remainingPositions.contains(p.position))
+            val area = regionPlots.size
+            val perimeter = regionPlots.toList.map(_.neighbors.size).sum
+            val sides = countSides(regionPositions, regionPlots.head.plant)
 
-      (
-        Region(
-          location,
-          plots.head.plant,
-          regionPositions,
-          area,
-          perimeter,
-          sides,
-        ),
-        remainingPlots,
-      )
+            (
+              Region(
+                location,
+                plots.head.plant,
+                regionPositions,
+                area,
+                perimeter,
+                sides,
+              ),
+              remainingPlots,
+            )
+        end collectRegion
 
-    def countSides(positions: Set[Position], plant: Char) =
-      val ps = positions.toList.map { case Position(x, y) => ((x, y), plant) }
-        .toMap.withDefault(_ => '.')
-      new corner.CornerCounter(ps).corners.map(_._2).sum
+        def countSides(positions: Set[Position], plant: Char) =
+            val ps = positions.toList.map { case Position(x, y) =>
+                ((x, y), plant)
+            }.toMap.withDefault(_ => '.')
+            new corner.CornerCounter(ps).corners.map(_._2).sum
+        end countSides
 
-    def collectRegions(plots: Set[Plot], regions: Set[Region]): Set[Region] =
-      if plots.isEmpty then regions
-      else
-        val (region, remainingPlots) = collectRegion(plots)
-        collectRegions(remainingPlots, regions + region)
+        def collectRegions(
+            plots: Set[Plot],
+            regions: Set[Region],
+        ): Set[Region] =
+            if plots.isEmpty then regions
+            else
+                val (region, remainingPlots) = collectRegion(plots)
+                collectRegions(remainingPlots, regions + region)
 
-    def price: Int = regions.toList.map { region =>
-      region.area * region.perimeter
-    }.sum
+        def price: Int = regions.toList.map { region =>
+            region.area * region.perimeter
+        }.sum
 
-    def price0: Int = regions.toList.map { region =>
-      region.area * region.sides
-    }.sum
+        def price0: Int = regions.toList.map { region =>
+            region.area * region.sides
+        }.sum
+    end Garden
 
-  /** @return the file for the given filename as parsed elements */
-  def readFile(filename: String): Garden =
-    import scala.io.Source
+    /** @return the file for the given filename as parsed elements */
+    def readFile(filename: String): Garden =
+        import scala.io.Source
 
-    def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] =
-      val (maxX, maxY)         = (garden.size, garden(0).size)
-      val thisPlant            = garden(p.x)(p.y)
-      val positionsToCheck     = Set(
-        Position(p.x - 1, p.y),
-        Position(p.x + 1, p.y),
-        Position(p.x, p.y - 1),
-        Position(p.x, p.y + 1),
-      )
-      val inGardenNeigbors     = positionsToCheck.filter { p =>
-        p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
-      }.filter { p =>
-        val thatPlant = garden(p.x)(p.y)
-        thisPlant != thatPlant
-      }
-      val outOfGardenNeighbors = positionsToCheck.filter { p =>
-        p.x < 0 || p.x >= maxX || p.y < 0 || p.y >= maxY
-      }
-      inGardenNeigbors ++ outOfGardenNeighbors
+        def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] =
+            val (maxX, maxY) = (garden.size, garden(0).size)
+            val thisPlant = garden(p.x)(p.y)
+            val positionsToCheck = Set(
+              Position(p.x - 1, p.y),
+              Position(p.x + 1, p.y),
+              Position(p.x, p.y - 1),
+              Position(p.x, p.y + 1),
+            )
+            val inGardenNeigbors = positionsToCheck.filter { p =>
+                p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
+            }.filter { p =>
+                val thatPlant = garden(p.x)(p.y)
+                thisPlant != thatPlant
+            }
+            val outOfGardenNeighbors = positionsToCheck.filter { p =>
+                p.x < 0 || p.x >= maxX || p.y < 0 || p.y >= maxY
+            }
+            inGardenNeigbors ++ outOfGardenNeighbors
+        end neighbors
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromResource(filename)
-    try
-      val garden = source.getLines().toSeq.map { line => line.toCharArray() }
-        .toArray
-      val dimensions = (garden.size, garden(0).size)
-      val plots      = (0 until dimensions._1).flatMap { x =>
-        (0 until dimensions._2).map { y =>
-          val plant = garden(x)(y)
-          val p     = Position(x, y)
-          val ns    = neighbors(p, garden)
-          Plot(plant, p, ns)
-        }
-      }.toSet
+        val source = Source.fromResource(filename)
+        try
+            val garden = source.getLines().toSeq.map { line =>
+                line.toCharArray()
+            }.toArray
+            val dimensions = (garden.size, garden(0).size)
+            val plots = (0 until dimensions._1).flatMap { x =>
+                (0 until dimensions._2).map { y =>
+                    val plant = garden(x)(y)
+                    val p = Position(x, y)
+                    val ns = neighbors(p, garden)
+                    Plot(plant, p, ns)
+                }
+            }.toSet
 
-      Garden(plots, dimensions)
-    finally source.close()
+            Garden(plots, dimensions)
+        finally source.close()
+        end try
+    end readFile
 
-  /** @return the price to fence the garden */
-  def part1(garden: Garden): Int =
-    require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
-    logger.debug(s"garden: ${garden}")
+    /** @return the price to fence the garden */
+    def part1(garden: Garden): Int =
+        require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
+        logger.debug(s"garden: ${garden}")
 
-    garden.price
+        garden.price
+    end part1
 
-  /** @return the solution for part2 */
-  def part2(garden: Garden): Int =
-    require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
-    logger.debug(s"garden: ${garden}")
+    /** @return the solution for part2 */
+    def part2(garden: Garden): Int =
+        require(garden.regions.nonEmpty, "garden.regions.nonEmpty")
+        logger.debug(s"garden: ${garden}")
 
-    garden.price0
+        garden.price0
+    end part2
+end Day12

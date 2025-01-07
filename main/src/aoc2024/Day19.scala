@@ -17,41 +17,46 @@ package aoc2024
   */
 
 object Day19:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  type Towel  = String
-  type Design = String
+    type Towel = String
+    type Design = String
 
-  /** @return the set of tokens */
-  def readFile(filename: String): (Set[Towel], Set[Design]) =
-    import scala.io.Source
+    /** @return the set of tokens */
+    def readFile(filename: String): (Set[Towel], Set[Design]) =
+        import scala.io.Source
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromResource(filename)
-    try
-      val lines   = source.getLines().toSeq
-      val towels  = lines.head.split(",").map(_.trim).toSet
-      val designs = lines.tail.filter(!_.isEmpty).map(_.trim).toSet
-      (towels, designs)
-    finally source.close()
+        val source = Source.fromResource(filename)
+        try
+            val lines = source.getLines().toSeq
+            val towels = lines.head.split(",").map(_.trim).toSet
+            val designs = lines.tail.filter(!_.isEmpty).map(_.trim).toSet
+            (towels, designs)
+        finally source.close()
+        end try
+    end readFile
 
-  /** @return the number of possible towels */
-  def part1(onsen: (Set[Towel], Set[Design])): Int =
-    require(onsen._1.nonEmpty, "onsen._1.nonEmpty")
-    require(onsen._2.nonEmpty, "onsen._2.nonEmpty")
-    logger.debug(s"onsen: ${onsen}")
+    /** @return the number of possible towels */
+    def part1(onsen: (Set[Towel], Set[Design])): Int =
+        require(onsen._1.nonEmpty, "onsen._1.nonEmpty")
+        require(onsen._2.nonEmpty, "onsen._2.nonEmpty")
+        logger.debug(s"onsen: ${onsen}")
 
-    val (towels, designs) = onsen
-    val parser            = raw"(${towels.mkString("|")})+".r
-    designs.count(parser.matches)
+        val (towels, designs) = onsen
+        val parser = raw"(${towels.mkString("|")})+".r
+        designs.count(parser.matches)
+    end part1
 
-  /** @return the solution for part2 */
-  def part2(onsen: (Set[Towel], Set[Design])): Int =
-    require(onsen._1.nonEmpty, "onsen._1.nonEmpty")
-    require(onsen._2.nonEmpty, "onsen._2.nonEmpty")
-    logger.debug(s"onsen: ${onsen}")
+    /** @return the solution for part2 */
+    def part2(onsen: (Set[Towel], Set[Design])): Int =
+        require(onsen._1.nonEmpty, "onsen._1.nonEmpty")
+        require(onsen._2.nonEmpty, "onsen._2.nonEmpty")
+        logger.debug(s"onsen: ${onsen}")
 
-    val (towels, designs) = onsen
-    designs.size
+        val (towels, designs) = onsen
+        designs.size
+    end part2
+end Day19

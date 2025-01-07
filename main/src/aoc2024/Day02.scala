@@ -17,72 +17,84 @@ package aoc2024
   */
 
 object Day02:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  type Report = Seq[Int]
+    type Report = Seq[Int]
 
-  /** @return the reports from the given file */
-  def readFile(filename: String): Seq[Report] =
-    import scala.io.Source
+    /** @return the reports from the given file */
+    def readFile(filename: String): Seq[Report] =
+        import scala.io.Source
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"${filename}")
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"${filename}")
 
-    val source = Source.fromResource(filename)
-    try source.getLines().toSeq.map { line =>
-        logger.debug(s"line: ${line}")
+        val source = Source.fromResource(filename)
+        try
+            source.getLines().toSeq.map: line =>
+                logger.debug(s"line: ${line}")
 
-        val parsed = line.split("\\s+").map(_.toInt)
-        logger.debug(s"parsed: ${parsed}")
+                val parsed = line.split("\\s+").map(_.toInt)
+                logger.debug(s"parsed: ${parsed}")
 
-        parsed.toSeq
-      }
-    finally source.close()
+                parsed.toSeq
+        finally source.close()
+        end try
+    end readFile
 
-  extension(report: Report)
+    extension (report: Report)
 
-    def isSafe: Boolean =
-      require(report.size >= 2, "report.size >= 2")
-      logger.debug(s"report: ${report}")
+        def isSafe: Boolean =
+            require(report.size >= 2, "report.size >= 2")
+            logger.debug(s"report: ${report}")
 
-      def levelIsSafe(isIncreasing: Boolean, prevLevel: Int, level: Int) =
-        val levelDiff       = math.abs(prevLevel - level)
-        val levelDiffIsSafe = (1 to 3).contains(levelDiff)
+            def levelIsSafe(isIncreasing: Boolean, prevLevel: Int, level: Int) =
+                val levelDiff = math.abs(prevLevel - level)
+                val levelDiffIsSafe = (1 to 3).contains(levelDiff)
 
-        if isIncreasing then prevLevel < level && levelDiffIsSafe
-        else prevLevel > level && levelDiffIsSafe
+                if isIncreasing then prevLevel < level && levelDiffIsSafe
+                else prevLevel > level && levelDiffIsSafe
+            end levelIsSafe
 
-      val (_, _, countOfSafeLevels) = report.tail
-        .foldLeft(report(0) < report(1), report(0), 0): (soFar, level) =>
-          logger.debug(s"soFar: ${soFar}, level: ${level}")
+            def foldLevel(soFar: (Boolean, Int, Int), level: Int) =
+                logger.debug(s"soFar: ${soFar}, level: ${level}")
 
-          val (isIncreasing, prevLevel, safeCounter) = soFar
+                val (isIncreasing, prevLevel, safeCounter) = soFar
 
-          val thisIsSafe      = levelIsSafe(isIncreasing, prevLevel, level)
-          val nextLevel       = if thisIsSafe then level else prevLevel
-          val nextSafeCounter =
-            if thisIsSafe then safeCounter + 1 else safeCounter
+                val thisIsSafe = levelIsSafe(isIncreasing, prevLevel, level)
+                val nextLevel = if thisIsSafe then level else prevLevel
+                val nextSafeCounter =
+                    if thisIsSafe then safeCounter + 1 else safeCounter
 
-          (isIncreasing, nextLevel, nextSafeCounter)
+                (isIncreasing, nextLevel, nextSafeCounter)
+            end foldLevel
 
-      logger.debug(s"report: ${report}, countOfSafeLevels: ${countOfSafeLevels}")
-      countOfSafeLevels == report.size - 1
+            val (_, _, countOfSafeLevels) = report.tail
+                .foldLeft(report(0) < report(1), report(0), 0)(foldLevel)
 
-    def isSafe0: Boolean = report.indices.exists { i =>
-      val reportWithOneRemoved = report.take(i) ++ report.drop(i + 1)
-      reportWithOneRemoved.isSafe
-    }
+            logger.debug(
+                s"report: ${report}, countOfSafeLevels: ${countOfSafeLevels}"
+            )
+            countOfSafeLevels == report.size - 1
+        end isSafe
 
-  /** @return the solution for part1 */
-  def part1(reports: Seq[Report]): Int =
-    require(reports.nonEmpty, "reports.nonEmpty")
-    logger.debug(s"reports: ${reports}")
+        def isSafe0: Boolean = report.indices.exists: i =>
+            val reportWithOneRemoved = report.take(i) ++ report.drop(i + 1)
+            reportWithOneRemoved.isSafe
+    end extension
 
-    reports.count(_.isSafe)
+    /** @return the solution for part1 */
+    def part1(reports: Seq[Report]): Int =
+        require(reports.nonEmpty, "reports.nonEmpty")
+        logger.debug(s"reports: ${reports}")
 
-  /** @return the solution for part2 */
-  def part2(reports: Seq[Report]): Int =
-    require(reports.nonEmpty, "reports.nonEmpty")
-    logger.debug(s"reports: ${reports}")
+        reports.count(_.isSafe)
+    end part1
 
-    reports.count { r => r.isSafe || r.isSafe0 }
+    /** @return the solution for part2 */
+    def part2(reports: Seq[Report]): Int =
+        require(reports.nonEmpty, "reports.nonEmpty")
+        logger.debug(s"reports: ${reports}")
+
+        reports.count(r => r.isSafe || r.isSafe0)
+    end part2
+end Day02

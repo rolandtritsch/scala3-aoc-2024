@@ -31,66 +31,84 @@ package aoc2024
   */
 
 object Day07:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  case class Equation(val result: BigInt, val numbers: List[BigInt]):
+    case class Equation(val result: BigInt, val numbers: List[BigInt]):
 
-    private def check(
-      current: BigInt,
-      result: BigInt,
-      numbers: List[BigInt],
-      checkConcat: Boolean,
-    ): Boolean = numbers match
-      case Nil => if current == result then true else false
-      case number :: remainingNumbers =>
-        logger.debug(s"current: ${current}, result: ${result}, numbers: ${numbers}, checkConcat: ${checkConcat}")
+        private def check(
+            current: BigInt,
+            result: BigInt,
+            numbers: List[BigInt],
+            checkConcat: Boolean,
+        ): Boolean = numbers match
+            case Nil => if current == result then true else false
+            case number :: remainingNumbers =>
+                logger.debug(
+                    s"current: ${current}, result: ${result}, numbers: ${numbers}, checkConcat: ${checkConcat}"
+                )
 
-        check(current + number, result, remainingNumbers, checkConcat) ||
-        check(current * number, result, remainingNumbers, checkConcat) ||
-        (check(
-          BigInt(current.toString + number.toString),
-          result,
-          remainingNumbers,
-          checkConcat,
-        ) && checkConcat)
+                check(
+                  current + number,
+                  result,
+                  remainingNumbers,
+                  checkConcat,
+                ) || check(
+                  current * number,
+                  result,
+                  remainingNumbers,
+                  checkConcat,
+                ) ||
+                (check(
+                  BigInt(current.toString + number.toString),
+                  result,
+                  remainingNumbers,
+                  checkConcat,
+                ) && checkConcat)
+        end check
 
-    /** @return true, if the equation is valid */
-    def isValid(checkConcat: Boolean = false): Boolean =
-      check(numbers.head, result, numbers.tail, checkConcat)
+        /** @return true, if the equation is valid */
+        def isValid(checkConcat: Boolean = false): Boolean =
+            check(numbers.head, result, numbers.tail, checkConcat)
+    end Equation
 
-  /** @return the file for the given filename as parsed elements */
-  def readFile(filename: String): List[Equation] =
-    import scala.io.Source
+    /** @return the file for the given filename as parsed elements */
+    def readFile(filename: String): List[Equation] =
+        import scala.io.Source
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromResource(filename)
-    try source.getLines().toList.map { line =>
-        logger.debug(s"line: ${line}")
+        val source = Source.fromResource(filename)
+        try 
+            source.getLines().toList.map: line =>
+                logger.debug(s"line: ${line}")
 
-        val parsed = line.split(":")
-        logger.debug(s"parsed: ${parsed}")
+                val parsed = line.split(":")
+                logger.debug(s"parsed: ${parsed}")
 
-        val result  = BigInt(parsed(0))
-        val numbers = parsed(1).trim.split(" ").map(BigInt(_)).toList
+                val result = BigInt(parsed(0))
+                val numbers = parsed(1).trim.split(" ").map(BigInt(_)).toList
 
-        Equation(result, numbers)
-      }
-    finally source.close()
+                Equation(result, numbers)
+        finally source.close()
+        end try
+    end readFile
 
-  /** @return the sum of valid equation results */
-  def part1(equations: List[Equation]): BigInt =
-    require(equations.nonEmpty, "equations.nonEmpty")
-    logger.debug(s"equations: ${equations}")
+    /** @return the sum of valid equation results */
+    def part1(equations: List[Equation]): BigInt =
+        require(equations.nonEmpty, "equations.nonEmpty")
+        logger.debug(s"equations: ${equations}")
 
-    val validEquations = equations.filter(_.isValid())
-    validEquations.map(_.result).sum
+        val validEquations = equations.filter(_.isValid())
+        validEquations.map(_.result).sum
+    end part1
 
-  /** @return the sum of valid equation results (with concat) */
-  def part2(equations: List[Equation]): BigInt =
-    require(equations.nonEmpty, "equations.nonEmpty")
-    logger.debug(s"equations: ${equations}")
+    /** @return the sum of valid equation results (with concat) */
+    def part2(equations: List[Equation]): BigInt =
+        require(equations.nonEmpty, "equations.nonEmpty")
+        logger.debug(s"equations: ${equations}")
 
-    val validEquations = equations.filter(_.isValid(true))
-    validEquations.map(_.result).sum
+        val validEquations = equations.filter(_.isValid(true))
+        validEquations.map(_.result).sum
+    end part2
+end Day07

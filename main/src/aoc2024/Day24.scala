@@ -32,115 +32,127 @@ package aoc2024
   */
 
 object Day24:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  enum Operation:
-    case AND
-    case OR
-    case XOR
+    enum Operation:
+        case AND
+        case OR
+        case XOR
 
-  extension(op: Operation)
+    extension (op: Operation)
+        def str: String = op match
+            case Operation.AND => "&&"
+            case Operation.OR  => "||"
+            case Operation.XOR => "^"
 
-    def str: String = op match
-      case Operation.AND => "&&"
-      case Operation.OR  => "||"
-      case Operation.XOR => "^"
+    sealed trait LeftHandSide
+    case class LeftVariable(name: String) extends LeftHandSide:
+        override def toString(): String = s"${name}"
 
-  sealed trait LeftHandSide
-  case class LeftVariable(name: String) extends LeftHandSide:
-    override def toString(): String = s"${name}"
+    sealed trait RightHandSide
+    case class RightVariable(name: String) extends RightHandSide:
+        override def toString(): String = s"${name}"
+    case class Value(value: Boolean) extends RightHandSide:
+        override def toString(): String = s"${value}"
 
-  sealed trait RightHandSide
-  case class RightVariable(name: String) extends RightHandSide:
-    override def toString(): String = s"${name}"
-  case class Value(value: Boolean)       extends RightHandSide:
-    override def toString(): String = s"${value}"
+    case class Expression(
+        left: LeftHandSide,
+        op: Operation,
+        right: RightHandSide,
+    ) extends RightHandSide:
+        override def toString(): String = s"${left} ${op.str} ${right}"
+    end Expression
 
-  case class Expression(left: LeftHandSide, op: Operation, right: RightHandSide)
-    extends RightHandSide:
-    override def toString(): String = s"${left} ${op.str} ${right}"
+    case class Assignment(left: LeftHandSide, right: RightHandSide):
+        override def toString(): String = s"def ${left} = ${right}"
 
-  case class Assignment(left: LeftHandSide, right: RightHandSide):
-    override def toString(): String = s"def ${left} = ${right}"
+    /** @return the Assignments for the initial values */
+    def readFileInitials(filename: String): Set[Assignment] =
+        import scala.io.Source
 
-  /** @return the Assignments for the initial values */
-  def readFileInitials(filename: String): Set[Assignment] =
-    import scala.io.Source
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        val source = Source.fromResource(filename)
+        try source.getLines().toSeq.map { line =>
+                logger.debug(s"line: ${line}")
+                // x00: 1
+                val parser = """(\w+): ([0,1])""".r
+                val parsed = parser.findAllIn(line).matchData.next.subgroups
+                assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
+                logger.debug(s"parsed: ${parsed}")
+                Assignment(LeftVariable(parsed(0)), Value(parsed(1).toInt == 1))
+            }.toSet
+        finally source.close()
+        end try
+    end readFileInitials
 
-    val source = Source.fromResource(filename)
-    try source.getLines().toSeq.map { line =>
-        logger.debug(s"line: ${line}")
-        // x00: 1
-        val parser = """(\w+): ([0,1])""".r
-        val parsed = parser.findAllIn(line).matchData.next.subgroups
-        assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
-        logger.debug(s"parsed: ${parsed}")
-        Assignment(LeftVariable(parsed(0)), Value(parsed(1).toInt == 1))
-      }.toSet
-    finally source.close()
+    /** @return the Assignments for the statements */
+    def readFileStatements(filename: String): Set[Assignment] =
+        import scala.io.Source
 
-  /** @return the Assignments for the statements */
-  def readFileStatements(filename: String): Set[Assignment] =
-    import scala.io.Source
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        val source = Source.fromResource(filename)
+        try source.getLines().toSeq.map { line =>
+                logger.debug(s"line: ${line}")
+                // x00 AND y00 -> z00
+                val parser = """(\w+) (AND|OR|XOR) (\w+) -> (\w+)""".r
+                val parsed = parser.findAllIn(line).matchData.next.subgroups
+                logger.debug(s"parsed: ${parsed}")
+                assert(parsed.size == 4, s"parsed.size == 4: ${parsed.size}")
+                Assignment(
+                  LeftVariable(parsed(3)),
+                  Expression(
+                    LeftVariable(parsed(0)),
+                    Operation.valueOf(parsed(1)),
+                    RightVariable(parsed(2)),
+                  ),
+                )
+            }.toSet
+        finally source.close()
+        end try
+    end readFileStatements
 
-    val source = Source.fromResource(filename)
-    try source.getLines().toSeq.map { line =>
-        logger.debug(s"line: ${line}")
-        // x00 AND y00 -> z00
-        val parser = """(\w+) (AND|OR|XOR) (\w+) -> (\w+)""".r
-        val parsed = parser.findAllIn(line).matchData.next.subgroups
-        logger.debug(s"parsed: ${parsed}")
-        assert(parsed.size == 4, s"parsed.size == 4: ${parsed.size}")
-        Assignment(
-          LeftVariable(parsed(3)),
-          Expression(
-            LeftVariable(parsed(0)),
-            Operation.valueOf(parsed(1)),
-            RightVariable(parsed(2)),
-          ),
-        )
-      }.toSet
-    finally source.close()
+    /** @return the evaluation of the code */
+    def evaluate(lines: String): String =
+        import com.eed3si9n.eval
+        eval.Eval().evalInfer(lines).getValue(this.getClass.getClassLoader)
+            .toString
 
-  /** @return the evaluation of the code */
-  def evaluate(lines: String): String =
-    import com.eed3si9n.eval
-    eval.Eval().evalInfer(lines).getValue(this.getClass.getClassLoader).toString
+    /** @return the code snippet that needs to be evaluated */
+    def generate(statements: Set[Assignment]): String =
+        val vars = statements.map { s =>
+            s match
+                case Assignment(LeftVariable(name), _) => name
+        }.filter(_.startsWith("z")).toList.sorted.reverse.mkString(",")
+        val convertToBitString = s"List(${vars}).map(if(_) 1 else 0).mkString"
 
-  /** @return the code snippet that needs to be evaluated */
-  def generate(statements: Set[Assignment]): String =
-    val vars               = statements.map { s =>
-      s match
-        case Assignment(LeftVariable(name), _) => name
-    }.filter(_.startsWith("z")).toList.sorted.reverse.mkString(",")
-    val convertToBitString = s"List(${vars}).map(if(_) 1 else 0).mkString"
+        statements.map(_.toString).toList.sorted.mkString("\n") + "\n" +
+            convertToBitString
+    end generate
 
-    statements.map(_.toString).toList.sorted.mkString("\n") + "\n" +
-      convertToBitString
+    /** @return the Int of the resulting bit string */
+    def part1(s: (Set[Assignment], Set[Assignment])): BigInt =
+        require(s._1.nonEmpty, "s._1.nonEmpty")
+        require(s._2.nonEmpty, "s._2.nonEmpty")
+        logger.debug(s": ${s}")
 
-  /** @return the Int of the resulting bit string */
-  def part1(s: (Set[Assignment], Set[Assignment])): BigInt =
-    require(s._1.nonEmpty, "s._1.nonEmpty")
-    require(s._2.nonEmpty, "s._2.nonEmpty")
-    logger.debug(s": ${s}")
+        val statements = s._1 ++ s._2
 
-    val statements = s._1 ++ s._2
+        val bits = evaluate(generate(statements))
+        BigInt(bits, 2)
+    end part1
 
-    val bits = evaluate(generate(statements))
-    BigInt(bits, 2)
+    /** @return the solution for part2 */
+    def part2(s: (Set[Assignment], Set[Assignment])): Int =
+        require(s._1.nonEmpty, "s._1.nonEmpty")
+        require(s._2.nonEmpty, "s._2.nonEmpty")
+        logger.debug(s": ${s}")
 
-  /** @return the solution for part2 */
-  def part2(s: (Set[Assignment], Set[Assignment])): Int =
-    require(s._1.nonEmpty, "s._1.nonEmpty")
-    require(s._2.nonEmpty, "s._2.nonEmpty")
-    logger.debug(s": ${s}")
+        val statements = s._1 ++ s._2
 
-    val statements = s._1 ++ s._2
-
-    statements.size
+        statements.size
+    end part2
+end Day24

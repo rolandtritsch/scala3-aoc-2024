@@ -43,116 +43,130 @@ package aoc2024
   */
 
 object Day11:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  /** @return parse the given file and return the list of numbers */
-  def readFile(filename: String): List[Stone] =
-    import scala.io.Source
+    /** @return parse the given file and return the list of numbers */
+    def readFile(filename: String): List[Stone] =
+        import scala.io.Source
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    val source = Source.fromResource(filename)
-    try source.getLines.next.stones
-    finally source.close()
+        val source = Source.fromResource(filename)
+        try source.getLines.next.stones
+        finally source.close()
+    end readFile
 
-  type Stone      = Long
-  type RuleResult = (Stone, Option[Stone], Boolean)
-  type Rule       = Stone => RuleResult
+    type Stone = Long
+    type RuleResult = (Stone, Option[Stone], Boolean)
+    type Rule = Stone => RuleResult
 
-  private def ruleZero(stone: Stone): RuleResult =
-    if stone == 0 then (1, None, true) else (0, None, false)
+    private def ruleZero(stone: Stone): RuleResult =
+        if stone == 0 then (1, None, true) else (0, None, false)
 
-  private def ruleEven(stone: Stone): RuleResult =
-    val stoneString = stone.toString
-    if stoneString.length % 2 == 0 then
-      val (first, second) = stoneString.splitAt(stoneString.length / 2)
-      (first.toLong, Some(second.toLong), true)
-    else (stone, None, false)
+    private def ruleEven(stone: Stone): RuleResult =
+        val stoneString = stone.toString
+        if stoneString.length % 2 == 0 then
+            val (first, second) = stoneString.splitAt(stoneString.length / 2)
+            (first.toLong, Some(second.toLong), true)
+        else (stone, None, false)
+    end ruleEven
 
-  private def ruleDefault(stone: Stone): RuleResult = (stone * 2024, None, true)
+    private def ruleDefault(stone: Stone): RuleResult =
+        (stone * 2024, None, true)
 
-  // not private to support testing
-  val rules = List(ruleZero, ruleEven, ruleDefault)
+    // not private to support testing
+    val rules = List(ruleZero, ruleEven, ruleDefault)
 
-  extension(stones: List[Stone])
-
-    /** @return the list of stones after the rules where applied */
-    def apply(rules: List[Rule]): List[Stone] = stones.flatMap { stone =>
-      rules.foldLeft(List[Stone](), false) { case ((newStones, done), rule) =>
-        if done then (newStones, done)
-        else
-          rule(stone) match
-            case (s, None, done)      => (List(s), done)
-            case (s0, Some(s1), done) => (List(s0, s1), done)
-            case _ => throw new RuntimeException("Unexpected case")
-      }._1
-    }
-
-    /** @return the list of stones after the rules have been applied
-      *   (recursively)
-      */
-    def applyN(rules: List[Rule], n: Long): List[Stone] =
-      if n > 0 then stones.apply(rules).applyN(rules, n - 1) else stones
-
-    /** @return the sum of all (parallel) list sizes */
-    def ssize(rules: List[Rule], n: Long): Long =
-      import scala.collection.parallel.CollectionConverters.*
-
-      val levelOneStones    = stones.apply(rules)
-      val levelNStonesSizes = levelOneStones.par.map { stone =>
-        List(stone).applyN(rules, n - 1).size
-      }.sum
-      levelNStonesSizes
-
-    /** @return the sum of all parallel counts */
-    def ccount(rules: List[Rule], n: Long): Long =
-      import scala.collection.parallel.CollectionConverters.*
-
-      stones.par.map(_.countN(rules, n)).sum
-
-  // Yeah ... this will not work without a cache
-  private val cache = scala.collection.mutable.Map[(Stone, Long), Long]()
-
-  extension(stone: Stone)
-
-    /** @return the new/next stone(s) after applying the rules */
-    def apply(rules: List[Rule]): (Stone, Option[Stone]) =
-      val (s0, s1, _) = rules
-        .foldLeft(0L, Option(0L), false) { case (applied, rule) =>
-          val (_, _, done) = applied
-          if done then applied else rule(stone)
+    extension (stones: List[Stone])
+        /** @return the list of stones after the rules where applied */
+        def apply(rules: List[Rule]): List[Stone] = stones.flatMap { stone =>
+            rules.foldLeft(List[Stone](), false) {
+                case ((newStones, done), rule) =>
+                    if done then (newStones, done)
+                    else
+                        rule(stone) match
+                            case (s, None, done)      => (List(s), done)
+                            case (s0, Some(s1), done) => (List(s0, s1), done)
+                            case _ =>
+                                throw new RuntimeException("Unexpected case")
+            }._1
         }
-      (s0, s1)
 
-    /** @return the count of stones for level N */
-    def countN(rules: List[Rule], n: Long): Long =
-      if n > 0 then
-        cache.get(stone, n) match
-          case Some(i) => i
-          case None    =>
-            val i = stone.apply(rules) match
-              case (s, None)      => s.countN(rules, n - 1)
-              case (s0, Some(s1)) => s0.countN(rules, n - 1) +
-                  s1.countN(rules, n - 1)
-              case _ => throw new RuntimeException("Unexpected case")
-            cache.put((stone, n), i)
-            i
-      else 1
+        /** @return
+          *   the list of stones after the rules have been applied (recursively)
+          */
+        def applyN(rules: List[Rule], n: Long): List[Stone] =
+            if n > 0 then stones.apply(rules).applyN(rules, n - 1) else stones
 
-  extension(s: String)
-    def stones: List[Stone] = s.split(" ").toList.map(_.toLong)
+        /** @return the sum of all (parallel) list sizes */
+        def ssize(rules: List[Rule], n: Long): Long =
+            import scala.collection.parallel.CollectionConverters.*
 
-  /** @return the number of stones in the list */
-  def part1(stones: List[Stone]): Long =
-    require(stones.nonEmpty, "stones.nonEmpty")
-    logger.debug(s"stones: ${stones}")
+            val levelOneStones = stones.apply(rules)
+            val levelNStonesSizes = levelOneStones.par.map { stone =>
+                List(stone).applyN(rules, n - 1).size
+            }.sum
+            levelNStonesSizes
+        end ssize
 
-    stones.ssize(rules, 25)
+        /** @return the sum of all parallel counts */
+        def ccount(rules: List[Rule], n: Long): Long =
+            import scala.collection.parallel.CollectionConverters.*
 
-  /** @return the number of stones in the (very large) list */
-  def part2(stones: List[Stone]): Long =
-    require(stones.nonEmpty, "stones.nonEmpty")
-    logger.debug(s"stones: ${stones}")
+            stones.par.map(_.countN(rules, n)).sum
+    end extension
 
-    stones.ccount(rules, 75)
+    // Yeah ... this will not work without a cache
+    private val cache = scala.collection.mutable.Map[(Stone, Long), Long]()
+
+    extension (stone: Stone)
+
+        /** @return the new/next stone(s) after applying the rules */
+        def apply(rules: List[Rule]): (Stone, Option[Stone]) =
+            val (s0, s1, _) = rules
+                .foldLeft(0L, Option(0L), false) { case (applied, rule) =>
+                    val (_, _, done) = applied
+                    if done then applied else rule(stone)
+                }
+            (s0, s1)
+        end apply
+
+        /** @return the count of stones for level N */
+        def countN(rules: List[Rule], n: Long): Long =
+            if n > 0 then
+                cache.get(stone, n) match
+                    case Some(i) => i
+                    case None =>
+                        val i = stone.apply(rules) match
+                            case (s, None) => s.countN(rules, n - 1)
+                            case (s0, Some(s1)) => s0.countN(rules, n - 1) +
+                                    s1.countN(rules, n - 1)
+                            case _ =>
+                                throw new RuntimeException("Unexpected case")
+                        cache.put((stone, n), i)
+                        i
+                end match
+            else 1
+        end countN
+    end extension
+
+    extension (s: String)
+        def stones: List[Stone] = s.split(" ").toList.map(_.toLong)
+
+    /** @return the number of stones in the list */
+    def part1(stones: List[Stone]): Long =
+        require(stones.nonEmpty, "stones.nonEmpty")
+        logger.debug(s"stones: ${stones}")
+
+        stones.ssize(rules, 25)
+    end part1
+
+    /** @return the number of stones in the (very large) list */
+    def part2(stones: List[Stone]): Long =
+        require(stones.nonEmpty, "stones.nonEmpty")
+        logger.debug(s"stones: ${stones}")
+
+        stones.ccount(rules, 75)
+    end part2
+end Day11

@@ -20,82 +20,107 @@ package aoc2024
   */
 
 object Day09p1:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  type Block = Option[Int]
+    type Block = Option[Int]
 
-  /** The disk */
-  class Disk(val blocks: Vector[Block]):
-    val usedBlocks = blocks.flatten
+    /** @return the file for the given filename as parsed elements */
+    def readFile(filename: String): Disk =
+        import scala.io.Source
 
-    override def toString(): String = blocks.map { b =>
-      b match
-        case None     => '.'
-        case Some(id) => id.toString.head
-    }.mkString
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    def defragment: Disk =
-      def defragmentor(
-        fragmentedBlocks: Vector[Block],
-        defragmentedBlocks: Vector[Block],
-        blocksAvailableForDefragmentation: Vector[Int],
-        n: Int,
-      ): Vector[Block] =
-        logger.debug(s"fragmentedBlocks: ${fragmentedBlocks}, defragmentedBlocks: ${defragmentedBlocks}, blocksAvailableForDefragmentation: ${blocksAvailableForDefragmentation}, n: ${n}")
+        val source = Source.fromResource(filename)
+        try
+            val line = source.getLines.toSeq.head
+            logger.debug(s"line: ${line}")
+            val firstBlockSize = line(0).toString.toInt
+            val firstBlock: Vector[Block] = Vector.fill(firstBlockSize)(Some(0))
+            val (blocks, _) = line.tail.grouped(2)
+                .foldLeft(firstBlock, 1): (blocks, chars) =>
+                    logger.debug(s"blocks: ${blocks}, chars: ${chars}")
+                    val (bs, id) = blocks
 
-        if n >= usedBlocks.size then
-          defragmentedBlocks ++ Vector.fill(blocks.size - usedBlocks.size)(None)
-        else
-          fragmentedBlocks match
-            case Vector(None, _*)     => defragmentor(
-                fragmentedBlocks.tail,
-                defragmentedBlocks :+
-                  Some(blocksAvailableForDefragmentation.head),
-                blocksAvailableForDefragmentation.tail,
-                n + 1,
-              )
-            case Vector(Some(id), _*) => defragmentor(
-                fragmentedBlocks.tail,
-                defragmentedBlocks :+ Some(id),
-                blocksAvailableForDefragmentation,
-                n + 1,
-              )
-            case _ => throw new RuntimeException("Unexpected case")
+                    val freeBlockSize = chars(0).toString.toInt
+                    val freeBlocks: Vector[Block] = Vector
+                        .fill(freeBlockSize)(None)
+                    val usedBlockSize = chars(1).toString.toInt
+                    val usedBlocks: Vector[Block] = Vector
+                        .fill(usedBlockSize)(Some(id))
 
-      Disk(defragmentor(blocks, Vector(), usedBlocks.reverse, 0))
+                    (bs ++ freeBlocks ++ usedBlocks, id + 1)
 
-    def checksum: BigInt = usedBlocks.map(BigInt(_)).zipWithIndex.map(_ * _).sum
+            Disk(blocks)
+        finally source.close()
+        end try
+    end readFile
 
-  /** @return the file for the given filename as parsed elements */
-  def readFile(filename: String): Disk =
-    import scala.io.Source
+    /** A Disk. With all of its blocks (used and unused). */
+    class Disk(val blocks: Vector[Block]):
+        /** The used blocks */
+        val usedBlocks = blocks.flatten
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        override def toString(): String =
+            val bs = blocks.map: b =>
+                b match
+                    case Some(id) => id.toString.head
+                    case None     => '.'
+            bs.mkString
+        end toString
 
-    val source = Source.fromResource(filename)
-    try
-      val line                      = source.getLines.toSeq.head
-      logger.debug(s"line: ${line}")
-      val firstBlockSize            = line(0).toString.toInt
-      val firstBlock: Vector[Block] = Vector.fill(firstBlockSize)(Some(0))
-      val (blocks, _)               = line.tail.grouped(2)
-        .foldLeft(firstBlock, 1) { case ((bs, id), chars) =>
-          logger.debug(s"bs: ${bs}, chars: ${chars}, id: ${id}}")
+        /** @return the defragmented disk */
+        def defragment: Disk =
+            def defragmentor(
+                fragmentedBlocks: Vector[Block],
+                defragmentedBlocks: Vector[Block],
+                blocksAvailableForDefragmentation: Vector[Int],
+                n: Int,
+            ): Vector[Block] =
+                // format: off
+                logger.debug(
+                    s"fragmentedBlocks: ${fragmentedBlocks}, defragmentedBlocks: ${defragmentedBlocks}, blocksAvailableForDefragmentation: ${blocksAvailableForDefragmentation}, n: ${n}"
+                )
+                // format: on
 
-          val freeBlockSize             = chars(0).toString.toInt
-          val freeBlocks: Vector[Block] = Vector.fill(freeBlockSize)(None)
-          val usedBlockSize             = chars(1).toString.toInt
-          val usedBlocks: Vector[Block] = Vector.fill(usedBlockSize)(Some(id))
+                if n >= usedBlocks.size then
+                    defragmentedBlocks ++
+                        Vector.fill(blocks.size - usedBlocks.size)(None)
+                else
+                    // format: off
+                    fragmentedBlocks match
+                        case Vector(None, _*) =>
+                            defragmentor(
+                                fragmentedBlocks.tail,
+                                defragmentedBlocks :+ Some(blocksAvailableForDefragmentation.head),
+                                blocksAvailableForDefragmentation.tail,
+                                n + 1,
+                            )
+                        case Vector(Some(id), _*) => 
+                            defragmentor(
+                                fragmentedBlocks.tail,
+                                defragmentedBlocks :+ Some(id),
+                                blocksAvailableForDefragmentation,
+                                n + 1,
+                            )
+                        case _ => throw new RuntimeException("Unexpected case")
+                    end match
+                    // format: on
+                end if
+            end defragmentor
 
-          (bs ++ freeBlocks ++ usedBlocks, id + 1)
-        }
-      Disk(blocks)
-    finally source.close()
+            Disk(defragmentor(blocks, Vector(), usedBlocks.reverse, 0))
+        end defragment
 
-  /** @return the checksum for the defragmented disk */
-  def part1(disk: Disk): BigInt =
-    require(disk.blocks.nonEmpty, "disk.blocks.nonEmpty")
-    logger.debug(s"disk: ${disk}")
+        def checksum: BigInt =
+            usedBlocks.map(BigInt(_)).zipWithIndex.map(_ * _).sum
+    end Disk
 
-    disk.defragment.checksum
+    /** @return the checksum for the defragmented disk */
+    def part1(disk: Disk): BigInt =
+        require(disk.blocks.nonEmpty, "disk.blocks.nonEmpty")
+        logger.debug(s"disk: ${disk}")
+
+        disk.defragment.checksum
+    end part1
+end Day09p1

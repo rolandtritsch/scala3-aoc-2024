@@ -28,70 +28,77 @@ import util.GridGraph
   */
 
 object Day18:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
-
-  import util.Grid.*
-  import util.Position
-
-  def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(
-    using factory: GridFactory[G],
-  ): (G, Seq[Position]) =
     val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-    def parseLine(line: String): Position =
-      val parsed = line.split(",").map(_.toInt)
-      assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
-      Position(parsed(1), parsed(0))
+    import util.Grid.*
+    import util.Position
 
-    val source = scala.io.Source.fromResource(filename)
-    try
-      val lines                          = source.getLines().toSeq
-      val (initialBytes, remainingBytes) = lines.splitAt(initialGridBytes)
+    def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(
+        using factory: GridFactory[G]
+    ): (G, Seq[Position]) =
+        val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-      val blocked = initialBytes.map(parseLine).toSet
+        def parseLine(line: String): Position =
+            val parsed = line.split(",").map(_.toInt)
+            assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
+            Position(parsed(1), parsed(0))
 
-      val dimensions   = (blocked.map(_.x).max + 1, blocked.map(_.y).max + 1)
-      val (dimX, dimY) = dimensions
+        val source = scala.io.Source.fromResource(filename)
+        try
+            val lines = source.getLines().toSeq
+            val (initialBytes, remainingBytes) = lines.splitAt(initialGridBytes)
 
-      val free = (0 until dimX).flatMap { x =>
-        (0 until dimY).map { y => Position(x, y) }
-      }.filter(!blocked.contains(_)).toSet
+            val blocked = initialBytes.map(parseLine).toSet
 
-      val grid  = factory.create(
-        free,
-        blocked,
-        Some(Position(0, 0)),
-        Some(Position(dimX - 1, dimY - 1)),
-        dimensions,
-      )
-      val bytes = remainingBytes.map(parseLine)
-      (grid, bytes)
-    finally source.close()
+            val dimensions =
+                (blocked.map(_.x).max + 1, blocked.map(_.y).max + 1)
+            val (dimX, dimY) = dimensions
 
-  /** @return the shortest path through the corrupted memory */
-  def part1(grids: (util.Grid, Seq[util.Position])): Int =
-    import util.GridGraph.shortestPath
+            val free = (0 until dimX).flatMap { x =>
+                (0 until dimY).map(y => Position(x, y))
+            }.filter(!blocked.contains(_)).toSet
 
-    val (grid, _) = grids
-    val memory    = GridGraph.fromGrid(grid)
+            val grid = factory.create(
+              free,
+              blocked,
+              Some(Position(0, 0)),
+              Some(Position(dimX - 1, dimY - 1)),
+              dimensions,
+            )
+            val bytes = remainingBytes.map(parseLine)
+            (grid, bytes)
+        finally source.close()
+        end try
+    end fromResource
 
-    memory.shortestPath(grid.start.get, grid.end.get).size
+    /** @return the shortest path through the corrupted memory */
+    def part1(grids: (util.Grid, Seq[util.Position])): Int =
+        import util.GridGraph.shortestPath
 
-  /** @return the solution for part2 */
-  def part2(grids: (util.Grid, Seq[util.Position])): String =
-    import util.GridGraph.shortestPath
+        val (grid, _) = grids
+        val memory = GridGraph.fromGrid(grid)
 
-    def findNoPath(
-      grid: util.Grid,
-      remainingBytes: Seq[util.Position],
-    ): Option[Position] = remainingBytes match
-      case Nil     => None
-      case b :: bs =>
-        val g = grid.clone(free = grid.free - b, blocked = grid.blocked + b)
-        val memory = GridGraph.fromGrid(g)
-        val path   = memory.shortestPath(g.start.get, g.end.get)
-        if path.isEmpty then Some(b) else findNoPath(g, bs)
+        memory.shortestPath(grid.start.get, grid.end.get).size
+    end part1
 
-    val (grid, remainingBytes) = grids
-    val byte                   = findNoPath(grid, remainingBytes).get
-    (byte.y, byte.x).toString
+    /** @return the solution for part2 */
+    def part2(grids: (util.Grid, Seq[util.Position])): String =
+        import util.GridGraph.shortestPath
+
+        def findNoPath(
+            grid: util.Grid,
+            remainingBytes: Seq[util.Position],
+        ): Option[Position] = remainingBytes match
+            case Nil => None
+            case b :: bs =>
+                val g = grid
+                    .clone(free = grid.free - b, blocked = grid.blocked + b)
+                val memory = GridGraph.fromGrid(g)
+                val path = memory.shortestPath(g.start.get, g.end.get)
+                if path.isEmpty then Some(b) else findNoPath(g, bs)
+
+        val (grid, remainingBytes) = grids
+        val byte = findNoPath(grid, remainingBytes).get
+        (byte.y, byte.x).toString
+    end part2
+end Day18

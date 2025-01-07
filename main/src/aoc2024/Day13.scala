@@ -53,129 +53,159 @@ package aoc2024
   */
 
 object Day13:
-  val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
-  type Token = Long
+    type Token = Long
 
-  case class Position(x: Long, y: Long):
-    def +(diff: Position): Position = Position(x + diff.x, y + diff.y)
+    case class Position(x: Long, y: Long):
+        def +(diff: Position): Position = Position(x + diff.x, y + diff.y)
 
-  object Position:
-    implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
-  import scala.math.Ordering.Implicits.*
+    object Position:
+        implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
+    import scala.math.Ordering.Implicits.*
 
-  case class Button(diff: Position, cost: Token)
+    case class Button(diff: Position, cost: Token)
 
-  case class ClawMachine(A: Button, B: Button, target: Position):
+    case class ClawMachine(A: Button, B: Button, target: Position):
 
-    def cheapestWayToWin(depth: Int): Option[Long] =
-      import scala.collection.immutable.MultiSet
+        def cheapestWayToWin(depth: Int): Option[Long] =
+            import scala.collection.immutable.MultiSet
 
-      val visited = scala.collection.mutable.Set[MultiSet[Token]]()
+            val visited = scala.collection.mutable.Set[MultiSet[Token]]()
 
-      def loop(
-        position: Position,
-        way: MultiSet[Token],
-        ways: Set[MultiSet[Token]],
-        minCost: Option[Long],
-        depth: Int,
-      ): (Set[MultiSet[Token]], Option[Long]) =
-        logger.debug(s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}")
+            def loop(
+                position: Position,
+                way: MultiSet[Token],
+                ways: Set[MultiSet[Token]],
+                minCost: Option[Long],
+                depth: Int,
+            ): (Set[MultiSet[Token]], Option[Long]) =
+                logger.debug(
+                  s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}"
+                )
 
-        if depth < 0 then (ways, minCost)
-        else if position > target then (ways, minCost)
-        else if position == target then
-          (ways + way, (minCost, Some(way.sum)).min)
-        else if way.sum >= minCost.getOrElse(Long.MaxValue) then (ways, minCost)
-        else if visited.contains(way) then (ways, minCost)
-        else
-          visited += way
-          val (waysA, minCostA) =
-            loop(position + A.diff, way + A.cost, ways, minCost, depth - 1)
-          val (waysB, minCostB) =
-            loop(position + B.diff, way + B.cost, ways, minCost, depth - 1)
-          (waysA ++ waysB, (minCostA, minCostB).min)
+                if depth < 0 then (ways, minCost)
+                else if position > target then (ways, minCost)
+                else if position == target then
+                    (ways + way, (minCost, Some(way.sum)).min)
+                else if way.sum >= minCost.getOrElse(Long.MaxValue) then
+                    (ways, minCost)
+                else if visited.contains(way) then (ways, minCost)
+                else
+                    visited += way
+                    val (waysA, minCostA) = loop(
+                      position + A.diff,
+                      way + A.cost,
+                      ways,
+                      minCost,
+                      depth - 1,
+                    )
+                    val (waysB, minCostB) = loop(
+                      position + B.diff,
+                      way + B.cost,
+                      ways,
+                      minCost,
+                      depth - 1,
+                    )
+                    (waysA ++ waysB, (minCostA, minCostB).min)
+                end if
+            end loop
 
-      val result = loop(Position(0, 0), MultiSet.empty, Set.empty, None, depth)
-      logger.debug(s"result: ${result}")
-      result._2
+            val result =
+                loop(Position(0, 0), MultiSet.empty, Set.empty, None, depth)
+            logger.debug(s"result: ${result}")
+            result._2
+        end cheapestWayToWin
 
-    import breeze.linalg.*
+        import breeze.linalg.*
 
-    def solve: Option[(Long, Long)] =
-      def isWhole(n: Double): Boolean    = BigDecimal(n)
-        .setScale(3, BigDecimal.RoundingMode.HALF_UP).isWhole()
-      def isPositive(n: Double): Boolean = n > 0
+        def solve: Option[(Long, Long)] =
+            def isWhole(n: Double): Boolean = BigDecimal(n)
+                .setScale(3, BigDecimal.RoundingMode.HALF_UP).isWhole()
+            def isPositive(n: Double): Boolean = n > 0
 
-      val coefficients = DenseMatrix(
-        (A.diff.x.toDouble, B.diff.x.toDouble),
-        (A.diff.y.toDouble, B.diff.y.toDouble),
-      )
-      val constants    = DenseVector(target.x.toDouble, target.y.toDouble)
-      val solution     = coefficients \ constants
-      assert(solution.length == 2)
-      if solution.forall(n => isWhole(n) && isPositive(n)) then
-        Some((solution(0).round, solution(1).round))
-      else None
+            val coefficients = DenseMatrix(
+              (A.diff.x.toDouble, B.diff.x.toDouble),
+              (A.diff.y.toDouble, B.diff.y.toDouble),
+            )
+            val constants = DenseVector(target.x.toDouble, target.y.toDouble)
+            val solution = coefficients \ constants
+            assert(solution.length == 2)
+            if solution.forall(n => isWhole(n) && isPositive(n)) then
+                Some((solution(0).round, solution(1).round))
+            else None
+        end solve
+    end ClawMachine
 
-  extension(minCost: (Option[Long], Option[Long]))
+    extension (minCost: (Option[Long], Option[Long]))
+        def min: Option[Long] = minCost match
+            case (Some(a), Some(b)) => Some(math.min(a, b))
+            case (Some(a), None)    => Some(a)
+            case (None, Some(b))    => Some(b)
+            case _                  => None
 
-    def min: Option[Long] = minCost match
-      case (Some(a), Some(b)) => Some(math.min(a, b))
-      case (Some(a), None)    => Some(a)
-      case (None, Some(b))    => Some(b)
-      case _                  => None
+    object Parser:
+        import scala.util.matching
 
-  object Parser:
-    import scala.util.matching
+        // Button A: X+65, Y+27!Button B: X+32, Y+70!Prize: X=305, Y=4371!
+        val parser: matching.Regex =
+            """Button A\: X\+(\d+), Y\+(\d+)!Button B\: X\+(\d+), Y\+(\d+)!Prize\: X\=(\d+), Y\=(\d+)!"""
+                .r
 
-    // Button A: X+65, Y+27!Button B: X+32, Y+70!Prize: X=305, Y=4371!
-    val parser: matching.Regex =
-      """Button A\: X\+(\d+), Y\+(\d+)!Button B\: X\+(\d+), Y\+(\d+)!Prize\: X\=(\d+), Y\=(\d+)!"""
-        .r
+        def parse(
+            line: String,
+            errorCorrection: Long,
+        ): (Position, Position, Position) = line match
+            case parser(ax, ay, bx, by, tx, ty) => (
+                  Position(ax.toLong, ay.toLong),
+                  Position(bx.toLong, by.toLong),
+                  Position(
+                    tx.toLong + errorCorrection,
+                    ty.toLong + errorCorrection,
+                  ),
+                )
+            case _ => throw new RuntimeException("Unexpected case")
+    end Parser
 
-    def parse(
-      line: String,
-      errorCorrection: Long,
-    ): (Position, Position, Position) = line match
-      case parser(ax, ay, bx, by, tx, ty) => (
-          Position(ax.toLong, ay.toLong),
-          Position(bx.toLong, by.toLong),
-          Position(tx.toLong + errorCorrection, ty.toLong + errorCorrection),
-        )
-      case _ => throw new RuntimeException("Unexpected case")
+    /** @return the file for the given filename as parsed elements */
+    def readFile(
+        filename: String,
+        errorCorrection: Long = 0L,
+    ): Set[ClawMachine] =
+        import scala.io.Source
 
-  /** @return the file for the given filename as parsed elements */
-  def readFile(filename: String, errorCorrection: Long = 0L): Set[ClawMachine] =
-    import scala.io.Source
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
 
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
+        val source = Source.fromResource(filename)
+        try
+            val lines = source.getLines().grouped(4).map(_.mkString("!")).toSet
+            lines.map { line =>
+                logger.debug(s"line: ${line}")
+                val (a, b, target) = Parser.parse(line, errorCorrection)
+                ClawMachine(Button(a, 3), Button(b, 1), target)
+            }
+        finally source.close()
+        end try
+    end readFile
 
-    val source = Source.fromResource(filename)
-    try
-      val lines = source.getLines().grouped(4).map(_.mkString("!")).toSet
-      lines.map { line =>
-        logger.debug(s"line: ${line}")
-        val (a, b, target) = Parser.parse(line, errorCorrection)
-        ClawMachine(Button(a, 3), Button(b, 1), target)
-      }
-    finally source.close()
+    extension (machines: Set[ClawMachine])
+        def cheapestWaysToWin(depth: Int): Long = machines.toList
+            .flatMap(_.cheapestWayToWin(depth)).sum
 
-  extension(machines: Set[ClawMachine])
-    def cheapestWaysToWin(depth: Int): Long = machines.toList
-      .flatMap(_.cheapestWayToWin(depth)).sum
+    /** @return the fewest tokens to win all prices */
+    def part1(machines: Set[ClawMachine]): Long =
+        require(machines.nonEmpty, "machines.nonEmpty")
+        logger.debug(s"machines: ${machines}")
 
-  /** @return the fewest tokens to win all prices */
-  def part1(machines: Set[ClawMachine]): Long =
-    require(machines.nonEmpty, "machines.nonEmpty")
-    logger.debug(s"machines: ${machines}")
+        machines.cheapestWaysToWin(200)
+    end part1
 
-    machines.cheapestWaysToWin(200)
+    /** @return the fewest tokens to win all prices */
+    def part2(machines: Set[ClawMachine]): Long =
+        require(machines.nonEmpty, "machines.nonEmpty")
+        logger.debug(s"machines: ${machines}")
 
-  /** @return the fewest tokens to win all prices */
-  def part2(machines: Set[ClawMachine]): Long =
-    require(machines.nonEmpty, "machines.nonEmpty")
-    logger.debug(s"machines: ${machines}")
-
-    machines.flatMap(_.solve).map { case (a, b) => (a * 3) + (b * 1) }.sum
+        machines.flatMap(_.solve).map { case (a, b) => (a * 3) + (b * 1) }.sum
+    end part2
+end Day13
