@@ -200,7 +200,7 @@ object Day17:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try 
+        try
             val registers = source.getLines().toSeq.map: line =>
                 logger.debug(s"line: ${line}")
                 // Register A: 46337277
@@ -224,8 +224,8 @@ object Day17:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try 
-            source.getLines().toSeq.flatMap:line =>
+        try
+            source.getLines().toSeq.flatMap: line =>
                 logger.debug(s"line: ${line}")
                 // Program: 2,4,1,1,7,5,4,4,1,4,0,3,5,5,3,0
                 val parser: matching.Regex = """Program: (\d+(?:,\s*\d+)*)""".r

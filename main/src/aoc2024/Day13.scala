@@ -84,7 +84,7 @@ object Day13:
             ): (Set[MultiSet[Token]], Option[Long]) =
                 // formt: off
                 logger.debug(
-                  s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}"
+                    s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}"
                 )
                 // formt: on
 
@@ -179,7 +179,7 @@ object Day13:
             errorCorrection: Long,
         ): (Position, Position, Position) = line match
             // format: off
-            case parser(ax, ay, bx, by, tx, ty) => 
+            case parser(ax, ay, bx, by, tx, ty) =>
                 (
                     Position(ax.toLong, ay.toLong),
                     Position(bx.toLong, by.toLong),
@@ -216,7 +216,7 @@ object Day13:
     end readFile
 
     extension (machines: Set[ClawMachine])
-        def cheapestWaysToWin(depth: Int): Long = 
+        def cheapestWaysToWin(depth: Int): Long =
             machines.toList.flatMap(_.cheapestWayToWin(depth)).sum
 
     /** @return the fewest tokens to win all prices */

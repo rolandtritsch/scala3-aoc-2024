@@ -155,8 +155,8 @@ object Day20:
         val shortestPath = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = 
-            track.shortCuts(program, shortestPath.get).map: (c, p) => 
+        val shortCutsPathLength =
+            track.shortCuts(program, shortestPath.get).map: (c, p) =>
                 (c, p.getOrElse(List.empty).length)
 
         val shortCutsValue = shortCutsPathLength.toList.map: (c, p) =>

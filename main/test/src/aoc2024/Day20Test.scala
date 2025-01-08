@@ -3,33 +3,33 @@ package aoc2024
 import aoc2024.Day20.*
 
 class Day20Test extends munit.ScalaCheckSuite:
-    val only   = new munit.Tag("only")
+    val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
     test("Day20 - dummy".tag(ignore)):
         assert(true)
 
     test("Day20 - readFile - test"):
-        val obtained         = readFile("./inputs/Day20Test.txt")
+        val obtained = readFile("./inputs/Day20Test.txt")
         val (track, program) = obtained
         assertEquals(track.walls.size, 140)
         assertEquals(program, Position(3, 1))
 
     test("Day20 - readFile"):
-        val obtained         = readFile("./inputs/Day20.txt")
+        val obtained = readFile("./inputs/Day20.txt")
         val (track, program) = obtained
         assertEquals(track.walls.size, 10560)
         assertEquals(program, Position(67, 75))
 
     test("Day20 - dfs - test"):
-        val input            = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val (track, program) = input
         Day20.visited.clear()
         val shortestPath = program.dfs(track)
         assertEquals(shortestPath.get.size, 84)
 
     test("Day20 - dfs - test2"):
-        val input            = readFile("./inputs/Day20Test2.txt")
+        val input = readFile("./inputs/Day20Test2.txt")
         val (track, program) = input
         Day20.visited.clear()
         val shortestPath = program.dfs(track)
@@ -44,7 +44,7 @@ class Day20Test extends munit.ScalaCheckSuite:
     // }
 
     test("Day20 - shortCuts - test"):
-        val input            = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val (track, program) = input
 
         Day20.visited.clear()
@@ -55,11 +55,11 @@ class Day20Test extends munit.ScalaCheckSuite:
         assertEquals(shortCuts.size, 44)
 
     test("Day20 - shortCuts - shortCutsPathLength - test"):
-        val input            = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val (track, program) = input
 
         Day20.visited.clear()
-        val shortestPath       = program.dfs(track)
+        val shortestPath = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
         val shortCutsPathLength =
@@ -77,33 +77,31 @@ class Day20Test extends munit.ScalaCheckSuite:
         val shortestPath = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = 
+        val shortCutsPathLength =
             track.shortCuts(program, shortestPath.get).map:
-                case (c, p) => 
+                case (c, p) =>
                     (c, p.getOrElse(List.empty).length)
 
-        val shortCutsValue = shortCutsPathLength.toList.map:
-            (c, p) =>
-                (c, shortestPathLength - p)
+        val shortCutsValue = shortCutsPathLength.toList.map: (c, p) =>
+            (c, shortestPathLength - p)
 
         assertEquals(shortCutsValue.size, 44)
 
     test("Day20 - shortCuts - final - test"):
-        val input            = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val (track, program) = input
 
         Day20.visited.clear()
-        val shortestPath       = program.dfs(track)
+        val shortestPath = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = 
+        val shortCutsPathLength =
             track.shortCuts(program, shortestPath.get).map:
-                case (c, p) => 
+                case (c, p) =>
                     (c, p.getOrElse(List.empty).length)
 
-        val shortCutsValue = shortCutsPathLength.toList.map:
-            (c, p) =>
-                (c, shortestPathLength - p)
+        val shortCutsValue = shortCutsPathLength.toList.map: (c, p) =>
+            (c, shortestPathLength - p)
 
         val obtained = shortCutsValue
             .groupBy(_._2)
@@ -125,28 +123,28 @@ class Day20Test extends munit.ScalaCheckSuite:
             (1, 64)
         )
         // format: on
-        .map((c, v) => (v, c))
+            .map((c, v) => (v, c))
 
         assertEquals(obtained, expected)
 
     test("Day20 - part1 - test"):
-        val input    = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val obtained = part1(input, 50)
         assertEquals(obtained, 1)
 
     test("Day20 - part1"):
         // val input = readFile("./inputs/Day20.txt")
-        val input    = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val obtained = part1(input)
         assertEquals(obtained, 0)
 
     test("Day20 - part2 - test"):
-        val input    = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val obtained = part2(input)
         assertEquals(obtained, 140)
 
     test("Day20 - part2"):
-        val input    = readFile("./inputs/Day20.txt")
+        val input = readFile("./inputs/Day20.txt")
         val obtained = part2(input)
         assertEquals(obtained, 10560)
 end Day20Test

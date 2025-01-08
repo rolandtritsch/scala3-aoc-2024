@@ -26,15 +26,16 @@ object Day03:
     case class Enable() extends Operation
 
     private def execute(instructions: Seq[Operation], checking: Boolean): Int =
-        val (result, _) = instructions.foldLeft(0, true): (accumulator, operation) =>
-            val (acc, enabled) = accumulator
-            operation match
-                case Mul(op1, op2) =>
-                    if enabled || !checking then (acc + (op1 * op2), true)
-                    else (acc, false)
-                case Disable() => (acc, false)
-                case Enable()  => (acc, true)
-            end match
+        val (result, _) =
+            instructions.foldLeft(0, true): (accumulator, operation) =>
+                val (acc, enabled) = accumulator
+                operation match
+                    case Mul(op1, op2) =>
+                        if enabled || !checking then (acc + (op1 * op2), true)
+                        else (acc, false)
+                    case Disable() => (acc, false)
+                    case Enable()  => (acc, true)
+                end match
         result
     end execute
 
@@ -82,7 +83,7 @@ object Day03:
         logger.debug(s"${filename}")
 
         val source = Source.fromResource(filename)
-        try 
+        try
             source.getLines().toSeq.flatMap: line =>
                 logger.debug(s"line: ${line}")
 

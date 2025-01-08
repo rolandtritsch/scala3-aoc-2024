@@ -18,7 +18,6 @@ package aoc2024
   *   - look for the invalid updates
   *   - find the ones that can be fixed (and fix them)
   *   - find the middle pages of the (now valid/fixed) updates and sum them up
-  *
   */
 
 object Day05:
@@ -121,7 +120,7 @@ object Day05:
 
             def fix1(invalid: List[Fact], update: Update): Update =
                 invalid match
-                    case Nil => update
+                    case Nil          => update
                     case fact :: rest => fix1(rest, update.swap(fact))
 
             // fix0(update.invalid(rules).toList)

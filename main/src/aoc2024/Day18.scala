@@ -22,8 +22,8 @@ import util.GridGraph
   *
   * Part2:
   *
-  *   - Read all the files/memorys (into a grid and then into a graph), 
-  *     one by one by one
+  *   - Read all the files/memorys (into a grid and then into a graph), one by
+  *     one by one
   *   - Find and return the first one/byte that has no (shortest) path (anymore)
   */
 
@@ -34,10 +34,10 @@ object Day18:
     import util.Position
 
     def fromResource[G](
-        filename: String, 
+        filename: String,
         initialGridBytes: Int = Int.MaxValue,
     )(
-        using factory: GridFactory[G],
+        using factory: GridFactory[G]
     ): (G, Seq[Position]) =
         val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
@@ -98,7 +98,7 @@ object Day18:
         ): Option[Position] = remainingBytes match
             case Nil => None
             case b :: bs =>
-                val g = 
+                val g =
                     grid.clone(free = grid.free - b, blocked = grid.blocked + b)
                 val memory = GridGraph.fromGrid(g)
                 val path = memory.shortestPath(g.start.get, g.end.get)

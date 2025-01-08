@@ -1,7 +1,7 @@
 package aoc2024
 
 class Day05Test extends munit.ScalaCheckSuite:
-    val testRules   = Day05.readFileRules("./inputs/Day05Test-Rules.txt")
+    val testRules = Day05.readFileRules("./inputs/Day05Test-Rules.txt")
     val testUpdates = Day05.readFileUpdates("./inputs/Day05Test-Updates.txt")
 
     test("Day05 - readFile - Rules - Test"):
@@ -23,7 +23,7 @@ class Day05Test extends munit.ScalaCheckSuite:
     test("Day05 - factBuilder"):
         import aoc2024.Day05.*
 
-        val input    = List(75, 47, 61, 53, 29)
+        val input = List(75, 47, 61, 53, 29)
         val obtained = input.facts
         // format: off
         val expected = Set(
@@ -49,7 +49,7 @@ class Day05Test extends munit.ScalaCheckSuite:
 
         assert(!input.isValid(testRules))
 
-    val rules   = Day05.readFileRules("./inputs/Day05-Rules.txt")
+    val rules = Day05.readFileRules("./inputs/Day05-Rules.txt")
     val updates = Day05.readFileUpdates("./inputs/Day05-Updates.txt")
 
     test("Day05 - part1 - test"):

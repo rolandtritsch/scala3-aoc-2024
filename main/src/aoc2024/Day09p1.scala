@@ -96,7 +96,7 @@ object Day09p1:
                                 blocksAvailableForDefragmentation.tail,
                                 n + 1,
                             )
-                        case Vector(Some(id), _*) => 
+                        case Vector(Some(id), _*) =>
                             defragmentor(
                                 fragmentedBlocks.tail,
                                 defragmentedBlocks :+ Some(id),

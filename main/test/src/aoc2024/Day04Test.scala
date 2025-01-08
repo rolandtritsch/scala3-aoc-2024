@@ -13,7 +13,7 @@ class Day04Test extends munit.ScalaCheckSuite:
     test("Day04 - rotate"):
         import aoc2024.Day04.*
 
-        val input    = Seq("123", "ABC", "abc")
+        val input = Seq("123", "ABC", "abc")
         val obtained = input.rotate
         val expected = Seq("aA1", "bB2", "cC3")
 
@@ -23,7 +23,7 @@ class Day04Test extends munit.ScalaCheckSuite:
     test("Day04 - transpose"):
         import aoc2024.Day04.*
 
-        val input    = Seq("123", "ABC", "abc")
+        val input = Seq("123", "ABC", "abc")
         val obtained = input.transposed
         val expected = Seq("1Aa", "2Bb", "3Cc")
 
@@ -33,7 +33,7 @@ class Day04Test extends munit.ScalaCheckSuite:
     test("Day04 - diagonalize - tlbr"):
         import aoc2024.Day04.*
 
-        val input    = Seq("1234", "ABCD", "abcd", "+-*/")
+        val input = Seq("1234", "ABCD", "abcd", "+-*/")
         val obtained = input.diagonalizeTLBR
         // format: off
         val expected = Seq(
@@ -52,7 +52,7 @@ class Day04Test extends munit.ScalaCheckSuite:
     test("Day04 - diagonalize - trbl"):
         import aoc2024.Day04.*
 
-        val input    = Seq("1234", "ABCD", "abcd", "+-*/")
+        val input = Seq("1234", "ABCD", "abcd", "+-*/")
         val obtained = input.diagonalizeTRBL
         // format: off
         val expected = Seq(
@@ -77,7 +77,7 @@ class Day04Test extends munit.ScalaCheckSuite:
         import aoc2024.Day04.*
 
         val input = Seq("M.S", ".A.", "M.S")
-        val obtained = 
+        val obtained =
             input.diagonalizeTLBR.findAllPos("MAS", Position.nextTLBR)
         val expected = Seq((0, 0))
 
@@ -87,7 +87,7 @@ class Day04Test extends munit.ScalaCheckSuite:
         import aoc2024.Day04.*
 
         val input = Seq("M.S", ".A.", "M.S")
-        val obtained = 
+        val obtained =
             input.diagonalizeTRBL.findAllPos("SAM", Position.nextTRBL)
         val expected = Seq((0, 2))
 
@@ -119,7 +119,7 @@ class Day04Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, 18)
 
     test("Day04 - part1"):
-        val input    = Day04.readFile("./inputs/Day04.txt")
+        val input = Day04.readFile("./inputs/Day04.txt")
         val obtained = Day04.part1(input)
         assertEquals(obtained, 2536)
 
@@ -128,7 +128,7 @@ class Day04Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, 9)
 
     test("Day04 - part2"):
-        val input    = Day04.readFile("./inputs/Day04.txt")
+        val input = Day04.readFile("./inputs/Day04.txt")
         val obtained = Day04.part2(input)
         assertEquals(obtained, 1875)
 end Day04Test

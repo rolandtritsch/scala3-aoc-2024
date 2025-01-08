@@ -71,9 +71,11 @@ object Day02:
             val (_, _, countOfSafeLevels) = report.tail
                 .foldLeft(report(0) < report(1), report(0), 0)(foldLevel)
 
+            // format: off
             logger.debug(
                 s"report: ${report}, countOfSafeLevels: ${countOfSafeLevels}"
             )
+            // format: on
             countOfSafeLevels == report.size - 1
         end isSafe
 

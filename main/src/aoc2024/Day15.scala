@@ -186,10 +186,12 @@ object Day15:
 
             val (wh, moves) = state
             (wh.move(moves.head), moves.tail)
+        end next
 
         def finalState: State = state match
             case (_, Nil) => state
-            case _ => state.next.finalState
+            case _        => state.next.finalState
+        end finalState
     end extension
 
     /** @return the Warehouse from the given file */
@@ -220,6 +222,7 @@ object Day15:
                                 throw new RuntimeException(s"Unexpected case")
 
         finally source.close()
+        end try
     end readFileWarehouse
 
     /** @return the Moves from the given file */
@@ -241,6 +244,7 @@ object Day15:
                     case _   => throw new RuntimeException(s"Unexpected case")
             ms.toList
         finally source.close()
+        end try
     end readFileMoves
 
     /** @return the sum of all GPS coordinates */

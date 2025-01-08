@@ -39,8 +39,8 @@ object Day23:
         // Build adjacency map
         val graph = connections.foldLeft(Map.empty[String, Set[String]]):
             case (acc, Connection(a, b)) => acc
-                .updatedWith(a)(opt => Some(opt.getOrElse(Set.empty) + b))
-                .updatedWith(b)(opt => Some(opt.getOrElse(Set.empty) + a))
+                    .updatedWith(a)(opt => Some(opt.getOrElse(Set.empty) + b))
+                    .updatedWith(b)(opt => Some(opt.getOrElse(Set.empty) + a))
 
         // Find all sets of three inter-connected computers
         val allNodes = graph.keySet
@@ -63,3 +63,4 @@ object Day23:
 
         0
     end part2
+end Day23

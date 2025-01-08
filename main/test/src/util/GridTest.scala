@@ -1,7 +1,7 @@
 package util
 
 class GridTest extends munit.ScalaCheckSuite:
-    val only   = new munit.Tag("only")
+    val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
     given Grid.GridFactory[Grid] with
@@ -11,7 +11,7 @@ class GridTest extends munit.ScalaCheckSuite:
             blocked: Set[Position],
             start: Option[Position],
             end: Option[Position],
-            dimensions: (Int, Int)
+            dimensions: (Int, Int),
         ): Grid = new Grid(free, blocked, start, end, dimensions)
     end given
 
@@ -27,20 +27,24 @@ class GridTest extends munit.ScalaCheckSuite:
     test("Grid - adjacent"):
         val grid = Grid.fromResource("./tests/GridTest.txt")
 
+        // format: off
         assertEquals(
-          grid.adjacent(Position(1, 1)),
-          Set(Position(1, 2), Position(2, 1))
+            grid.adjacent(Position(1, 1)),
+            Set(Position(1, 2), Position(2, 1)),
         )
+        // format: on
 
     test("Grid - neighbors"):
         val grid = Grid.fromResource("./tests/GridTest.txt")
 
+        // format: off
         assertEquals(
-          grid.neighbors(Position(1, 1)),
-          Set(Position(1, 2), Position(2, 1))
+            grid.neighbors(Position(1, 1)),
+            Set(Position(1, 2), Position(2, 1)),
         )
         assertEquals(
-          grid.neighbors(Position(1, 2)),
-          Set(Position(1, 1), Position(1, 3))
+            grid.neighbors(Position(1, 2)),
+            Set(Position(1, 1), Position(1, 3)),
         )
+        // format: on
 end GridTest

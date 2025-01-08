@@ -67,7 +67,7 @@ trait Dfs:
             if current == end.get then Some(path :+ current).min(bestPath)
             else if score(path :+ current) >= visited(current) then bestPath
             else
-                adjacent(current).foldLeft(bestPath):(bp, n) =>
+                adjacent(current).foldLeft(bestPath): (bp, n) =>
                     visited.update(current, score(path :+ current))
                     findCheapest(n, path :+ current, bp).min(bp)
             end if

@@ -1,9 +1,9 @@
 package util
 
 class BfsTest extends munit.ScalaCheckSuite:
-    val only                  = new munit.Tag("only")
-    val ignore                = new munit.Tag("ignore")
-    val slow                  = new munit.Tag("slow")
+    val only = new munit.Tag("only")
+    val ignore = new munit.Tag("ignore")
+    val slow = new munit.Tag("slow")
     override val munitTimeout = scala.concurrent.duration.Duration(120, "s")
 
     class GridWithBfs(
@@ -11,7 +11,7 @@ class BfsTest extends munit.ScalaCheckSuite:
         blocked: Set[Position],
         start: Option[Position],
         end: Option[Position],
-        dimensions: (Int, Int)
+        dimensions: (Int, Int),
     ) extends Grid(free, blocked, start, end, dimensions) with Bfs:
         def this() = this(Set.empty, Set.empty, None, None, (0, 0))
     end GridWithBfs
@@ -23,7 +23,7 @@ class BfsTest extends munit.ScalaCheckSuite:
             blocked: Set[Position],
             start: Option[Position],
             end: Option[Position],
-            dimensions: (Int, Int)
+            dimensions: (Int, Int),
         ): GridWithBfs = new GridWithBfs(free, blocked, start, end, dimensions)
     end given
 
@@ -37,7 +37,7 @@ class BfsTest extends munit.ScalaCheckSuite:
           Position(2, 1),
           Position(3, 1),
           Position(3, 2),
-          Position(3, 3)
+          Position(3, 3),
         )
 
         assertEquals(pathIterative.get, expected)
@@ -67,7 +67,7 @@ class BfsTest extends munit.ScalaCheckSuite:
           Position(4, 1),
           Position(4, 2),
           Position(4, 3),
-          Position(4, 4)
+          Position(4, 4),
         )
         val expectedRecursive = List(
           Position(0, 0),
@@ -78,7 +78,7 @@ class BfsTest extends munit.ScalaCheckSuite:
           Position(3, 2),
           Position(4, 2),
           Position(4, 3),
-          Position(4, 4)
+          Position(4, 4),
         )
 
         assertEquals(pathIterative.get, expectedIterative)

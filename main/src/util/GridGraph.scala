@@ -30,8 +30,9 @@ object GridGraph
             val start = g.get(from)
             val end = g.get(to)
             val path = start.shortestPathTo(end)
-            
+
             if path.isEmpty then List()
             else path.get.nodes.map(_.outer).toList.tail
         end shortestPath
+    end extension
 end GridGraph

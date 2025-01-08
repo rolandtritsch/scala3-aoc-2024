@@ -1,7 +1,7 @@
 package aoc2024
 
 class Day10Test extends munit.ScalaCheckSuite:
-    val only   = new munit.Tag("only")
+    val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
     import aoc2024.Day10.*
@@ -35,22 +35,22 @@ class Day10Test extends munit.ScalaCheckSuite:
         assertEquals(obtained.trailHeads, expected)
 
     test("Day10 - part1 - test"):
-        val input    = Day10.readFile("./inputs/Day10Test.txt")
+        val input = Day10.readFile("./inputs/Day10Test.txt")
         val obtained = Day10.part1(input)
         assertEquals(obtained, 36)
 
     test("Day10 - part1"):
-        val input    = Day10.readFile("./inputs/Day10.txt")
+        val input = Day10.readFile("./inputs/Day10.txt")
         val obtained = Day10.part1(input)
         assertEquals(obtained, 607)
 
     test("Day10 - part2 - test"):
-        val input    = Day10.readFile("./inputs/Day10Test.txt")
+        val input = Day10.readFile("./inputs/Day10Test.txt")
         val obtained = Day10.part2(input)
         assertEquals(obtained, 81)
 
     test("Day10 - part2"):
-        val input    = Day10.readFile("./inputs/Day10.txt")
+        val input = Day10.readFile("./inputs/Day10.txt")
         val obtained = Day10.part2(input)
         assertEquals(obtained, 1384)
 end Day10Test

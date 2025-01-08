@@ -1,7 +1,7 @@
 package aoc2024
 
 class Day07Test extends munit.ScalaCheckSuite:
-    val only   = new munit.Tag("only")
+    val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
     test("Day07 - dummy".tag(ignore)):
@@ -32,7 +32,7 @@ class Day07Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, BigInt(3749))
 
     test("Day07 - part1"):
-        val input    = Day07.readFile("./inputs/Day07.txt")
+        val input = Day07.readFile("./inputs/Day07.txt")
         val obtained = Day07.part1(input)
         assertEquals(obtained, BigInt("28730327770375"))
 
@@ -41,7 +41,7 @@ class Day07Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, BigInt(11387))
 
     test("Day07 - part2"):
-        val input    = Day07.readFile("./inputs/Day07.txt")
+        val input = Day07.readFile("./inputs/Day07.txt")
         val obtained = Day07.part2(input)
         assertEquals(obtained, BigInt("424977609625985"))
 end Day07Test

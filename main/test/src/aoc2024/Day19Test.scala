@@ -3,7 +3,7 @@ package aoc2024
 import aoc2024.Day19.*
 
 class Day19Test extends munit.ScalaCheckSuite:
-    val only   = new munit.Tag("only")
+    val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
     test("Day19 - dummy".tag(ignore)):

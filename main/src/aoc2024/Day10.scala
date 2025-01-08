@@ -79,7 +79,7 @@ object Day10:
                     Position(p.x - 1, p.y),
                 )
                 // format: on
-                .filter(_.isOnGrid).filter(this(_) == this(p) + 1)
+                    .filter(_.isOnGrid).filter(this(_) == this(p) + 1)
             end next
 
             /** @return all paths for the given position/trailhead */
@@ -94,7 +94,8 @@ object Day10:
             def score: Int =
                 val allTrials = p.collect(Set())
                 val allTrialsWithAUniqueExit = allTrials.map: t =>
-                    t.filter(p0 => this(p0) == minHeight || this(p0) == maxHeight)
+                    t.filter: p0 =>
+                        this(p0) == minHeight || this(p0) == maxHeight
                 allTrialsWithAUniqueExit.size
             end score
 
@@ -111,9 +112,9 @@ object Day10:
             val cells = grid.zipWithIndex.flatMap: (line, x) =>
                 line.zipWithIndex.map((v, y) => (v, x, y))
             val heads = cells
-                .filter: (v, _, _) => 
+                .filter: (v, _, _) =>
                     v == minHeight
-                .map: (_, x, y) => 
+                .map: (_, x, y) =>
                     Position(x, y)
             heads.toSet
         end trailHeads

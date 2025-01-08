@@ -197,7 +197,7 @@ object Day16:
         val source = Source.fromResource(filename)
         try
             val (maze, reindeer) = source.getLines().toSeq.zipWithIndex
-                .foldLeft((new Maze(), Option.empty[Reindeer])): 
+                .foldLeft((new Maze(), Option.empty[Reindeer])):
                     case (state, (line, x)) =>
                         logger.debug(s"line: ${line}")
                         line.zipWithIndex.foldLeft(state):

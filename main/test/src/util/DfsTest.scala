@@ -1,9 +1,9 @@
 package util
 
 class DfsTest extends munit.ScalaCheckSuite:
-    val only                  = new munit.Tag("only")
-    val ignore                = new munit.Tag("ignore")
-    val slow                  = new munit.Tag("slow")
+    val only = new munit.Tag("only")
+    val ignore = new munit.Tag("ignore")
+    val slow = new munit.Tag("slow")
     override val munitTimeout = scala.concurrent.duration.Duration(120, "s")
 
     class GridWithDfs(
@@ -11,7 +11,7 @@ class DfsTest extends munit.ScalaCheckSuite:
         blocked: Set[Position],
         start: Option[Position],
         end: Option[Position],
-        dimensions: (Int, Int)
+        dimensions: (Int, Int),
     ) extends Grid(free, blocked, start, end, dimensions) with Dfs:
         def this() = this(Set.empty, Set.empty, None, None, (0, 0))
     end GridWithDfs
@@ -23,21 +23,22 @@ class DfsTest extends munit.ScalaCheckSuite:
             blocked: Set[Position],
             start: Option[Position],
             end: Option[Position],
-            dimensions: (Int, Int)
+            dimensions: (Int, Int),
         ): GridWithDfs = new GridWithDfs(free, blocked, start, end, dimensions)
     end given
 
     test("Dfs - findFirst"):
         val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest.txt")
         val path = grid.findFirst(grid.start.get)
+        // format: off
         val expected = List(
-          Position(1, 1),
-          Position(2, 1),
-          Position(3, 1),
-          Position(3, 2),
-          Position(3, 3)
+            Position(1, 1),
+            Position(2, 1),
+            Position(3, 1),
+            Position(3, 2),
+            Position(3, 3),
         )
-
+        // format: on
         assertEquals(path.get, expected)
 
     test("Dfs - findFirst - no-path"):
@@ -50,24 +51,25 @@ class DfsTest extends munit.ScalaCheckSuite:
         val grid = Grid
             .fromResource[GridWithDfs]("./tests/GridTest-NoBoundaries.txt")
         val path = grid.findFirst(grid.start.get)
+        // format: off
         val expected = List(
-          Position(0, 0),
-          Position(1, 0),
-          Position(2, 0),
-          Position(3, 0),
-          Position(3, 1),
-          Position(2, 1),
-          Position(1, 1),
-          Position(0, 1),
-          Position(0, 2),
-          Position(1, 2),
-          Position(1, 3),
-          Position(2, 3),
-          Position(3, 3),
-          Position(4, 3),
-          Position(4, 4)
+            Position(0, 0),
+            Position(1, 0),
+            Position(2, 0),
+            Position(3, 0),
+            Position(3, 1),
+            Position(2, 1),
+            Position(1, 1),
+            Position(0, 1),
+            Position(0, 2),
+            Position(1, 2),
+            Position(1, 3),
+            Position(2, 3),
+            Position(3, 3),
+            Position(4, 3),
+            Position(4, 4),
         )
-
+        // format: on
         assertEquals(path.get, expected)
 
     test("Dfs - findFirst - small"):

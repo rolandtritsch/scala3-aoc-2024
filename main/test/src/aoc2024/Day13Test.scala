@@ -1,8 +1,8 @@
 package aoc2024
 
 class Day13Test extends munit.ScalaCheckSuite:
-    val only                  = new munit.Tag("only")
-    val ignore                = new munit.Tag("ignore")
+    val only = new munit.Tag("only")
+    val ignore = new munit.Tag("ignore")
     override val munitTimeout = scala.concurrent.duration.Duration(60, "s")
 
     import aoc2024.Day13.*
@@ -65,12 +65,12 @@ class Day13Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, Some(280L))
 
     test("Day13 - part1 - test"):
-        val input    = Day13.readFile("./inputs/Day13Test.txt")
+        val input = Day13.readFile("./inputs/Day13Test.txt")
         val obtained = Day13.part1(input)
         assertEquals(obtained, 480L)
 
     test("Day13 - part1"):
-        val input    = Day13.readFile("./inputs/Day13.txt")
+        val input = Day13.readFile("./inputs/Day13.txt")
         val obtained = Day13.part1(input)
         assertEquals(obtained, 34393L)
 
@@ -102,12 +102,12 @@ class Day13Test extends munit.ScalaCheckSuite:
         assertEquals(machines(3).solve, Some(102851800151L, 107526881786L))
 
     test("Day13 - part2 - test"):
-        val input    = Day13.readFile("./inputs/Day13Test.txt", errorCorrection)
+        val input = Day13.readFile("./inputs/Day13Test.txt", errorCorrection)
         val obtained = Day13.part2(input)
         assertEquals(obtained, 875318608908L)
 
     test("Day13 - part2"):
-        val input    = Day13.readFile("./inputs/Day13.txt", errorCorrection)
+        val input = Day13.readFile("./inputs/Day13.txt", errorCorrection)
         val obtained = Day13.part2(input)
         assertEquals(obtained, 83551068361379L)
 end Day13Test

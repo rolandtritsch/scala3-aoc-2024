@@ -3,7 +3,7 @@ package aoc2024
 import aoc2024.Day17.*
 
 class Day17Test extends munit.ScalaCheckSuite:
-    val only   = new munit.Tag("only")
+    val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
     test("Day17 - dummy".tag(ignore)):
@@ -19,62 +19,62 @@ class Day17Test extends munit.ScalaCheckSuite:
 
     test("Day17 - instruction - ADV"):
         val instruction = Instruction.create(0, 5)
-        val registers   = Map('A' -> 15360L, 'B' -> 10L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 15360L, 'B' -> 10L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('A'), 15L)
 
     test("Day17 - instruction - BXL"):
         val instruction = Instruction.create(1, 3)
-        val registers   = Map('B' -> 4L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('B' -> 4L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('B'), 7L)
 
     test("Day17 - instruction - BST"):
         val instruction = Instruction.create(2, 4)
-        val registers   = Map('A' -> 511L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 511L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('B'), 7L)
 
     test("Day17 - instruction - JNZ - no jump"):
         val instruction = Instruction.create(3, 999)
-        val registers   = Map('A' -> 0L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 0L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained.contains('Z'), false)
 
     test("Day17 - instruction - JNZ - jump"):
         val instruction = Instruction.create(3, 999)
-        val registers   = Map('A' -> 1L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 1L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('Z'), 999L)
 
     test("Day17 - instruction - BXC"):
         val instruction = Instruction.create(4, 0)
-        val registers   = Map('B' -> 4L, 'C' -> 3L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('B' -> 4L, 'C' -> 3L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('B'), 7L)
 
     test("Day17 - instruction - BXC"):
         val instruction = Instruction.create(4, 0)
-        val registers   = Map('B' -> 2024L, 'C' -> 43690L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('B' -> 2024L, 'C' -> 43690L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('B'), 44354L)
 
     test("Day17 - instruction - OUT"):
         val instruction = Instruction.create(5, 4)
-        val registers   = Map('A' -> 511L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 511L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('Y'), 7L)
 
     test("Day17 - instruction - BDV"):
         val instruction = Instruction.create(6, 5)
-        val registers   = Map('A' -> 15360L, 'B' -> 10L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 15360L, 'B' -> 10L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('B'), 15L)
 
     test("Day17 - instruction - CDV"):
         val instruction = Instruction.create(7, 5)
-        val registers   = Map('A' -> 15360L, 'B' -> 10L)
-        val obtained    = instruction.execute(registers)
+        val registers = Map('A' -> 15360L, 'B' -> 10L)
+        val obtained = instruction.execute(registers)
         assertEquals(obtained('C'), 15L)
 
     test("Day17 - readFileInstructions - test"):

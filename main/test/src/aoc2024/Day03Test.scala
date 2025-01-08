@@ -48,7 +48,7 @@ class Day03Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, 161)
 
     test("Day03 - part1"):
-        val input    = Day03.readFile("./inputs/Day03.txt")
+        val input = Day03.readFile("./inputs/Day03.txt")
         val obtained = Day03.part1(input)
         assertEquals(obtained, 187833789)
 
@@ -61,7 +61,7 @@ class Day03Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, 48)
 
     test("Day03 - part2"):
-        val input    = Day03.readFile("./inputs/Day03.txt")
+        val input = Day03.readFile("./inputs/Day03.txt")
         val obtained = Day03.part2(input)
         assertEquals(obtained, 94455185)
 end Day03Test

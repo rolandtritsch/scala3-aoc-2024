@@ -82,18 +82,21 @@ object Day11:
         /** @return the list of stones after the rules where applied */
         def apply(rules: List[Rule]): List[Stone] =
             stones.flatMap: stone =>
-                val (stones, _) = rules.foldLeft(List[Stone](), false): (ss, rule) =>
-                    val (newStones, done) = ss
-                    if done then (newStones, done)
-                    else
-                        rule(stone) match
-                            case (s, None, done) => (List(s), done)
-                            case (s0, Some(s1), done) =>
-                                (List(s0, s1), done)
-                            case _ =>
-                                throw new RuntimeException("Unexpected case")
-                        end match
-                    end if
+                val (stones, _) = rules.foldLeft(List[Stone](), false):
+                    (ss, rule) =>
+                        val (newStones, done) = ss
+                        if done then (newStones, done)
+                        else
+                            rule(stone) match
+                                case (s, None, done) => (List(s), done)
+                                case (s0, Some(s1), done) =>
+                                    (List(s0, s1), done)
+                                case _ =>
+                                    // format: off
+                                    throw new RuntimeException("Unexpected case")
+                                    // format: on
+                            end match
+                        end if
 
                 stones
         end apply
@@ -130,7 +133,7 @@ object Day11:
         /** @return the new/next stone(s) after applying the rules */
         def apply(rules: List[Rule]): (Stone, Option[Stone]) =
             val (s0, s1, _) = rules
-                .foldLeft(0L, Option(0L), false):(applied, rule) =>
+                .foldLeft(0L, Option(0L), false): (applied, rule) =>
                     val (_, _, done) = applied
                     if done then applied else rule(stone)
 
@@ -148,7 +151,9 @@ object Day11:
                             case (s0, Some(s1)) => s0.countN(rules, n - 1) +
                                     s1.countN(rules, n - 1)
                             case _ =>
+                                // format: off
                                 throw new RuntimeException("Unexpected case")
+                                // format: on
                         cache.put((stone, n), i)
                         i
                 end match

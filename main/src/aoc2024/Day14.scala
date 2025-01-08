@@ -65,7 +65,8 @@ object Day14:
             val newPosition = robot.position.add(robot.velocity, dimensions)
             Robot(robot.id, newPosition, robot.velocity)
 
-    /** A Simulation with a Set of Robots (and the Dimensions of the Simulation) */
+    /** A Simulation with a Set of Robots (and the Dimensions of the Simulation)
+      */
     class Simulation(robots: Set[Robot], dimensions: (Int, Int)):
 
         /** @return a new Simulation after running for the given seconds */
@@ -123,7 +124,7 @@ object Day14:
         var dimensions = (0, 0)
         val source = Source.fromResource(filename)
         try
-            val robots = 
+            val robots =
                 source.getLines().toSeq.zipWithIndex.map: (line, robot) =>
                     logger.debug(s"line: ${line}")
 

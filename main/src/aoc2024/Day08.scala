@@ -85,10 +85,11 @@ object Day08:
         /** @return the set of antenna pairs for all the given antennas. */
         def pairs: Set[(Antenna, Antenna)] =
             val groupByFrequency = antennas.groupBy(_.frequency).map(_._2)
-            val antennaPairs = groupByFrequency.flatMap: antennasForOneFrequency =>
-                antennasForOneFrequency.subsets(2).map: antennaPair =>
-                    val pair = antennaPair.toSeq
-                    (pair(0), pair(1))
+            val antennaPairs = groupByFrequency.flatMap:
+                antennasForOneFrequency =>
+                    antennasForOneFrequency.subsets(2).map: antennaPair =>
+                        val pair = antennaPair.toSeq
+                        (pair(0), pair(1))
             antennaPairs.toSet
         end pairs
     end extension
@@ -165,7 +166,8 @@ object Day08:
         logger.debug(s"grid: ${grid}")
 
         val antennaPairs = grid.antennas.pairs
-        val antiNodePositions = antennaPairs.flatMap(_.antiNodes0(grid.dimensions))
+        val antiNodePositions =
+            antennaPairs.flatMap(_.antiNodes0(grid.dimensions))
         val antennaPositions = grid.antennas.map(_.position)
         (antiNodePositions ++ antennaPositions).size
     end part2

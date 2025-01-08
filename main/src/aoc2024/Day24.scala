@@ -24,9 +24,9 @@ package aoc2024
   *
   *   - Read the input file and build a code file that looks like this ...
   * ```
-  * def y01 = false 
-  * def y02 = true 
-  * def z00 = y01 && y02 
+  * def y01 = false
+  * def y02 = true
+  * def z00 = y01 && y02
   * def z01 = y01 || y02
   * List(z01, z00).map(if(_) 1 else 0).mkString
   * ```
@@ -97,7 +97,7 @@ object Day24:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try 
+        try
             val assignments = source.getLines().toSeq.map: line =>
                 logger.debug(s"line: ${line}")
                 // x00 AND y00 -> z00

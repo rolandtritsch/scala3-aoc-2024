@@ -43,27 +43,35 @@ object Day07:
         ): Boolean = numbers match
             case Nil => if current == result then true else false
             case number :: remainingNumbers =>
+                // format: off
                 logger.debug(
                     s"current: ${current}, result: ${result}, numbers: ${numbers}, checkConcat: ${checkConcat}"
                 )
+                // format: on
 
+                // format: off
                 check(
-                  current + number,
-                  result,
-                  remainingNumbers,
-                  checkConcat,
-                ) || check(
-                  current * number,
-                  result,
-                  remainingNumbers,
-                  checkConcat,
+                    current + number,
+                    result,
+                    remainingNumbers,
+                    checkConcat,
+                ) || 
+                check(
+                    current * number,
+                    result,
+                    remainingNumbers,
+                    checkConcat,
                 ) ||
-                (check(
-                  BigInt(current.toString + number.toString),
-                  result,
-                  remainingNumbers,
-                  checkConcat,
-                ) && checkConcat)
+                (
+                    check(
+                        BigInt(current.toString + number.toString),
+                        result,
+                        remainingNumbers,
+                        checkConcat,
+                    ) 
+                    && checkConcat
+                )
+                // format: on
         end check
 
         /** @return true, if the equation is valid */
@@ -79,7 +87,7 @@ object Day07:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try 
+        try
             source.getLines().toList.map: line =>
                 logger.debug(s"line: ${line}")
 

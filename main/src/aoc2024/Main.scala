@@ -112,3 +112,4 @@ def solve() =
   println(s"Day24 - part1: ${Day24.part1(day24State)}")
   println(s"Day24 - part2: ${Day24.part2(day24State)}")
   // format: on
+end solve

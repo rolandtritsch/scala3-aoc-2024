@@ -46,6 +46,7 @@ class Grid(
                 else if blocked.contains(pos) then '#'
                 else if free.contains(pos) then '.'
                 else new RuntimeException("Unexpected case")
+                end if
             rows.mkString
         val grid = cols.mkString.mkString("\n")
         s"${this}\n${grid}\n"
@@ -66,7 +67,7 @@ class Grid(
             Position(p.x, p.y + 1),
         )
         // format: on
-        .filter(p => free.contains(p) && !visited.contains(p))
+            .filter(p => free.contains(p) && !visited.contains(p))
     end adjacent
 end Grid
 

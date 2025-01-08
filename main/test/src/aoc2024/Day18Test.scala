@@ -5,8 +5,8 @@ import util.Grid.Factory.given
 import util.Position
 
 class Day18Test extends munit.ScalaCheckSuite:
-    val only                  = new munit.Tag("only")
-    val ignore                = new munit.Tag("ignore")
+    val only = new munit.Tag("only")
+    val ignore = new munit.Tag("ignore")
     override val munitTimeout = scala.concurrent.duration.Duration(60, "s")
 
     test("Day18 - dummy".tag(ignore)):
@@ -33,22 +33,22 @@ class Day18Test extends munit.ScalaCheckSuite:
         assertEquals(remaining.size, 2426)
 
     test("Day18 - part1 - test"):
-        val input    = fromResource("./inputs/Day18Test.txt", 12)
+        val input = fromResource("./inputs/Day18Test.txt", 12)
         val obtained = part1(input)
         assertEquals(obtained, 22)
 
     test("Day18 - part1"):
-        val input    = fromResource("./inputs/Day18.txt", 1024)
+        val input = fromResource("./inputs/Day18.txt", 1024)
         val obtained = part1(input)
         assertEquals(obtained, 318)
 
     test("Day18 - part2 - test"):
-        val input    = fromResource("./inputs/Day18Test.txt", 12)
+        val input = fromResource("./inputs/Day18Test.txt", 12)
         val obtained = part2(input)
         assertEquals(obtained, "(6,1)")
 
     test("Day18 - part2"):
-        val input    = fromResource("./inputs/Day18.txt", 1024)
+        val input = fromResource("./inputs/Day18.txt", 1024)
         val obtained = part2(input)
         assertEquals(obtained, "(56,29)")
 end Day18Test
