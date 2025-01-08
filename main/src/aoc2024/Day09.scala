@@ -8,5 +8,7 @@ package aoc2024
   * Please take a look at Day09p1 and Day09p2.
   */
 
+// scalafix:off
 object Day09:
 end Day09
+// scalafix:on

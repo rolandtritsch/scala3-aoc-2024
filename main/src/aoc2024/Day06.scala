@@ -49,7 +49,7 @@ object Day06:
 
     class Grid(val grid: Array[Array[State]], var guard: Position):
         val rows = grid.length
-        val cols= grid(0).length // scalafix: ok 
+        val cols = grid(0).length // scalafix:ok
         var done = false
         var looped = false
         val visited: mutable.Set[Position] = mutable.Set.empty[Position]

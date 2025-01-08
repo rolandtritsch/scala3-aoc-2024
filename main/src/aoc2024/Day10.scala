@@ -63,7 +63,7 @@ object Day10:
     /** A map of the given topography */
     class TopographicalMap(private val grid: Grid):
         val maxX = grid.size
-        val maxY = grid(0).size // scalafix: ok
+        val maxY = grid(0).size // scalafix:ok
         val minHeight = 0
         val maxHeight = 9
 

@@ -1,7 +1,7 @@
 package aoc2024
 
-import util.GridGraph
 import com.typesafe.scalalogging.Logger
+import util.GridGraph
 
 /** Day18 - RAM Run
   *

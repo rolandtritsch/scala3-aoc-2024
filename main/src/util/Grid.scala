@@ -74,7 +74,7 @@ class Grid(
 end Grid
 
 object Grid:
-    val logger = Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     trait GridFactory[G]:
         def create(

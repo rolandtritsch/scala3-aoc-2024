@@ -1,8 +1,8 @@
 package util
 
+import com.typesafe.scalalogging.Logger
 import scalax.collection.edges
 import scalax.collection.mutable
-import com.typesafe.scalalogging.Logger
 
 /** A Graph that describes a grid. Defined by a Set of Positions (Nodes/Vertexs)
   * and the neighbors (Edges) each Node has .
