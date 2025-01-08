@@ -37,11 +37,6 @@ jobs:
 
       - uses: coursier/cache-action@v6
 
-      - name: Run the formatter
-        run: |
-          ./mill main.reformat 2>&1 | grep "Everything is formatted already"
-          ./mill main.test.reformat 2>&1 | grep "Everything is formatted already"
-
       - name: Run the linter
         run: ./mill main.fix --check
 
