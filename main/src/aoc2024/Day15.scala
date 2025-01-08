@@ -146,7 +146,7 @@ object Day15:
     end Warehouse
 
     extension (spaces: Set[Position])
-        /** @return the next Position/Spaces after the given Move */
+        /** @return the next Position/Spaces after the given Move */ // scalafix:ok
         def move(robot: Position, move: Move): (Set[Position], Position) =
             (spaces - robot.next(move) + robot, robot.next(move))
 

@@ -125,34 +125,40 @@ object Day16:
                 val (vForward, bpForward) =
                     if nextForward.isDefined then
                         // format: off
+                        // scalafix: off
                         nextForward.get.dfs(
                             maze,
                             (this, FORWARD) :: path,
                             bestPath,
                             nextVisited,
-                        )
+                        ) 
+                        // scalafix: on
                         // format: on
                     else (nextVisited, bestPath)
                 val (vClockwise, bpClockwise) =
                     if nextClockwise.isDefined then
                         // format: off
+                        // scalafix: off
                         nextClockwise.get.dfs(
                             maze,
                             (Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_CLOCKWISE) :: path,
                             bpForward.min(bestPath),
                             vForward
                         )
+                        // scalafix: on
                         // format: on
                     else (vForward, bpForward.min(bestPath))
                 val (vCounterClockwise, bpCounterClockwise) =
                     if nextCounterClockwise.isDefined then
                         // format: off
+                        // scalafix: off
                         nextCounterClockwise.get.dfs(
                             maze,
                             (Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_COUNTERCLOCKWISE) :: path,
                             bpClockwise.min(bpForward),
                             vClockwise,
                         )
+                        // scalafix: on
                         // format: on
                     else (vClockwise, bpClockwise.min(bpForward))
                 (vCounterClockwise, bpCounterClockwise.min(bpClockwise))
@@ -177,7 +183,7 @@ object Day16:
           */
         def walk(maze: Maze): Int =
             val (_, bestPath) = dfs(maze)
-            bestPath.get.score
+            bestPath.get.score // scalafix:ok
     end Reindeer
 
     class Maze(val walls: Set[Position], val exit: Position):
@@ -215,7 +221,7 @@ object Day16:
                                     case _ => throw new RuntimeException(s"Unexpected case: $c")
                                 // format: on
 
-            (maze, reindeer.get)
+            (maze, reindeer.get) // scalafix:ok
         finally source.close()
         end try
     end readFile

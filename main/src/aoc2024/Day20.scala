@@ -143,7 +143,7 @@ object Day20:
                                     case _ => throw new RuntimeException("Unexpected case")
                                 end match
                                 // format: on
-            (track, program.get)
+            (track, program.get) // scalafix:ok
         finally source.close()
         end try
     end readFile
@@ -157,10 +157,10 @@ object Day20:
 
         Day20.visited.clear()
         val shortestPath = program.dfs(track)
-        val shortestPathLength = shortestPath.get.length
+        val shortestPathLength = shortestPath.get.length // scalafix:ok
 
         val shortCutsPathLength =
-            track.shortCuts(program, shortestPath.get).map: (c, p) =>
+            track.shortCuts(program, shortestPath.get).map: (c, p) => // scalafix:ok
                 (c, p.getOrElse(List.empty).length)
 
         val shortCutsValue = shortCutsPathLength.toList.map: (c, p) =>

@@ -58,7 +58,7 @@ object Day10:
 
     type Grid = Array[Array[Height]]
 
-    case class Position(val x: Int, val y: Int)
+    case class Position(x: Int, y: Int)
 
     /** A map of the given topography */
     class TopographicalMap(private val grid: Grid):
@@ -68,6 +68,8 @@ object Day10:
         val maxHeight = 9
 
         extension (p: Position)
+
+            /** @return true, if the position is on the grid */ // scalafix:ok
             def isOnGrid: Boolean =
                 p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
 

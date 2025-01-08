@@ -86,10 +86,8 @@ object Day12:
         require(perimeter > 0, "perimeter > 0")
     end Region
 
-    type Dimensions = (Int, Int)
-
     /** A Garden. With all Plots. */
-    class Garden(plots: Set[Plot], dimensions: Dimensions):
+    class Garden(plots: Set[Plot]):
         val plotsByPlant: Map[Char, Set[Plot]] = plots.groupBy(_.plant)
 
         /** The regions of the garden. */
@@ -221,15 +219,14 @@ object Day12:
         val source = Source.fromResource(filename)
         try
             val garden = source.getLines().toArray.map(_.toCharArray)
-            val dimensions = (garden.length, garden(0).length)
-            val plots = (0 until dimensions._1).flatMap: x =>
-                (0 until dimensions._2).map: y =>
+            val plots = (0 until garden.length).flatMap: x =>
+                (0 until garden(0).length).map: y =>
                     val plant = garden(x)(y)
                     val p = Position(x, y)
                     val ns = neighbors(p, garden)
                     Plot(plant, p, ns)
 
-            Garden(plots.toSet, dimensions)
+            Garden(plots.toSet)
         finally source.close()
         end try
     end readFile

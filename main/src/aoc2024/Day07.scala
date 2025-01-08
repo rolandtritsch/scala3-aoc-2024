@@ -35,7 +35,7 @@ import com.typesafe.scalalogging.Logger
 object Day07:
     val logger: Logger = Logger(this.getClass.getName)
 
-    case class Equation(val result: BigInt, val numbers: List[BigInt]):
+    case class Equation(result: BigInt, numbers: List[BigInt]):
 
         private def check(
             current: BigInt,

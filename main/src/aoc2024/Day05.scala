@@ -71,7 +71,8 @@ object Day05:
     end readFileUpdates
 
     extension (update: Update)
-        /** @return the Set of facts to check against the rules */
+
+        /** @return the Set of facts to check against the rules */ // scalafix:ok
         def facts: Set[Fact] =
             def factBuilder(update: Update, facts: Set[Fact]): Set[Fact] =
                 update match

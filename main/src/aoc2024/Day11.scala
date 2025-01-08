@@ -81,7 +81,8 @@ object Day11:
     val rules: List[Stone => RuleResult] = List(ruleZero, ruleEven, ruleDefault)
 
     extension (stones: List[Stone])
-        /** @return the list of stones after the rules where applied */
+
+        /** @return the list of stones after the rules where applied */ // scalafix:ok
         def apply(rules: List[Rule]): List[Stone] =
             stones.flatMap: stone =>
                 val (stones, _) = rules.foldLeft(List[Stone](), false):
@@ -132,7 +133,7 @@ object Day11:
 
     extension (stone: Stone)
 
-        /** @return the new/next stone(s) after applying the rules */
+        /** @return the new/next stone(s) after applying the rules */ // scalafix:ok
         def apply(rules: List[Rule]): (Stone, Option[Stone]) =
             val (s0, s1, _) = rules
                 .foldLeft(0L, Option(0L), false): (applied, rule) =>

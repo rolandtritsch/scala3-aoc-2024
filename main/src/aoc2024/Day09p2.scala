@@ -124,7 +124,7 @@ object Day09p2:
         /** map to look up the size of the file by file id */
         val fileSizes: Map[Int, Int] = blocks
             .withFilter(_._3.isDefined)
-            .map((_, size, id) => (id.get, size))
+            .map((_, size, id) => (id.get, size)) // scalafix:ok
             .toMap
 
         /** @return the index of the file */
@@ -179,8 +179,8 @@ object Day09p2:
                     blocks.remove(index1)
                     blocks.remove(index0)
                     blocks.insert(index0, (offset0, size0 + size1, id0))
-                end if
-            end if
+                else throw new Exception("Unexpected case")
+            else throw new Exception("Unexpected case")
         end merge
 
         private def foundFreeSpace(index: Int): Boolean = index >= 0
@@ -198,8 +198,8 @@ object Day09p2:
                     // Merge on the left and on the right
                     merge(fileIndex, fileIndex + 1)
                     merge(fileIndex - 1, fileIndex)
-                end if
-            end if
+                else throw new Exception("Unexpected case")
+            else throw new Exception("Unexpected case")
         end defragment
 
         /** @return the maximum block id */

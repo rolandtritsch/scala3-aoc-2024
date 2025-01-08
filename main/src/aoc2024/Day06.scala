@@ -45,7 +45,7 @@ object Day06:
         case UP, DOWN, LEFT, RIGHT
     import Direction.*
 
-    case class Position(val row: Int, val col: Int, direction: Direction = UP)
+    case class Position(row: Int, col: Int, direction: Direction = UP)
 
     class Grid(val grid: Array[Array[State]], var guard: Position):
         val rows = grid.length
@@ -138,11 +138,11 @@ object Day06:
                 val grid = clone(lab, row, col, BLOCKED)
                 val lookForLoop = Grid(grid, lab.guard)
                 lookForLoop.walk
-                if lookForLoop.looped then counter += 1
+                if lookForLoop.looped then counter += 1 // scalafix:ok
         counter
     end findLoops
 
-    /** @return a clone lab with a new BLOCK at the given position */
+    /** @return a clone lab with a new Block at the given position */
     private def clone(
         lab: Grid,
         labRow: Int,
