@@ -82,11 +82,11 @@ object Day13:
                 minCost: Option[Long],
                 depth: Int,
             ): (Set[MultiSet[Token]], Option[Long]) =
-                // formt: off
+                // format: off
                 logger.debug(
                     s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}"
                 )
-                // formt: on
+                // format: on
 
                 if depth < 0 then (ways, minCost)
                 else if position > target then (ways, minCost)

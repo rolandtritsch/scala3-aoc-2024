@@ -55,7 +55,7 @@ object Day07:
                     result,
                     remainingNumbers,
                     checkConcat,
-                ) || 
+                ) ||
                 check(
                     current * number,
                     result,
@@ -68,7 +68,7 @@ object Day07:
                         result,
                         remainingNumbers,
                         checkConcat,
-                    ) 
+                    )
                     && checkConcat
                 )
                 // format: on
