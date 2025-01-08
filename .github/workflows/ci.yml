@@ -37,6 +37,14 @@ jobs:
 
       - uses: coursier/cache-action@v6
 
+      - name: Run the formatter
+        run: |
+          ./mill main.reformat 2>&1 | grep "Everything is formatted already" > /dev/null 2>&1
+          ./mill main.test.reformat 2>&1 | grep "Everything is formatted already" > /dev/null 2>&1
+
+      - name: Run the linter
+        run: ./mill main.fix --check
+
       - name: Run all tests (but the slow ones)
         run: ./mill main.test.testCached
 
@@ -54,7 +62,7 @@ jobs:
         if: github.ref == 'refs/heads/trunk'
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "./out/main/docJar.dest/javadoc"
+          path: './out/main/docJar.dest/javadoc'
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/trunk'
