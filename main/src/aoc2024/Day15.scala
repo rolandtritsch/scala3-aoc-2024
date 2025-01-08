@@ -67,10 +67,9 @@ object Day15:
             case Move.Left  => Position(x, y - 1)
             case Move.Right => Position(x, y + 1)
 
-        def isBlockedByWall(walls: Set[Position]): Boolean =
-            walls.contains(this)
-        def isBlockedByBox(boxes: Set[Position]): Boolean =
-            boxes.contains(this)
+        def isBlockedByWall(walls: Set[Position]): Boolean = walls
+            .contains(this)
+        def isBlockedByBox(boxes: Set[Position]): Boolean = boxes.contains(this)
     end Position
 
     object Position:
@@ -104,18 +103,26 @@ object Day15:
             val nextRobot = robot.next(move)
             if nextRobot.isBlockedByWall(walls) then this
             else if nextRobot.isBlockedByBox(boxes) then
-                val (nextSpaces, nextBoxes, movedIt) =
-                    spaces.push(nextRobot, nextRobot, boxes, walls, move)
+                val (nextSpaces, nextBoxes, movedIt) = spaces
+                    .push(nextRobot, nextRobot, boxes, walls, move)
                 // format: off
-                logger.debug(s"nextSpaces: ${nextSpaces}, nextBoxes: ${nextBoxes}, movedIt: ${movedIt}")
+                logger.debug(
+                    s"nextSpaces: ${nextSpaces}, nextBoxes: ${nextBoxes}, movedIt: ${movedIt}"
+                )
                 // format: on
                 if movedIt then
                     val (finalSpaces, nextRobot) = nextSpaces.move(robot, move)
                     // format: off
-                    this.clone(robot = nextRobot, boxes = nextBoxes, spaces = finalSpaces)
+                    this.clone(
+                        robot = nextRobot,
+                        boxes = nextBoxes,
+                        spaces = finalSpaces,
+                    )
                     // format: on
                 else this
+                end if
             else this.clone(robot = nextRobot)
+            end if
         end move
 
         override def toString(): String =
@@ -123,16 +130,16 @@ object Day15:
 
         def toStringPretty(): String =
             val Position(maxX, maxY) = walls.toList.max
-            val wh = (0 to maxX).map { x =>
-                (0 to maxY).map { y =>
+            val cols = (0 to maxX).map: x =>
+                val rows = (0 to maxY).map: y =>
                     val pos = Position(x, y)
                     if robot == pos then '@'
                     else if boxes.contains(pos) then 'O'
                     else if walls.contains(pos) then '#'
                     else '.'
-                }.mkString
-            }.mkString("\n")
-            s"\n${wh}\n"
+                rows.mkString
+
+            s"\n${cols.mkString("\n")}\n"
         end toStringPretty
     end Warehouse
 
@@ -150,7 +157,9 @@ object Day15:
             move: Move,
         ): (Set[Position], Set[Position], Boolean) =
             // format: off
-            logger.debug(s"box: ${box}, currentBox: ${currentBox}, move: ${move}, boxes: ${boxes}, spaces: ${spaces}, walls: ${walls}")
+            logger.debug(
+                s"box: ${box}, currentBox: ${currentBox}, move: ${move}, boxes: ${boxes}, spaces: ${spaces}, walls: ${walls}"
+            )
             // format: on
 
             if currentBox.next(move).isBlockedByWall(walls) then
@@ -159,7 +168,11 @@ object Day15:
                 spaces.push(box, currentBox.next(move), boxes, walls, move)
             else
                 // format: off
-                (spaces - currentBox.next(move) + box, boxes + currentBox.next(move) - box, true)
+                (
+                    spaces - currentBox.next(move) + box,
+                    boxes + currentBox.next(move) - box,
+                    true,
+                )
                 // format: on
             end if
         end push
@@ -173,11 +186,10 @@ object Day15:
 
             val (wh, moves) = state
             (wh.move(moves.head), moves.tail)
-        end next
 
         def finalState: State = state match
             case (_, Nil) => state
-            case _        => state.next.finalState
+            case _ => state.next.finalState
     end extension
 
     /** @return the Warehouse from the given file */
@@ -188,28 +200,26 @@ object Day15:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try 
-            source
-                .getLines()
-                .toSeq
-                .zipWithIndex
-                .foldLeft(new Warehouse()):(wh, row) =>
-                    logger.debug(s"line: ${row}")
-
-                    val (line, y) = row
+        try
+            source.getLines().toSeq.zipWithIndex
+                .foldLeft(new Warehouse()): (wh, row) =>
+                    logger.debug(s"row: ${row}")
+                    val (line, x) = row
                     line.zipWithIndex.foldLeft(wh): (wh, col) =>
-                        val (c, x) = col
+                        val (c, y) = col
                         c match
-                            case '#' => 
+                            case '#' =>
                                 wh.clone(walls = wh.walls + Position(x, y))
-                            case 'O' => 
+                            case 'O' =>
                                 wh.clone(boxes = wh.boxes + Position(x, y))
-                            case '.' => 
+                            case '.' =>
                                 wh.clone(spaces = wh.spaces + Position(x, y))
+                            case '@' =>
+                                wh.clone(robot = Position(x, y))
                             case _ =>
                                 throw new RuntimeException(s"Unexpected case")
+
         finally source.close()
-        end try
     end readFileWarehouse
 
     /** @return the Moves from the given file */
@@ -230,9 +240,7 @@ object Day15:
                     case '>' => Move.Right
                     case _   => throw new RuntimeException(s"Unexpected case")
             ms.toList
-
         finally source.close()
-        end try
     end readFileMoves
 
     /** @return the sum of all GPS coordinates */

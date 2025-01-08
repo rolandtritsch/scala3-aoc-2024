@@ -134,6 +134,8 @@ object Day20:
                                 c match
                                     case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
                                     case 'E' => (track.clone(end = Position(x, y)), program)
+                                    case 'S' => (track, Some(Position(x, y)))
+                                    case '.' => (track, program)
                                     case _ => throw new RuntimeException(s"Unexpected case")
                                 end match
                                 // format: on

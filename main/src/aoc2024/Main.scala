@@ -1,7 +1,7 @@
 package aoc2024
 
 @main
-def solve() = {
+def solve() =
   // format: off
   val input00 = Day00.readFile("./inputs/Day00.txt")
   println(s"Day00 - part1: ${Day00.part1(input00)}")
@@ -112,4 +112,3 @@ def solve() = {
   println(s"Day24 - part1: ${Day24.part1(day24State)}")
   println(s"Day24 - part2: ${Day24.part2(day24State)}")
   // format: on
-}
