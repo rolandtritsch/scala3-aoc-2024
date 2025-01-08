@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day05 - Print Queue
   *
   * part1:
@@ -21,7 +23,7 @@ package aoc2024
   */
 
 object Day05:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Page = Int
     type Rule = (Page, Page)
@@ -94,7 +96,7 @@ object Day05:
 
         /** @return invalid facts */
         def invalid(rules: Set[Rule]): Set[Fact] =
-            update.facts.filter(!rules.contains(_))
+            update.facts.filterNot(rules.contains(_))
 
         /** @return swap the two elements */
         def swap(fact: Fact): Update =
@@ -146,7 +148,7 @@ object Day05:
         require(updates.nonEmpty, "updates.nonEmpty")
         logger.debug(s"rules: ${rules}, updates: ${updates}")
 
-        val inValidUpdates = updates.filter(!_.isValid(rules))
+        val inValidUpdates = updates.filterNot(_.isValid(rules))
         val validUpdates = inValidUpdates.map(_.fix(rules))
         val middlePages = validUpdates.toList.map: update =>
             update(update.size / 2)

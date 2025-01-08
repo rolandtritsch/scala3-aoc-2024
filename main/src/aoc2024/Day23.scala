@@ -1,9 +1,11 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day23 - LAN Party */
 
 object Day23:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Computer = String
 
@@ -53,7 +55,7 @@ object Day23:
             yield Set(a, b, c)
 
         // Count triplets containing at least one computer starting with 't'
-        triplets.count(triplet => triplet.exists(_.startsWith("t")))
+        triplets.count(_.exists(_.startsWith("t")))
     end part1
 
     /** @return the solution for part2 */

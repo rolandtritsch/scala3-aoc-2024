@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day09 - Disk Fragmenter
   *
   * part2:
@@ -28,7 +30,7 @@ package aoc2024
   */
 
 object Day09p2:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     import scala.collection.mutable
 
@@ -120,8 +122,10 @@ object Day09p2:
         end fileSystemCheck
 
         /** map to look up the size of the file by file id */
-        val fileSizes = blocks.filter(_._3.isDefined)
-            .map((_, size, id) => (id.get, size)).toMap
+        val fileSizes: Map[Int, Int] = blocks
+            .withFilter(_._3.isDefined)
+            .map((_, size, id) => (id.get, size))
+            .toMap
 
         /** @return the index of the file */
         def findFileIndex(id0: Int): Int =

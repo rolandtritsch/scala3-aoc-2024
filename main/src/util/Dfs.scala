@@ -76,5 +76,5 @@ trait Dfs:
         findCheapest(start, List.empty, None)
     end findCheapest
 
-    given (Path => Int) = p => p.size
+    given (Path => Int) = _.size
 end Dfs

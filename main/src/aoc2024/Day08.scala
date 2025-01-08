@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day08 - Resonant Collinearity
   *
   * That's an interesting one.
@@ -26,7 +28,7 @@ package aoc2024
   */
 
 object Day08:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** Relative positioning of one antenna to the second one in the pair */
     enum Positioning:
@@ -156,8 +158,8 @@ object Day08:
         logger.debug(s"grid: ${grid}")
 
         val antennaPairs = grid.antennas.pairs
-        val antiNodePositions = antennaPairs.map(_.antiNodes).flatten
-        antiNodePositions.count(node => grid.isOnGrid(node))
+        val antiNodePositions = antennaPairs.flatMap(_.antiNodes)
+        antiNodePositions.count(grid.isOnGrid)
     end part1
 
     /** @return the number of antinodes on the grid (recursively). */

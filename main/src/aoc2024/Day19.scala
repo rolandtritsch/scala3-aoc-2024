@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day19 - Linen Layout
   *
   * Seems that (at least for part1) we can cheat a bit and use regular
@@ -17,7 +19,7 @@ package aoc2024
   */
 
 object Day19:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Towel = String
     type Design = String
@@ -33,7 +35,7 @@ object Day19:
         try
             val lines = source.getLines().toSeq
             val towels = lines.head.split(",").map(_.trim).toSet
-            val designs = lines.tail.filter(!_.isEmpty).map(_.trim).toSet
+            val designs = lines.tail.withFilter(_.nonEmpty).map(_.trim).toSet
             (towels, designs)
         finally source.close()
         end try

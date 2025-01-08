@@ -1,5 +1,7 @@
 package util
 
+import com.typesafe.scalalogging.Logger
+
 /** A Grid. The datastructure we use to read a grid from a file.
   *
   * The file has ...
@@ -18,7 +20,7 @@ class Grid(
     val end: Option[Position],
     val dimensions: (Int, Int),
 ):
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     def clone(
         free: Set[Position] = this.free,
@@ -72,6 +74,8 @@ class Grid(
 end Grid
 
 object Grid:
+    val logger = Logger(this.getClass.getName)
+
     trait GridFactory[G]:
         def create(
             free: Set[Position],
@@ -83,8 +87,6 @@ object Grid:
     end GridFactory
 
     def fromResource[G](filename: String)(using factory: GridFactory[G]): G =
-        val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
-
         val source = scala.io.Source.fromResource(filename)
         try
             // format: off

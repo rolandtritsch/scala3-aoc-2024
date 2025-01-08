@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day06 - Guard Gallivant
   *
   * part1:
@@ -31,7 +33,9 @@ package aoc2024
   */
 
 object Day06:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    import scala.collection.mutable
+
+    val logger: Logger = Logger(this.getClass.getName)
 
     enum State:
         case FREE, BLOCKED, OUTOFBOUNDS
@@ -44,11 +48,11 @@ object Day06:
     case class Position(val row: Int, val col: Int, direction: Direction = UP)
 
     class Grid(val grid: Array[Array[State]], var guard: Position):
-        val rows = grid.size
-        val cols = grid(0).size
+        val rows = grid.length
+        val cols= grid(0).length // scalafix: ok 
         var done = false
         var looped = false
-        val visited = scala.collection.mutable.Set.empty[Position]
+        val visited: mutable.Set[Position] = mutable.Set.empty[Position]
 
         private def nextPosition: State =
             val Position(row, col, direction) = guard
@@ -129,8 +133,8 @@ object Day06:
     /** @return the number of positions that create loops */
     private def findLoops(lab: Grid): Int =
         var counter = 0
-        (0 until lab.rows).map: row =>
-            (0 until lab.cols).map: col =>
+        (0 until lab.rows).foreach: row =>
+            (0 until lab.cols).foreach: col =>
                 val grid = clone(lab, row, col, BLOCKED)
                 val lookForLoop = Grid(grid, lab.guard)
                 lookForLoop.walk

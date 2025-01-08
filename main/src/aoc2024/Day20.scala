@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day20 - Race Condition
   *
   * Here we go again ... another grid traversal/walking problem. But with a
@@ -24,9 +26,11 @@ package aoc2024
   */
 
 object Day20:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    import scala.collection.mutable
 
-    val visited = scala.collection.mutable.Map.empty[Position, Int]
+    val logger: Logger = Logger(this.getClass.getName)
+
+    val visited: mutable.Map[Position, Int] = mutable.Map.empty[Position, Int]
         .withDefaultValue(Int.MaxValue)
 
     case class Position(x: Int, y: Int):
@@ -40,7 +44,7 @@ object Day20:
                 Position(x, y + 1),
             )
             // format: on
-                .filter(!walls.contains(_))
+                .filterNot(walls.contains(_))
 
         /** @return the shortest path through the race track */
         def dfs(
@@ -62,7 +66,7 @@ object Day20:
             def min(path: List[Position]): Option[List[Position]] =
                 shortestPath match
                     case Some(sp) if (sp.size > path.size) => Some(path)
-                    case Some(sp)                          => Some(sp)
+                    case sp @ Some(_)                      => sp
                     case None                              => Some(path)
                 end match
             end min

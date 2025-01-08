@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day24 - Crossed Wires
   *
   * This is a boolean expression evaluator.
@@ -35,7 +37,7 @@ package aoc2024
   */
 
 object Day24:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     enum Operation:
         case AND, OR, XOR
@@ -46,11 +48,11 @@ object Day24:
             case Operation.OR  => "||"
             case Operation.XOR => "^"
 
-    sealed trait LeftHandSide
+    sealed trait LeftHandSide extends Product with Serializable
     case class LeftVariable(name: String) extends LeftHandSide:
         override def toString(): String = s"${name}"
 
-    sealed trait RightHandSide
+    sealed trait RightHandSide extends Product with Serializable
     case class RightVariable(name: String) extends RightHandSide:
         override def toString(): String = s"${name}"
     case class Value(value: Boolean) extends RightHandSide:

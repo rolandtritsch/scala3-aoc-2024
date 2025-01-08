@@ -2,6 +2,7 @@ package util
 
 import scalax.collection.edges
 import scalax.collection.mutable
+import com.typesafe.scalalogging.Logger
 
 /** A Graph that describes a grid. Defined by a Set of Positions (Nodes/Vertexs)
   * and the neighbors (Edges) each Node has .
@@ -11,7 +12,7 @@ type GridGraph = mutable.Graph[Position, edges.UnDiEdge[Position]]
 
 object GridGraph
     extends mutable.TypedGraphFactory[Position, edges.UnDiEdge[Position]]:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     def fromGrid(grid: Grid): GridGraph =
         // require(grid.nonEmpty, "grid.nonEmpty")

@@ -1,6 +1,7 @@
 package aoc2024
 
 import util.GridGraph
+import com.typesafe.scalalogging.Logger
 
 /** Day18 - RAM Run
   *
@@ -28,7 +29,7 @@ import util.GridGraph
   */
 
 object Day18:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     import util.Grid.*
     import util.Position
@@ -39,11 +40,9 @@ object Day18:
     )(
         using factory: GridFactory[G]
     ): (G, Seq[Position]) =
-        val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
-
         def parseLine(line: String): Position =
             val parsed = line.split(",").map(_.toInt)
-            assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
+            assert(parsed.length == 2, s"parsed.size == 2: ${parsed.length}")
             Position(parsed(1), parsed(0))
 
         val source = scala.io.Source.fromResource(filename)
@@ -61,7 +60,7 @@ object Day18:
                 (0 until dimX).flatMap: x =>
                     (0 until dimY).map: y =>
                         Position(x, y)
-                .filter(!blocked.contains(_)).toSet
+                .filterNot(blocked.contains(_)).toSet
 
             // format: off
             val grid = factory.create(

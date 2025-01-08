@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day12 - Garden Groups
   *
   * @see
@@ -56,7 +58,7 @@ package aoc2024
   */
 
 object Day12:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     case class Position(x: Int, y: Int)
 
@@ -88,10 +90,10 @@ object Day12:
 
     /** A Garden. With all Plots. */
     class Garden(plots: Set[Plot], dimensions: Dimensions):
-        val plotsByPlant = plots.groupBy(_.plant)
+        val plotsByPlant: Map[Char, Set[Plot]] = plots.groupBy(_.plant)
 
         /** The regions of the garden. */
-        val regions = plotsByPlant.values
+        val regions: Set[Region] = plotsByPlant.values
             .foldLeft(Set.empty[Region]): (regions, plots) =>
                 regions ++ collectRegions(plots, Set.empty[Region])
 
@@ -149,7 +151,7 @@ object Day12:
           *   We can use the scala-corner library to count the number of
           *   corners, because the number of corners is the number of sides.
           */
-        def countSides(positions: Set[Position], plant: Char) =
+        def countSides(positions: Set[Position], plant: Char): Int =
             val ps = positions.toList.map: p =>
                 val Position(x, y) = p
                 ((x, y), plant)
@@ -188,7 +190,7 @@ object Day12:
         import scala.io.Source
 
         def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] =
-            val (maxX, maxY) = (garden.size, garden(0).size)
+            val (maxX, maxY) = (garden.length, garden(0).length)
             val thisPlant = garden(p.x)(p.y)
             val positionsToCheck =
                 // format: off
@@ -219,7 +221,7 @@ object Day12:
         val source = Source.fromResource(filename)
         try
             val garden = source.getLines().toArray.map(_.toCharArray)
-            val dimensions = (garden.size, garden(0).size)
+            val dimensions = (garden.length, garden(0).length)
             val plots = (0 until dimensions._1).flatMap: x =>
                 (0 until dimensions._2).map: y =>
                     val plant = garden(x)(y)

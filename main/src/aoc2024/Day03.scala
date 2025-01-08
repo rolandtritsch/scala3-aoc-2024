@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day03 - Mull It Over
   *
   * This is a computer simulation puzzle.
@@ -18,7 +20,7 @@ package aoc2024
   */
 
 object Day03:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     abstract class Operation
     case class Mul(op1: Int, op2: Int) extends Operation

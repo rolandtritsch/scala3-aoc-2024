@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day14 - Restroom Redoubt
   *
   * @see
@@ -31,7 +33,7 @@ package aoc2024
   */
 
 object Day14:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** A position in the 2-dimensional space */
     case class Position(x: Int, y: Int):

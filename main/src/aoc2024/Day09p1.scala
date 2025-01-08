@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day09 - Disk Fragmenter
   *
   * part1:
@@ -20,7 +22,7 @@ package aoc2024
   */
 
 object Day09p1:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Block = Option[Int]
 
@@ -62,10 +64,9 @@ object Day09p1:
         val usedBlocks = blocks.flatten
 
         override def toString(): String =
-            val bs = blocks.map: b =>
-                b match
-                    case Some(id) => id.toString.head
-                    case None     => '.'
+            val bs = blocks.map: 
+                case Some(id) => id.toString.head
+                case None     => '.'
             bs.mkString
         end toString
 

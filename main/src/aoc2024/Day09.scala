@@ -8,4 +8,5 @@ package aoc2024
   * Please take a look at Day09p1 and Day09p2.
   */
 
-object Day09 {}
+object Day09:
+end Day09

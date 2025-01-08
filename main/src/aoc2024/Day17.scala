@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day17 - Chronospatial Computer
   *
   * This is computer/state machine puzzle.
@@ -16,12 +18,12 @@ package aoc2024
   */
 
 object Day17:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Operand = Long
     type Registers = Map[Char, Operand]
 
-    sealed trait Instruction:
+    sealed trait Instruction extends Product with Serializable:
         def operandLiteral: Int
         def execute(registers: Registers): Registers
 
@@ -233,8 +235,7 @@ object Day17:
                     .head.split(",").map(_.toInt).grouped(2)
                     .map(pair => (pair(0), pair(1)))
                 logger.debug(s"parsed: ${parsed}")
-                parsed.map: (instruction, operandLiteral) =>
-                    Instruction.create(instruction, operandLiteral)
+                parsed.map(Instruction.create(_, _))
         finally source.close()
         end try
     end readFileInstructions

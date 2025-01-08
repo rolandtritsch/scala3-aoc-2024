@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day10 - Hoof It
   *
   * part1:
@@ -29,7 +31,7 @@ package aoc2024
   */
 
 object Day10:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** @return the topographical map for the give input file */
     def readFile(filename: String): TopographicalMap =
@@ -61,7 +63,7 @@ object Day10:
     /** A map of the given topography */
     class TopographicalMap(private val grid: Grid):
         val maxX = grid.size
-        val maxY = grid(0).size
+        val maxY = grid(0).size // scalafix: ok
         val minHeight = 0
         val maxHeight = 9
 
@@ -85,17 +87,15 @@ object Day10:
             /** @return all paths for the given position/trailhead */
             def collect(ps: Set[Position]): Set[Set[Position]] =
                 if this(p) == maxHeight then Set(ps + p)
-                else
-                    p.next.flatMap: nextPosition =>
-                        nextPosition.collect(ps + p)
+                else p.next.flatMap(_.collect(ps + p))
             end collect
 
             /** @return the score for the given position/trailhead */
             def score: Int =
                 val allTrials = p.collect(Set())
-                val allTrialsWithAUniqueExit = allTrials.map: t =>
-                    t.filter: p0 =>
-                        this(p0) == minHeight || this(p0) == maxHeight
+                val allTrialsWithAUniqueExit = allTrials.map(_.filter(p0 =>
+                    this(p0) == minHeight || this(p0) == maxHeight
+                ))
                 allTrialsWithAUniqueExit.size
             end score
 
@@ -112,7 +112,7 @@ object Day10:
             val cells = grid.zipWithIndex.flatMap: (line, x) =>
                 line.zipWithIndex.map((v, y) => (v, x, y))
             val heads = cells
-                .filter: (v, _, _) =>
+                .withFilter: (v, _, _) =>
                     v == minHeight
                 .map: (_, x, y) =>
                     Position(x, y)

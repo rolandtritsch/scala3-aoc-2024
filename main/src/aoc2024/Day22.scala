@@ -1,9 +1,11 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day22 - Monkey Market */
 
 object Day22:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Secret = Long
 

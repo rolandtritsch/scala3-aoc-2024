@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day01 - Historian Hysteria
   *
   * part1:
@@ -17,7 +19,7 @@ package aoc2024
   */
 
 object Day01:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** @return the file for the given filename as parsed elements */
     def readFile(filename: String): Seq[(Int, Int)] =

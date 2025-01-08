@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day13 - Claw Contraption
   *
   * Let first tackle reading the input file. It comes in blocks of 4 lines ...
@@ -53,7 +55,7 @@ package aoc2024
   */
 
 object Day13:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Token = Long
 
@@ -152,18 +154,19 @@ object Day13:
             assert(solution.length == 2)
 
             // Valid solutions must be whole and positive
-            if solution.forall(n => isWhole(n) && isPositive(n)) then
-                Some((solution(0).round, solution(1).round))
-            else None
+            Option.when(solution.forall(n => isWhole(n) && isPositive(n)))((solution(0).round, solution(1).round))
         end solve
     end ClawMachine
 
     extension (minCost: (Option[Long], Option[Long]))
+        // scalafix: off
         def min: Option[Long] = minCost match
             case (Some(a), Some(b)) => Some(math.min(a, b))
             case (Some(a), None)    => Some(a)
             case (None, Some(b))    => Some(b)
-            case _                  => None
+            case (None, None)       => None
+        end min
+        // scalafix: on
 
     object Parser:
         import scala.util.matching

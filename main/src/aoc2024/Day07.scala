@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day07 - Bridge Repair
   *
   * part1:
@@ -31,7 +33,7 @@ package aoc2024
   */
 
 object Day07:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     case class Equation(val result: BigInt, val numbers: List[BigInt]):
 
@@ -41,7 +43,7 @@ object Day07:
             numbers: List[BigInt],
             checkConcat: Boolean,
         ): Boolean = numbers match
-            case Nil => if current == result then true else false
+            case Nil => current == result
             case number :: remainingNumbers =>
                 // format: off
                 logger.debug(

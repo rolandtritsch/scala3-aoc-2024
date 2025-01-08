@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day15 - Warehouse Woes
   *
   * @see
@@ -55,7 +57,7 @@ package aoc2024
   */
 
 object Day15:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** A case class to represent a Position */
     case class Position(x: Int, y: Int):
@@ -238,13 +240,12 @@ object Day15:
         val source = Source.fromResource(filename)
         try
             val moves = source.getLines().mkString
-            val ms = moves.map: c =>
-                c match
-                    case '^' => Move.Up
-                    case 'v' => Move.Down
-                    case '<' => Move.Left
-                    case '>' => Move.Right
-                    case _   => throw new RuntimeException("Unexpected case")
+            val ms = moves.map: 
+                case '^' => Move.Up
+                case 'v' => Move.Down
+                case '<' => Move.Left
+                case '>' => Move.Right
+                case _   => throw new RuntimeException("Unexpected case")
             ms.toList
         finally source.close()
         end try

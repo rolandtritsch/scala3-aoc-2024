@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day02 - Red-Nosed Reports
   *
   * part1:
@@ -17,7 +19,7 @@ package aoc2024
   */
 
 object Day02:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     type Report = Seq[Int]
 

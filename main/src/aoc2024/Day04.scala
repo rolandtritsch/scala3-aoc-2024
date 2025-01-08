@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day04 - Ceres Search
   *
   * part1:
@@ -28,7 +30,7 @@ package aoc2024
   */
 
 object Day04:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** @return the file for the given filename as parsed elements */
     def readFile(filename: String): Seq[String] =
@@ -175,8 +177,10 @@ object Day04:
         // from the start of the string. So we can just look for the As
         // on the TLBR and TRBL, intersect them and then get the size of the
         // intersection.
-        val positionsOfAsTLBR = positionsTLBR.map(p => Position.nextTLBR(p))
-        val positionsOfAsTRBL = positionsTRBL.map(p => Position.nextTRBL(p))
+        // scalafix: off
+        val positionsOfAsTLBR = positionsTLBR.map(Position.nextTLBR(_))
+        val positionsOfAsTRBL = positionsTRBL.map(Position.nextTRBL(_))
+        // scalafix: on
 
         positionsOfAsTRBL.intersect(positionsOfAsTLBR).size
     end part2

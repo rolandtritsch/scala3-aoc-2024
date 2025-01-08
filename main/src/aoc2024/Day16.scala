@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day16 - Reindeer Maze
   *
   * Another grid/map/maze walking challenge.
@@ -39,14 +41,14 @@ package aoc2024
   */
 
 object Day16:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     enum Move:
         case FORWARD, ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE
     import Move.*
 
     // format: off
-    val cost = Map(
+    val cost: Map[Move, Int] = Map(
         FORWARD -> 1,
         ROTATE_CLOCKWISE -> 1000,
         ROTATE_COUNTERCLOCKWISE -> 1000,
@@ -70,7 +72,7 @@ object Day16:
     end Position
 
     // format: off
-    val rotate = Map(
+    val rotate: Map[(Move, Orientation), Orientation] = Map(
         (ROTATE_CLOCKWISE, SOUTH) -> WEST,
         (ROTATE_CLOCKWISE, WEST) -> NORTH,
         (ROTATE_CLOCKWISE, NORTH) -> EAST,
@@ -162,9 +164,11 @@ object Day16:
             logger.debug(s"next: this: ${this}, visited: ${visited}")
 
             val nextPosition = position.next(orientation)
-            if !maze.walls.contains(nextPosition) then
-                Some(Reindeer(nextPosition, orientation))
-            else None
+            Option.when(
+                !maze.walls.contains(nextPosition)
+            )(
+                Reindeer(nextPosition, orientation)
+            )
         end next
 
         /** @return

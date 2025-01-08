@@ -1,5 +1,7 @@
 package aoc2024
 
+import com.typesafe.scalalogging.Logger
+
 /** Day11 - Plutonian Pebbles
   *
   * That sounds easy enough.
@@ -43,7 +45,7 @@ package aoc2024
   */
 
 object Day11:
-    val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 
     /** @return parse the given file and return the list of numbers */
     def readFile(filename: String): List[Stone] =
@@ -76,7 +78,7 @@ object Day11:
         (stone * 2024, None, true)
 
     // Not private to support testing
-    val rules = List(ruleZero, ruleEven, ruleDefault)
+    val rules: List[Stone => RuleResult] = List(ruleZero, ruleEven, ruleDefault)
 
     extension (stones: List[Stone])
         /** @return the list of stones after the rules where applied */
@@ -143,20 +145,18 @@ object Day11:
         /** @return the count of stones for level N */
         def countN(rules: List[Rule], n: Long): Long =
             if n > 0 then
-                cache.get(stone, n) match
-                    case Some(i) => i
-                    case None =>
-                        val i = stone.apply(rules) match
-                            case (s, None) => s.countN(rules, n - 1)
-                            case (s0, Some(s1)) => s0.countN(rules, n - 1) +
-                                    s1.countN(rules, n - 1)
-                            case _ =>
-                                // format: off
-                                throw new RuntimeException("Unexpected case")
-                                // format: on
-                        cache.put((stone, n), i)
-                        i
-                end match
+                cache.get(stone, n).getOrElse:
+                    val i = stone.apply(rules) match
+                        case (s, None) => s.countN(rules, n - 1)
+                        case (s0, Some(s1)) => s0.countN(rules, n - 1) +
+                            s1.countN(rules, n - 1)
+                        case _ =>
+                            // format: off
+                            throw new RuntimeException("Unexpected case")
+                            // format: on
+                    end i
+                    cache.put((stone, n), i)
+                    i
             else 1
         end countN
     end extension
