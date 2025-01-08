@@ -146,7 +146,10 @@ object Day15:
     end Warehouse
 
     extension (spaces: Set[Position])
+
+        // format: off
         /** @return the next Position/Spaces after the given Move */ // scalafix:ok
+        // format: on
         def move(robot: Position, move: Move): (Set[Position], Position) =
             (spaces - robot.next(move) + robot, robot.next(move))
 
@@ -240,7 +243,7 @@ object Day15:
         val source = Source.fromResource(filename)
         try
             val moves = source.getLines().mkString
-            val ms = moves.map: 
+            val ms = moves.map:
                 case '^' => Move.Up
                 case 'v' => Move.Down
                 case '<' => Move.Left

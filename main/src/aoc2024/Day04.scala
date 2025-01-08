@@ -77,7 +77,9 @@ object Day04:
 
     extension (lines: Seq[String])
 
+        // format: off
         /** @return the number of what occurences in the lines */ // scalafix:ok
+        // format: on
         def findAll(what: String): Int =
             lines.foldLeft(0): (matchCount, line) =>
                 val parser: scala.util.matching.Regex = what.r

@@ -12,6 +12,6 @@ import com.typesafe.scalalogging.Logger
 
 // scalafix: off
 object Day09:
-  val logger: Logger = Logger(this.getClass.getName)
+    val logger: Logger = Logger(this.getClass.getName)
 end Day09
 // scalafix: on

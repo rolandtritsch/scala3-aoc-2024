@@ -82,7 +82,9 @@ object Day11:
 
     extension (stones: List[Stone])
 
+        // format: off
         /** @return the list of stones after the rules where applied */ // scalafix:ok
+        // format: on
         def apply(rules: List[Rule]): List[Stone] =
             stones.flatMap: stone =>
                 val (stones, _) = rules.foldLeft(List[Stone](), false):
@@ -133,7 +135,9 @@ object Day11:
 
     extension (stone: Stone)
 
+        // format: off
         /** @return the new/next stone(s) after applying the rules */ // scalafix:ok
+        // format: on
         def apply(rules: List[Rule]): (Stone, Option[Stone]) =
             val (s0, s1, _) = rules
                 .foldLeft(0L, Option(0L), false): (applied, rule) =>
@@ -150,7 +154,7 @@ object Day11:
                     val i = stone.apply(rules) match
                         case (s, None) => s.countN(rules, n - 1)
                         case (s0, Some(s1)) => s0.countN(rules, n - 1) +
-                            s1.countN(rules, n - 1)
+                                s1.countN(rules, n - 1)
                         case _ =>
                             // format: off
                             throw new RuntimeException("Unexpected case")

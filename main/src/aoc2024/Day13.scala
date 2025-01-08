@@ -154,7 +154,13 @@ object Day13:
             assert(solution.length == 2)
 
             // Valid solutions must be whole and positive
-            Option.when(solution.forall(n => isWhole(n) && isPositive(n)))((solution(0).round, solution(1).round))
+            // format: off
+            Option.when(
+                solution.forall(n => isWhole(n) && isPositive(n))
+            )(
+                (solution(0).round, solution(1).round)
+            )
+            // format: on
         end solve
     end ClawMachine
 
@@ -167,6 +173,7 @@ object Day13:
             case (None, None)       => None
         end min
         // scalafix: on
+    end extension
 
     object Parser:
         import scala.util.matching

@@ -131,7 +131,7 @@ object Day16:
                             (this, FORWARD) :: path,
                             bestPath,
                             nextVisited,
-                        ) 
+                        )
                         // scalafix: on
                         // format: on
                     else (nextVisited, bestPath)
@@ -171,9 +171,9 @@ object Day16:
 
             val nextPosition = position.next(orientation)
             Option.when(
-                !maze.walls.contains(nextPosition)
+              !maze.walls.contains(nextPosition)
             )(
-                Reindeer(nextPosition, orientation)
+              Reindeer(nextPosition, orientation)
             )
         end next
 

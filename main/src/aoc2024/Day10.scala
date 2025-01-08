@@ -69,7 +69,9 @@ object Day10:
 
         extension (p: Position)
 
+            // format: off
             /** @return true, if the position is on the grid */ // scalafix:ok
+            // format: on
             def isOnGrid: Boolean =
                 p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
 

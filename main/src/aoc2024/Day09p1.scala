@@ -64,7 +64,7 @@ object Day09p1:
         val usedBlocks = blocks.flatten
 
         override def toString(): String =
-            val bs = blocks.map: 
+            val bs = blocks.map:
                 case Some(id) => id.toString.head
                 case None     => '.'
             bs.mkString

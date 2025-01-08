@@ -43,7 +43,7 @@ object Day07:
             numbers: List[BigInt],
             checkConcat: Boolean,
         ): Boolean = numbers match
-            case Nil => current == result
+            case Nil                        => current == result
             case number :: remainingNumbers =>
                 // format: off
                 logger.debug(

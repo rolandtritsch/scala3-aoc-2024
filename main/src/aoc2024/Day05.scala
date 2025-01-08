@@ -72,7 +72,9 @@ object Day05:
 
     extension (update: Update)
 
+        // format: off
         /** @return the Set of facts to check against the rules */ // scalafix:ok
+        // format: on
         def facts: Set[Fact] =
             def factBuilder(update: Update, facts: Set[Fact]): Set[Fact] =
                 update match

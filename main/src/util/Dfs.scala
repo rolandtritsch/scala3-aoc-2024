@@ -64,7 +64,8 @@ trait Dfs:
             )
             logger.debug(s"current: ${current}, path: ${path}")
 
-            if current == end.get then Some(path :+ current).min(bestPath) // scalafix:ok
+            if current == end.get then // scalafix:ok
+                Some(path :+ current).min(bestPath)
             else if score(path :+ current) >= visited(current) then bestPath
             else
                 adjacent(current).foldLeft(bestPath): (bp, n) =>
