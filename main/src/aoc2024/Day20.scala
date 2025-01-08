@@ -136,7 +136,7 @@ object Day20:
                                     case 'E' => (track.clone(end = Position(x, y)), program)
                                     case 'S' => (track, Some(Position(x, y)))
                                     case '.' => (track, program)
-                                    case _ => throw new RuntimeException(s"Unexpected case")
+                                    case _ => throw new RuntimeException("Unexpected case")
                                 end match
                                 // format: on
             (track, program.get)

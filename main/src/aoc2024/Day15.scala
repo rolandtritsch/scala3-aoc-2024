@@ -219,7 +219,7 @@ object Day15:
                             case '@' =>
                                 wh.clone(robot = Position(x, y))
                             case _ =>
-                                throw new RuntimeException(s"Unexpected case")
+                                throw new RuntimeException("Unexpected case")
                         end match
             end wh
             wh
@@ -244,7 +244,7 @@ object Day15:
                     case 'v' => Move.Down
                     case '<' => Move.Left
                     case '>' => Move.Right
-                    case _   => throw new RuntimeException(s"Unexpected case")
+                    case _   => throw new RuntimeException("Unexpected case")
             ms.toList
         finally source.close()
         end try

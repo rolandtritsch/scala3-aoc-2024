@@ -2,7 +2,7 @@ import mill._
 import mill.scalalib._
 import mill.scalalib.scalafmt._
 
-import $ivy.`com.goyeau::mill-scalafix::0.4.0`
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
 import com.goyeau.mill.scalafix.ScalafixModule
 
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:`
@@ -26,9 +26,9 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
   )
   
   def scalafixIvyDeps = Agg(
-    ivy"com.github.xuwei-k::scalafix-rules:0.4.3",
+    ivy"com.github.xuwei-k::scalafix-rules:0.5.1",
   )
-
+  
   object test extends ScoverageTests with TestModule.Munit with ScalafmtModule {
     //def testCachedArgs = Seq("--include-tags=only")
     //def testCachedArgs = Seq("--exclude-tags=slow")
