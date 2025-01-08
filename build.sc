@@ -10,10 +10,13 @@ import mill.contrib.scoverage.ScoverageModule
 
 object main extends ScalaModule with ScoverageModule with ScalafmtModule with ScalafixModule {
   def scalaVersion = "3.4.3"
-  def scalacOptions = Seq("-Wunused:imports", "-deprecation", "-Xfatal-warnings")
+  def scalacOptions = Seq(
+    "-Wunused:imports", 
+    "-deprecation", 
+    "-Xfatal-warnings",
+  )
   def scoverageVersion = "2.2.1"
-  //def scalaVersion = "3.3.4"
-  //override def ammoniteVersion = "3.0.0-2-6342755f"  
+
   def ivyDeps = Agg(
     ivy"com.typesafe.scala-logging::scala-logging:3.9.5",
     ivy"ch.qos.logback:logback-classic:1.3.5",
@@ -28,6 +31,10 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
   def scalafixIvyDeps = Agg(
     ivy"com.github.xuwei-k::scalafix-rules:0.5.1",
   )
+
+  def scalafixConfig = T {
+    Some(millSourcePath / ".." /".scalafix.conf")
+  }
   
   object test extends ScoverageTests with TestModule.Munit with ScalafmtModule {
     //def testCachedArgs = Seq("--include-tags=only")
