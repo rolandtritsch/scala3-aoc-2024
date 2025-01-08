@@ -203,7 +203,7 @@ object Day15:
 
         val source = Source.fromResource(filename)
         try
-            source.getLines().toSeq.zipWithIndex
+            val wh = source.getLines().toSeq.zipWithIndex
                 .foldLeft(new Warehouse()): (wh, row) =>
                     logger.debug(s"row: ${row}")
                     val (line, x) = row
@@ -220,6 +220,9 @@ object Day15:
                                 wh.clone(robot = Position(x, y))
                             case _ =>
                                 throw new RuntimeException(s"Unexpected case")
+                        end match
+            end wh
+            wh
 
         finally source.close()
         end try
