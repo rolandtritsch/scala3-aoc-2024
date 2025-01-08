@@ -171,16 +171,16 @@ object Day09p2:
 
         /** Merge the two block, if they are both free space. */
         def merge(index0: Int, index1: Int): Unit =
-            if index0 >= 0 && index1 < blocks.size then
+            if index0 >= 0 && index1 < blocks.size then // scalafix:ok
                 val (offset0, size0, id0) = blocks(index0)
                 val (offset1, size1, id1) = blocks(index1)
                 // if both blocks are free space
-                if !id0.isDefined && !id1.isDefined then
+                if !id0.isDefined && !id1.isDefined then // scalafix:ok
                     blocks.remove(index1)
                     blocks.remove(index0)
                     blocks.insert(index0, (offset0, size0 + size1, id0))
-                else throw new Exception("Unexpected case")
-            else throw new Exception("Unexpected case")
+                end if
+            end if
         end merge
 
         private def foundFreeSpace(index: Int): Boolean = index >= 0
@@ -188,18 +188,18 @@ object Day09p2:
         /** Defragment the file on the disk */
         def defragment(id: Int): Unit =
             val freeIndex = findFirstFreeSpaceIndex(fileSizes(id))
-            if foundFreeSpace(freeIndex) then
+            if foundFreeSpace(freeIndex) then // scalafix:ok
                 split(freeIndex, fileSizes(id))
                 // Note: We need to get the file index after the split!!!
                 val fileIndex = findFileIndex(id)
                 // Note: We only swap if the freeSpace is before the file!!!
-                if freeIndex < fileIndex then
+                if freeIndex < fileIndex then // scalafix:ok
                     swap(freeIndex, fileIndex)
                     // Merge on the left and on the right
                     merge(fileIndex, fileIndex + 1)
                     merge(fileIndex - 1, fileIndex)
-                else throw new Exception("Unexpected case")
-            else throw new Exception("Unexpected case")
+                end if
+            end if
         end defragment
 
         /** @return the maximum block id */
