@@ -18,8 +18,8 @@ class Day12Test extends munit.ScalaCheckSuite:
         assertEquals(obtained.plotsByPlant.size, 26)
 
     test("Day12 - collectRegion"):
-        val garden                   = Day12.readFile("./inputs/Day12Test2.txt")
-        val plots                    = garden.plotsByPlant('A')
+        val garden = Day12.readFile("./inputs/Day12Test2.txt")
+        val plots = garden.plotsByPlant('A')
         val (region, remainingPlots) = garden.collectRegion(plots)
         assertEquals(region.area, 4)
         assertEquals(region.perimeter, 10)

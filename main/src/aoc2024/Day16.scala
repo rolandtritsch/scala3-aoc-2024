@@ -45,11 +45,13 @@ object Day16:
         case FORWARD, ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE
     import Move.*
 
+    // format: off
     val cost = Map(
-      FORWARD -> 1,
-      ROTATE_CLOCKWISE -> 1000,
-      ROTATE_COUNTERCLOCKWISE -> 1000,
+        FORWARD -> 1,
+        ROTATE_CLOCKWISE -> 1000,
+        ROTATE_COUNTERCLOCKWISE -> 1000,
     )
+    // format: on
 
     extension (path: List[(Reindeer, Move)])
         def score: Int = path.map(p => cost(p._2)).sum
@@ -59,35 +61,35 @@ object Day16:
     import Orientation.*
 
     case class Position(x: Int, y: Int):
-
         def next(orienation: Orientation): Position = orienation match
             case EAST  => Position(x, y + 1)
             case WEST  => Position(x, y - 1)
             case NORTH => Position(x - 1, y)
             case SOUTH => Position(x + 1, y)
+        end next
     end Position
 
+    // format: off
     val rotate = Map(
-      (ROTATE_CLOCKWISE, SOUTH) -> WEST,
-      (ROTATE_CLOCKWISE, WEST) -> NORTH,
-      (ROTATE_CLOCKWISE, NORTH) -> EAST,
-      (ROTATE_CLOCKWISE, EAST) -> SOUTH,
-      (ROTATE_COUNTERCLOCKWISE, SOUTH) -> EAST,
-      (ROTATE_COUNTERCLOCKWISE, EAST) -> NORTH,
-      (ROTATE_COUNTERCLOCKWISE, NORTH) -> WEST,
-      (ROTATE_COUNTERCLOCKWISE, WEST) -> SOUTH,
+        (ROTATE_CLOCKWISE, SOUTH) -> WEST,
+        (ROTATE_CLOCKWISE, WEST) -> NORTH,
+        (ROTATE_CLOCKWISE, NORTH) -> EAST,
+        (ROTATE_CLOCKWISE, EAST) -> SOUTH,
+        (ROTATE_COUNTERCLOCKWISE, SOUTH) -> EAST,
+        (ROTATE_COUNTERCLOCKWISE, EAST) -> NORTH,
+        (ROTATE_COUNTERCLOCKWISE, NORTH) -> WEST,
+        (ROTATE_COUNTERCLOCKWISE, WEST) -> SOUTH,
     )
+    // format: on
 
     case class Reindeer(val position: Position, val orientation: Orientation):
-
         extension (bestPath: Option[List[(Reindeer, Move)]])
-
             def min(
                 path: List[(Reindeer, Move)]
             ): Option[List[(Reindeer, Move)]] = bestPath match
-                case Some(bp) if (bp.score > path.score) => Some(path)
-                case Some(bp)                            => bestPath
-                case None                                => Some(path)
+                case Some(bp) =>
+                    if bp.score > path.score then Some(path) else bestPath
+                case None => Some(path)
 
             def min(
                 path: Option[List[(Reindeer, Move)]]
@@ -96,12 +98,13 @@ object Day16:
                 case None     => path
         end extension
 
+        /** @return the shortest path through the maze */
         def dfs(
             maze: Maze,
             path: List[(Reindeer, Move)] = List.empty,
             bestPath: Option[List[(Reindeer, Move)]] = None,
-            visited: Map[Position, Int] = Map.empty
-                .withDefaultValue(Int.MaxValue),
+            visited: Map[Position, Int] =
+                Map.empty.withDefaultValue(Int.MaxValue),
         ): (Map[Position, Int], Option[List[(Reindeer, Move)]]) =
             if position == maze.exit then (visited, bestPath.min(path))
             else if path.score >= visited(this.position) then (visited, None)
@@ -110,53 +113,51 @@ object Day16:
                 val nextClockwise =
                     Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation))
                         .next(maze, visited)
-                val nextCounterClockwise = Reindeer(
-                  position,
-                  rotate(ROTATE_COUNTERCLOCKWISE, orientation),
-                ).next(maze, visited)
+                val nextCounterClockwise =
+                    // format: off
+                    Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation))
+                        .next(maze, visited)
+                    // format: on
                 val nextVisited = visited.updated(this.position, path.score)
 
                 val (vForward, bpForward) =
                     if nextForward.isDefined then
+                        // format: off
                         nextForward.get.dfs(
-                          maze,
-                          (this, FORWARD) :: path,
-                          bestPath,
-                          nextVisited,
+                            maze,
+                            (this, FORWARD) :: path,
+                            bestPath,
+                            nextVisited,
                         )
+                        // format: on
                     else (nextVisited, bestPath)
                 val (vClockwise, bpClockwise) =
                     if nextClockwise.isDefined then
+                        // format: off
                         nextClockwise.get.dfs(
-                          maze,
-                          (
-                            Reindeer(
-                              position,
-                              rotate(ROTATE_CLOCKWISE, orientation),
-                            ),
-                            FORWARD,
-                          ) :: (this, ROTATE_CLOCKWISE) :: path,
-                          bpForward.min(bestPath),
-                          vForward,
+                            maze,
+                            (Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_CLOCKWISE) :: path,
+                            bpForward.min(bestPath),
+                            vForward
                         )
+                        // format: on
                     else (vForward, bpForward.min(bestPath))
                 val (vCounterClockwise, bpCounterClockwise) =
                     if nextCounterClockwise.isDefined then
+                        // format: off
                         nextCounterClockwise.get.dfs(
-                          maze,
-                          (
-                            Reindeer(
-                              position,
-                              rotate(ROTATE_COUNTERCLOCKWISE, orientation),
-                            ),
-                            FORWARD,
-                          ) :: (this, ROTATE_COUNTERCLOCKWISE) :: path,
-                          bpClockwise.min(bpForward),
-                          vClockwise,
+                            maze,
+                            (Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_COUNTERCLOCKWISE) :: path,
+                            bpClockwise.min(bpForward),
+                            vClockwise,
                         )
+                        // format: on
                     else (vClockwise, bpClockwise.min(bpForward))
                 (vCounterClockwise, bpCounterClockwise.min(bpClockwise))
+            end if
+        end dfs
 
+        /** @return the nex Reindeer or None if there is no next */
         def next(maze: Maze, visited: Map[Position, Int]): Option[Reindeer] =
             logger.debug(s"next: this: ${this}, visited: ${visited}")
 
@@ -166,6 +167,10 @@ object Day16:
             else None
         end next
 
+        /** @return
+          *   the score for the least expensive path to the exit (after walking
+          *   the maze)
+          */
         def walk(maze: Maze): Int =
             val (_, bestPath) = dfs(maze)
             bestPath.get.score
@@ -192,29 +197,19 @@ object Day16:
         val source = Source.fromResource(filename)
         try
             val (maze, reindeer) = source.getLines().toSeq.zipWithIndex
-                .foldLeft((new Maze(), Option.empty[Reindeer])):
+                .foldLeft((new Maze(), Option.empty[Reindeer])): 
                     case (state, (line, x)) =>
                         logger.debug(s"line: ${line}")
                         line.zipWithIndex.foldLeft(state):
-                            case ((maze, reindeer), (c, y)) => c match
-                                    case '#' => (
-                                          maze.clone(walls =
-                                              maze.walls + Position(x, y)
-                                          ),
-                                          reindeer,
-                                        )
-                                    case 'S' => (
-                                          maze,
-                                          Some(Reindeer(Position(x, y), EAST)),
-                                        )
-                                    case 'E' => (
-                                          maze.clone(exit = Position(x, y)),
-                                          reindeer,
-                                        )
+                            case ((maze, reindeer), (c, y)) =>
+                                // format: off
+                                c match
+                                    case '#' => (maze.clone(walls = maze.walls + Position(x, y)), reindeer)
+                                    case 'S' => (maze, Some(Reindeer(Position(x, y), EAST)))
+                                    case 'E' => (maze.clone(exit = Position(x, y)), reindeer)
                                     case '.' => (maze, reindeer)
-                                    case _ => throw new RuntimeException(
-                                          s"Unexpected case"
-                                        )
+                                    case _ => throw new RuntimeException(s"Unexpected case: $c")
+                                // format: on
 
             (maze, reindeer.get)
         finally source.close()

@@ -10,10 +10,12 @@ class Day09Test extends munit.ScalaCheckSuite:
     test("Day09p1 - readFile - test"):
         val obtained = Day09p1.readFile("./inputs/Day09Test.txt")
         assertEquals(obtained.blocks.size, 42)
+        // format: off
         assertEquals(
-          obtained.toString,
-          "00...111...2...333.44.5555.6666.777.888899"
+            obtained.toString,
+            "00...111...2...333.44.5555.6666.777.888899"
         )
+        // format: on
 
     test("Day09p1 - readFile"):
         val obtained = Day09p1.readFile("./inputs/Day09.txt")
@@ -39,10 +41,12 @@ class Day09Test extends munit.ScalaCheckSuite:
     test("Day09p2 - readFile - test"):
         val obtained = Day09p2.readFile("./inputs/Day09Test.txt")
         assertEquals(obtained.blocks.size, 19)
+        // format: off
         assertEquals(
-          obtained.toString,
-          "00...111...2...333.44.5555.6666.777.888899"
+            obtained.toString,
+            "00...111...2...333.44.5555.6666.777.888899"
         )
+        // format: on
         assert(obtained.fileSystemCheck)
 
     test("Day09p2 - findFileIndex"):
@@ -75,63 +79,85 @@ class Day09Test extends munit.ScalaCheckSuite:
     test("Day09p2 - swap"):
         val disk = Day09p2.readFile("./inputs/Day09Test.txt")
         disk.split(1, 2)
+        // format: off
         assertEquals(
-          disk.toString,
-          "00...111...2...333.44.5555.6666.777.888899"
+            disk.toString,
+            "00...111...2...333.44.5555.6666.777.888899"
         )
+        // format: on
         disk.swap(1, 19)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.111...2...333.44.5555.6666.777.8888.."
+            disk.toString,
+            "0099.111...2...333.44.5555.6666.777.8888.."
         )
+        // format: on
 
     test("Day09p2 - defragment"):
         val disk = Day09p2.readFile("./inputs/Day09Test.txt")
         disk.defragment(9)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.111...2...333.44.5555.6666.777.8888.."
+            disk.toString,
+            "0099.111...2...333.44.5555.6666.777.8888.."
         )
+        // format: on
         disk.defragment(8)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.111...2...333.44.5555.6666.777.8888.."
+            disk.toString,
+            "0099.111...2...333.44.5555.6666.777.8888.."
         )
+        // format: on
         disk.defragment(7)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.1117772...333.44.5555.6666.....8888.."
+            disk.toString,
+            "0099.1117772...333.44.5555.6666.....8888.."
         )
+        // format: on
         disk.defragment(6)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.1117772...333.44.5555.6666.....8888.."
+            disk.toString,
+            "0099.1117772...333.44.5555.6666.....8888.."
         )
+        // format: on
         disk.defragment(5)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.1117772...333.44.5555.6666.....8888.."
+            disk.toString,
+            "0099.1117772...333.44.5555.6666.....8888.."
         )
+        // format: on
         disk.defragment(4)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.111777244.333....5555.6666.....8888.."
+            disk.toString,
+            "0099.111777244.333....5555.6666.....8888.."
         )
+        // format: on
         disk.defragment(3)
+        // format: off
         assertEquals(
-          disk.toString,
-          "0099.111777244.333....5555.6666.....8888.."
+            disk.toString,
+            "0099.111777244.333....5555.6666.....8888.."
         )
+        // format: on
         disk.defragment(2)
+        // format: off
         assertEquals(
-          disk.toString,
-          "00992111777.44.333....5555.6666.....8888.."
+            disk.toString,
+            "00992111777.44.333....5555.6666.....8888.."
         )
+        // format: on
         disk.defragment(1)
+        // format: off
         assertEquals(
-          disk.toString,
-          "00992111777.44.333....5555.6666.....8888.."
+            disk.toString,
+            "00992111777.44.333....5555.6666.....8888.."
         )
+        // format: on
 
     test("Day09p2 - part2 - test"):
         val input    = Day09p2.readFile("./inputs/Day09Test.txt")

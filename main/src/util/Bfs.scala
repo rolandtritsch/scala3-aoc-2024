@@ -31,9 +31,13 @@ trait Bfs:
 
             if current == end.get then return Some(path)
             else
-                for next <- adjacent(current) if !visited.contains(next) do
+                for
+                    next <- adjacent(current)
+                    if !visited.contains(next)
+                do
                     visited.add(next)
                     paths.enqueue((next, path :+ next))
+                end for
             end if
         end while
 

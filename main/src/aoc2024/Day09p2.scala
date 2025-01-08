@@ -88,7 +88,10 @@ object Day09p2:
 
         /** @return true, if the file system is valid */
         def fileSystemCheck: Boolean =
-            def foldBlocks(state: (Block, Boolean), b: Block): (Block, Boolean) =
+            def foldBlocks(
+                state: (Block, Boolean),
+                b: Block,
+            ): (Block, Boolean) =
                 val (pb, c) = state
                 val (poffset, psize, pid) = pb
                 val (offset, _, id) = b
@@ -111,7 +114,7 @@ object Day09p2:
                     else true
                 (b, c && check)
             end foldBlocks
-            
+
             val (_, valid) = blocks.tail.foldLeft(blocks.head, true)(foldBlocks)
             valid
         end fileSystemCheck
@@ -122,41 +125,38 @@ object Day09p2:
 
         /** @return the index of the file */
         def findFileIndex(id0: Int): Int =
-            val index = blocks.indexWhere { (_, _, id1) =>
+            val index = blocks.indexWhere: (_, _, id1) =>
                 id1 match
                     case Some(id2) if (id2 == id0) => true
                     case _                         => false
-            }
             assert(index >= 0, "file id not found")
             index
         end findFileIndex
 
         /** @return the index of the first free space of minSize size */
-        def findFirstFreeSpaceIndex(minSize: Int): Int = blocks
-            .indexWhere { (_, size, id) =>
+        def findFirstFreeSpaceIndex(minSize: Int): Int =
+            blocks.indexWhere: (_, size, id) =>
                 id match
                     case None if (size >= minSize) => true
                     case _                         => false
-            }
+        end findFirstFreeSpaceIndex
 
-        /** update the block list with the free space rightsized to be swapped
+        /** Update the block list with the free space rightsized to be swapped.
           */
         def split(freeIndex: Int, minSize: Int): Unit =
             val block = blocks(freeIndex)
             val (offset, size, id) = block
             val splitBlocks =
-                if size > minSize then
-                    List(
-                      (offset, minSize, id),
-                      (offset + minSize, size - minSize, id),
-                    )
+                // format: off
+                if size > minSize then List((offset, minSize, id), (offset + minSize, size - minSize, id))
                 else List(block)
+                // format: on
 
             blocks.remove(freeIndex)
             blocks.insertAll(freeIndex, splitBlocks)
         end split
 
-        /** update the block list with the swapped blocks */
+        /** Update the block list with the swapped blocks. */
         def swap(freeIndex: Int, fileIndex: Int): Unit =
             val (fileOffset, fileSize, fileId) = blocks.remove(fileIndex)
             val (freeOffset, freeSize, freeId) = blocks.remove(freeIndex)
@@ -165,7 +165,7 @@ object Day09p2:
             blocks.insert(fileIndex, (fileOffset, freeSize, freeId))
         end swap
 
-        /** merge the two block, if they are both free space */
+        /** Merge the two block, if they are both free space. */
         def merge(index0: Int, index1: Int): Unit =
             if index0 >= 0 && index1 < blocks.size then
                 val (offset0, size0, id0) = blocks(index0)
@@ -175,10 +175,13 @@ object Day09p2:
                     blocks.remove(index1)
                     blocks.remove(index0)
                     blocks.insert(index0, (offset0, size0 + size1, id0))
+                end if
+            end if
+        end merge
 
         private def foundFreeSpace(index: Int): Boolean = index >= 0
 
-        /** defragment the file on the disk */
+        /** Defragment the file on the disk */
         def defragment(id: Int): Unit =
             val freeIndex = findFirstFreeSpaceIndex(fileSizes(id))
             if foundFreeSpace(freeIndex) then
@@ -195,14 +198,15 @@ object Day09p2:
             end if
         end defragment
 
+        /** @return the maximum block id */
         def maxId: Int =
             val (_, _, Some(id)) = blocks.last: @unchecked
             id
 
+        /** @return the checksum for the defragmented disk */
         def checksum: BigInt =
-            val ids = blocks.flatMap((_, size, id) =>
+            val ids = blocks.flatMap: (_, size, id) =>
                 List.fill(size)(BigInt(id.getOrElse(0)))
-            )
             ids.zipWithIndex.map(_ * _).sum
         end checksum
     end Disk

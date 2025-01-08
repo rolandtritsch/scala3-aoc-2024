@@ -30,13 +30,17 @@ object Day20:
         .withDefaultValue(Int.MaxValue)
 
     case class Position(x: Int, y: Int):
-
-        def next(walls: Set[Position]): Seq[Position] = Seq(
-          Position(x - 1, y),
-          Position(x + 1, y),
-          Position(x, y - 1),
-          Position(x, y + 1),
-        ).filter(!walls.contains(_))
+        /** @return all possible next positions for this position */
+        def next(walls: Set[Position]): Seq[Position] =
+            // format: off
+            Seq(
+                Position(x - 1, y),
+                Position(x + 1, y),
+                Position(x, y - 1),
+                Position(x, y + 1),
+            )
+            // format: on
+                .filter(!walls.contains(_))
 
         /** @return the shortest path through the race track */
         def dfs(
@@ -48,10 +52,11 @@ object Day20:
             else if path.size >= visited(this) then None
             else
                 visited.update(this, path.size)
-                next(track.walls).foldLeft(shortestPath) { case (sp, n) =>
+                next(track.walls).foldLeft(shortestPath): (sp, n) =>
                     val nextsp = n.dfs(track, path :+ this, sp)
                     if nextsp.isEmpty then sp else nextsp
-                }
+            end if
+        end dfs
 
         extension (shortestPath: Option[List[Position]])
             def min(path: List[Position]): Option[List[Position]] =
@@ -59,6 +64,9 @@ object Day20:
                     case Some(sp) if (sp.size > path.size) => Some(path)
                     case Some(sp)                          => Some(sp)
                     case None                              => Some(path)
+                end match
+            end min
+        end extension
     end Position
 
     object Position:
@@ -73,37 +81,36 @@ object Day20:
             end: Position = this.end,
         ): RaceTrack = RaceTrack(walls, end)
 
+        /** @return all the possible cheats */
         def cheats(shortestPath: Set[Position]): Set[Position] =
             val Position(x, y) = walls.max
             val (maxX, maxY) = (x + 1, y + 1)
-            val horizontals = (1 to maxX - 2).flatMap { x =>
-                (1 to maxY - 4).map { y =>
+            val horizontals = (1 to maxX - 2).flatMap: x =>
+                (1 to maxY - 4).map: y =>
                     (Position(x, y), Position(x, y + 1), Position(x, y + 2))
-                }
-            }.toSet
-            val verticals = (1 to maxY - 2).flatMap { y =>
-                (1 to maxX - 4).map { x =>
+            val verticals = (1 to maxY - 2).flatMap: y =>
+                (1 to maxX - 4).map: x =>
                     (Position(x, y), Position(x + 1, y), Position(x + 2, y))
-                }
-            }.toSet
-            (horizontals ++ verticals).filter { case (p1, p2, p3) =>
-                !walls.contains(p1) && walls.contains(p2) &&
-                !walls.contains(p3) &&
-                (shortestPath.contains(p1) || shortestPath.contains(p3))
-            }.map(_._2)
+            val cheats = (horizontals ++ verticals).toSet.filter:
+                (p1, p2, p3) =>
+                    !walls.contains(p1) && walls.contains(p2) &&
+                        !walls.contains(p3) &&
+                        (shortestPath.contains(p1) || shortestPath.contains(p3))
+            cheats.map(_._2)
         end cheats
 
+        /** @return all the possible short-cuts */
         def shortCuts(
             program: Position,
             shortestPath: List[Position],
-        ): Set[(Position, Option[List[Position]])] = cheats(shortestPath.toSet)
-            .map { c =>
+        ): Set[(Position, Option[List[Position]])] =
+            cheats(shortestPath.toSet).map: c =>
                 val cheatingWalls = walls - c
                 val cheatingTrack = clone(walls = cheatingWalls)
                 Day20.visited.clear()
                 val sp = program.dfs(cheatingTrack)
                 (c, sp)
-            }
+        end shortCuts
     end RaceTrack
 
     type State = (RaceTrack, Position)
@@ -122,23 +129,14 @@ object Day20:
                     case (state, (line, x)) =>
                         logger.debug(s"line: ${line}")
                         line.zipWithIndex.foldLeft(state):
-                            case ((track, program), (c, y)) => c match
-                                    case '#' => (
-                                          track.clone(walls =
-                                              track.walls + Position(x, y)
-                                          ),
-                                          program,
-                                        )
-                                    case 'S' => (track, Some(Position(x, y)))
-                                    case 'E' => (
-                                          track.clone(end = Position(x, y)),
-                                          program,
-                                        )
-                                    case '.' => (track, program)
-                                    case _ => throw new RuntimeException(
-                                          s"Unexpected case"
-                                        )
-
+                            case ((track, program), (c, y)) =>
+                                // format: off
+                                c match
+                                    case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
+                                    case 'E' => (track.clone(end = Position(x, y)), program)
+                                    case _ => throw new RuntimeException(s"Unexpected case")
+                                end match
+                                // format: on
             (track, program.get)
         finally source.close()
         end try
@@ -155,16 +153,18 @@ object Day20:
         val shortestPath = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = track.shortCuts(program, shortestPath.get)
-            .map { case (c, p) => (c, p.getOrElse(List.empty).length) }.toList
+        val shortCutsPathLength = 
+            track.shortCuts(program, shortestPath.get).map: (c, p) => 
+                (c, p.getOrElse(List.empty).length)
 
-        val shortCutsValue = shortCutsPathLength.map { (c, p) =>
+        val shortCutsValue = shortCutsPathLength.toList.map: (c, p) =>
             (c, shortestPathLength - p)
-        }
 
-        shortCutsValue.groupBy(_._2).map { (cheatValue, cheatList) =>
-            (cheatValue, cheatList.size)
-        }.count(_._1 >= threshold)
+        val shortCutsGroup = shortCutsValue.groupBy(_._2).map:
+            (cheatValue, cheatList) =>
+                (cheatValue, cheatList.size)
+
+        shortCutsGroup.count(_._1 >= threshold)
     end part1
 
     /** @return the solution for part2 */

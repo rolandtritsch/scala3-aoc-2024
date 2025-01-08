@@ -61,24 +61,22 @@ object Day14:
     case class Robot(id: Int, position: Position, velocity: Velocity)
 
     extension (robots: Set[Robot])
-        def move(dimensions: (Int, Int)): Set[Robot] = robots.map { robot =>
+        def move(dimensions: (Int, Int)): Set[Robot] = robots.map: robot =>
             val newPosition = robot.position.add(robot.velocity, dimensions)
             Robot(robot.id, newPosition, robot.velocity)
-        }
 
-    /** A simulation with a set of robots and dimensions */
+    /** A Simulation with a Set of Robots (and the Dimensions of the Simulation) */
     class Simulation(robots: Set[Robot], dimensions: (Int, Int)):
 
-        /** @return a new simulation after running for the given seconds */
+        /** @return a new Simulation after running for the given seconds */
         def run(seconds: Int): Simulation =
-            val newRobots = (1 to seconds).foldLeft(robots) { (rs, _) =>
+            val newRobots = (1 to seconds).foldLeft(robots): (rs, _) =>
                 rs.move(dimensions)
-            }
 
             Simulation(newRobots, dimensions)
         end run
 
-        /** @return the number of robots in each quadrant */
+        /** @return the number of Robots in each quadrant */
         def quadrants(): Map[(Int, Int), Int] =
             def isValid(robot: Robot): Boolean =
                 val (midX, midY) = (dimensions._1 / 2, dimensions._2 / 2)
@@ -91,9 +89,8 @@ object Day14:
                 (qX, qY)
             end byQuadrant
 
-            robots.filter(isValid).groupBy(byQuadrant).map { case (k, v) =>
+            robots.filter(isValid).groupBy(byQuadrant).map: (k, v) =>
                 (k, v.size)
-            }
         end quadrants
 
         override def toString(): String =
@@ -126,19 +123,22 @@ object Day14:
         var dimensions = (0, 0)
         val source = Source.fromResource(filename)
         try
-            val robots = source.getLines().toSeq.zipWithIndex
-                .map { (line, robot) =>
+            val robots = 
+                source.getLines().toSeq.zipWithIndex.map: (line, robot) =>
                     logger.debug(s"line: ${line}")
 
                     // p=0,4 v=3,-3
                     val parser: matching.Regex =
                         """p=(-?\d+),(-?\d+) v=(-?\d+),(-?\d+)""".r
-                    val parsed = parser.findAllIn(line).matchData.next.subgroups
+                    val parsed = parser
+                        .findAllIn(line)
+                        .matchData
+                        .next
+                        .subgroups
                         .map(_.toInt)
-                    assert(
-                      parsed.size == 4,
-                      s"parsed.size == 4: ${parsed.size}",
-                    )
+                    // format: off
+                    assert(parsed.size == 4, s"parsed.size == 4: ${parsed.size}")
+                    // format: on
 
                     val (py, px, vy, vx) =
                         (parsed(0), parsed(1), parsed(2), parsed(3))
@@ -148,9 +148,8 @@ object Day14:
                         (math.max(maxX, px + 1), math.max(maxY, py + 1))
 
                     Robot(robot, Position(px, py), Velocity(vx, vy))
-                }.toSet
 
-            Simulation(robots, dimensions)
+            Simulation(robots.toSet, dimensions)
         finally source.close()
         end try
     end readFile

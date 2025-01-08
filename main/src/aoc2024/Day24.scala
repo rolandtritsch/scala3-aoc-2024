@@ -23,10 +23,13 @@ package aoc2024
   * Part1:
   *
   *   - Read the input file and build a code file that looks like this ...
-  *
-  * def y01 = false def y02 = true def z00 = y01 && y02 def z01 = y01 || y02
+  * ```
+  * def y01 = false 
+  * def y02 = true 
+  * def z00 = y01 && y02 
+  * def z01 = y01 || y02
   * List(z01, z00).map(if(_) 1 else 0).mkString
-  *
+  * ```
   *   - Note: z00 is the lowest bit
   *   - Evaluate the code string
   */
@@ -35,9 +38,7 @@ object Day24:
     val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
     enum Operation:
-        case AND
-        case OR
-        case XOR
+        case AND, OR, XOR
 
     extension (op: Operation)
         def str: String = op match
@@ -74,7 +75,8 @@ object Day24:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try source.getLines().toSeq.map { line =>
+        try
+            val assignments = source.getLines().toSeq.map: line =>
                 logger.debug(s"line: ${line}")
                 // x00: 1
                 val parser = """(\w+): ([0,1])""".r
@@ -82,7 +84,7 @@ object Day24:
                 assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
                 logger.debug(s"parsed: ${parsed}")
                 Assignment(LeftVariable(parsed(0)), Value(parsed(1).toInt == 1))
-            }.toSet
+            assignments.toSet
         finally source.close()
         end try
     end readFileInitials
@@ -95,38 +97,41 @@ object Day24:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try source.getLines().toSeq.map { line =>
+        try 
+            val assignments = source.getLines().toSeq.map: line =>
                 logger.debug(s"line: ${line}")
                 // x00 AND y00 -> z00
                 val parser = """(\w+) (AND|OR|XOR) (\w+) -> (\w+)""".r
                 val parsed = parser.findAllIn(line).matchData.next.subgroups
                 logger.debug(s"parsed: ${parsed}")
                 assert(parsed.size == 4, s"parsed.size == 4: ${parsed.size}")
+                // format: off
                 Assignment(
-                  LeftVariable(parsed(3)),
-                  Expression(
-                    LeftVariable(parsed(0)),
-                    Operation.valueOf(parsed(1)),
-                    RightVariable(parsed(2)),
-                  ),
+                    LeftVariable(parsed(3)),
+                    Expression(
+                        LeftVariable(parsed(0)),
+                        Operation.valueOf(parsed(1)),
+                        RightVariable(parsed(2)),
+                    ),
                 )
-            }.toSet
+                // format: on
+            assignments.toSet
         finally source.close()
         end try
     end readFileStatements
 
     /** @return the evaluation of the code */
     def evaluate(lines: String): String =
-        import com.eed3si9n.eval
-        eval.Eval().evalInfer(lines).getValue(this.getClass.getClassLoader)
+        com.eed3si9n.eval.Eval()
+            .evalInfer(lines)
+            .getValue(this.getClass.getClassLoader)
             .toString
 
     /** @return the code snippet that needs to be evaluated */
     def generate(statements: Set[Assignment]): String =
-        val vars = statements.map { s =>
-            s match
-                case Assignment(LeftVariable(name), _) => name
-        }.filter(_.startsWith("z")).toList.sorted.reverse.mkString(",")
+        val vars = statements.map:
+            case Assignment(LeftVariable(name), _) => name
+        .filter(_.startsWith("z")).toList.sorted.reverse.mkString(",")
         val convertToBitString = s"List(${vars}).map(if(_) 1 else 0).mkString"
 
         statements.map(_.toString).toList.sorted.mkString("\n") + "\n" +

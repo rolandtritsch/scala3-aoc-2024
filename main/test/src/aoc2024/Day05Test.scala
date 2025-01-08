@@ -25,18 +25,20 @@ class Day05Test extends munit.ScalaCheckSuite:
 
         val input    = List(75, 47, 61, 53, 29)
         val obtained = input.facts
+        // format: off
         val expected = Set(
-          (75, 47),
-          (75, 61),
-          (75, 53),
-          (75, 29),
-          (47, 61),
-          (47, 53),
-          (47, 29),
-          (61, 53),
-          (61, 29),
-          (53, 29)
+            (75, 47),
+            (75, 61),
+            (75, 53),
+            (75, 29),
+            (47, 61),
+            (47, 53),
+            (47, 29),
+            (61, 53),
+            (61, 29),
+            (53, 29)
         )
+        // format: on
 
         assertEquals(obtained, expected)
 

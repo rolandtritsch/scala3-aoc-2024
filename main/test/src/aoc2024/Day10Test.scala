@@ -19,17 +19,19 @@ class Day10Test extends munit.ScalaCheckSuite:
 
     test("Day10 - trailHeads - test"):
         val obtained = Day10.readFile("./inputs/Day10Test.txt")
+        // format: off
         val expected = Set(
-          Position(0, 2),
-          Position(0, 4),
-          Position(2, 4),
-          Position(4, 6),
-          Position(5, 2),
-          Position(5, 5),
-          Position(6, 0),
-          Position(6, 6),
-          Position(7, 1)
+            Position(0, 2),
+            Position(0, 4),
+            Position(2, 4),
+            Position(4, 6),
+            Position(5, 2),
+            Position(5, 5),
+            Position(6, 0),
+            Position(6, 6),
+            Position(7, 1)
         )
+        // format: on
         assertEquals(obtained.trailHeads, expected)
 
     test("Day10 - part1 - test"):

@@ -22,8 +22,8 @@ import util.GridGraph
   *
   * Part2:
   *
-  *   - Read all the files/memorys (into a grid and then into a graph), one by
-  *     one
+  *   - Read all the files/memorys (into a grid and then into a graph), 
+  *     one by one by one
   *   - Find and return the first one/byte that has no (shortest) path (anymore)
   */
 
@@ -33,8 +33,11 @@ object Day18:
     import util.Grid.*
     import util.Position
 
-    def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(
-        using factory: GridFactory[G]
+    def fromResource[G](
+        filename: String, 
+        initialGridBytes: Int = Int.MaxValue,
+    )(
+        using factory: GridFactory[G],
     ): (G, Seq[Position]) =
         val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
@@ -54,17 +57,21 @@ object Day18:
                 (blocked.map(_.x).max + 1, blocked.map(_.y).max + 1)
             val (dimX, dimY) = dimensions
 
-            val free = (0 until dimX).flatMap { x =>
-                (0 until dimY).map(y => Position(x, y))
-            }.filter(!blocked.contains(_)).toSet
+            val free =
+                (0 until dimX).flatMap: x =>
+                    (0 until dimY).map: y =>
+                        Position(x, y)
+                .filter(!blocked.contains(_)).toSet
 
+            // format: off
             val grid = factory.create(
-              free,
-              blocked,
-              Some(Position(0, 0)),
-              Some(Position(dimX - 1, dimY - 1)),
-              dimensions,
+                free,
+                blocked,
+                Some(Position(0, 0)),
+                Some(Position(dimX - 1, dimY - 1)),
+                dimensions,
             )
+            // format: on
             val bytes = remainingBytes.map(parseLine)
             (grid, bytes)
         finally source.close()
@@ -81,7 +88,7 @@ object Day18:
         memory.shortestPath(grid.start.get, grid.end.get).size
     end part1
 
-    /** @return the solution for part2 */
+    /** @return the first byte that has no (shortest) path (anymore) */
     def part2(grids: (util.Grid, Seq[util.Position])): String =
         import util.GridGraph.shortestPath
 
@@ -91,11 +98,12 @@ object Day18:
         ): Option[Position] = remainingBytes match
             case Nil => None
             case b :: bs =>
-                val g = grid
-                    .clone(free = grid.free - b, blocked = grid.blocked + b)
+                val g = 
+                    grid.clone(free = grid.free - b, blocked = grid.blocked + b)
                 val memory = GridGraph.fromGrid(g)
                 val path = memory.shortestPath(g.start.get, g.end.get)
                 if path.isEmpty then Some(b) else findNoPath(g, bs)
+        end findNoPath
 
         val (grid, remainingBytes) = grids
         val byte = findNoPath(grid, remainingBytes).get

@@ -31,6 +31,27 @@ package aoc2024
 object Day10:
     val logger = com.typesafe.scalalogging.Logger(this.getClass.getName)
 
+    /** @return the topographical map for the give input file */
+    def readFile(filename: String): TopographicalMap =
+        import scala.io.Source
+
+        require(filename.nonEmpty, "filename.nonEmpty")
+        logger.debug(s"filename: ${filename}")
+
+        val source = Source.fromResource(filename)
+        try
+            val lines = source.getLines().toArray
+            val parsed = lines.map: line =>
+                line.toArray.map(_.toString).map: height =>
+                    height match
+                        case "." => -99
+                        case _   => height.toInt
+
+            TopographicalMap(parsed)
+        finally source.close()
+        end try
+    end readFile
+
     type Height = Int
 
     type Grid = Array[Array[Height]]
@@ -41,33 +62,39 @@ object Day10:
     class TopographicalMap(private val grid: Grid):
         val maxX = grid.size
         val maxY = grid(0).size
+        val minHeight = 0
+        val maxHeight = 9
 
         extension (p: Position)
-            def isOnGrid: Boolean = p.x >= 0 && p.x < maxX && p.y >= 0 &&
-                p.y < maxY
+            def isOnGrid: Boolean =
+                p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
 
             /** @return all possible next positions for this position */
-            private def next: Set[Position] = Set(
-              Position(p.x, p.y + 1),
-              Position(p.x + 1, p.y),
-              Position(p.x, p.y - 1),
-              Position(p.x - 1, p.y),
-            ).filter(_.isOnGrid).filter(this(_) == this(p) + 1)
+            private def next: Set[Position] =
+                // format: off
+                Set(
+                    Position(p.x, p.y + 1),
+                    Position(p.x + 1, p.y),
+                    Position(p.x, p.y - 1),
+                    Position(p.x - 1, p.y),
+                )
+                // format: on
+                .filter(_.isOnGrid).filter(this(_) == this(p) + 1)
+            end next
 
             /** @return all paths for the given position/trailhead */
             def collect(ps: Set[Position]): Set[Set[Position]] =
-                if this(p) == 9 then Set(ps + p)
+                if this(p) == maxHeight then Set(ps + p)
                 else
-                    p.next.flatMap { nextPosition =>
+                    p.next.flatMap: nextPosition =>
                         nextPosition.collect(ps + p)
-                    }
+            end collect
 
             /** @return the score for the given position/trailhead */
             def score: Int =
                 val allTrials = p.collect(Set())
-                val allTrialsWithAUniqueExit = allTrials.map { t =>
-                    t.filter(p0 => this(p0) == 0 || this(p0) == 9)
-                }
+                val allTrialsWithAUniqueExit = allTrials.map: t =>
+                    t.filter(p0 => this(p0) == minHeight || this(p0) == maxHeight)
                 allTrialsWithAUniqueExit.size
             end score
 
@@ -81,36 +108,16 @@ object Day10:
 
         /** @return all trailHeads */
         def trailHeads: Set[Position] =
-            val cells = grid.zipWithIndex.flatMap { (line, x) =>
+            val cells = grid.zipWithIndex.flatMap: (line, x) =>
                 line.zipWithIndex.map((v, y) => (v, x, y))
-            }
-            cells.filter((v, _, _) => v == 0).map((_, x, y) => Position(x, y))
-                .toSet
+            val heads = cells
+                .filter: (v, _, _) => 
+                    v == minHeight
+                .map: (_, x, y) => 
+                    Position(x, y)
+            heads.toSet
         end trailHeads
     end TopographicalMap
-
-    /** @return the topographical map for the give input file */
-    def readFile(filename: String): TopographicalMap =
-        import scala.io.Source
-
-        require(filename.nonEmpty, "filename.nonEmpty")
-        logger.debug(s"filename: ${filename}")
-
-        val source = Source.fromResource(filename)
-        try
-            val lines = source.getLines().toSeq
-            val parsed = lines.map { line =>
-                line.map(_.toString).map { s =>
-                    s match
-                        case "." => -99
-                        case _   => s.toInt
-                }.toArray
-            }.toArray
-
-            TopographicalMap(parsed)
-        finally source.close()
-        end try
-    end readFile
 
     /** @return the sum of all scores for all trailheads */
     def part1(tp: TopographicalMap): Int =

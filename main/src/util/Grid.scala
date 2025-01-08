@@ -36,8 +36,8 @@ class Grid(
         path: List[Position] = List.empty,
     ): String =
         val (dimX, dimY) = dimensions
-        val grid = (0 until dimX).map { x =>
-            (0 until dimY).map { y =>
+        val cols = (0 until dimX).map: x =>
+            val rows = (0 until dimY).map: y =>
                 val pos = Position(x, y)
                 if current.getOrElse(Position(-1, -1)) == pos then 'X'
                 else if start.getOrElse(Position(-1, -1)) == pos then 'S'
@@ -46,30 +46,32 @@ class Grid(
                 else if blocked.contains(pos) then '#'
                 else if free.contains(pos) then '.'
                 else new RuntimeException("Unexpected case")
-                end if
-            }.mkString
-        }.mkString.mkString("\n")
+            rows.mkString
+        val grid = cols.mkString.mkString("\n")
         s"${this}\n${grid}\n"
     end toStringPretty
 
-    def neighbors: Map[Position, Set[Position]] = free
-        .map(p => (p, adjacent(p))).toMap
+    def neighbors: Map[Position, Set[Position]] =
+        free.map(p => (p, adjacent(p))).toMap
 
     def adjacent(
         p: Position,
         visited: Set[Position] = Set.empty,
-    ): Set[Position] = Set(
-      Position(p.x - 1, p.y),
-      Position(p.x + 1, p.y),
-      Position(p.x, p.y - 1),
-      Position(p.x, p.y + 1),
-    ).filter(p => free.contains(p) && !visited.contains(p))
+    ): Set[Position] =
+        // format: off
+        Set(
+            Position(p.x - 1, p.y),
+            Position(p.x + 1, p.y),
+            Position(p.x, p.y - 1),
+            Position(p.x, p.y + 1),
+        )
+        // format: on
+        .filter(p => free.contains(p) && !visited.contains(p))
+    end adjacent
 end Grid
 
 object Grid:
-
     trait GridFactory[G]:
-
         def create(
             free: Set[Position],
             blocked: Set[Position],
@@ -84,53 +86,31 @@ object Grid:
 
         val source = scala.io.Source.fromResource(filename)
         try
+            // format: off
             val init = (
-              Set.empty[Position],
-              Set.empty[Position],
-              Option.empty[Position],
-              Option.empty[Position],
-              (0, 0),
+                Set.empty[Position],
+                Set.empty[Position],
+                Option.empty[Position],
+                Option.empty[Position],
+                (0, 0),
             )
+            // format: on
             val (free, blocked, start, end, max) = source.getLines().toSeq
-                .zipWithIndex.foldLeft(init) { case (grid, (line, x)) =>
-                    logger.debug(s"grid: ${grid}, line: ${line}")
-
-                    line.zipWithIndex.foldLeft(grid) { case (grid, (c, y)) =>
-                        val (free, blocked, start, end, _) = grid
-                        c match
-                            case '.' => (
-                                  free + Position(x, y),
-                                  blocked,
-                                  start,
-                                  end,
-                                  (x, y),
-                                )
-                            case '#' => (
-                                  free,
-                                  blocked + Position(x, y),
-                                  start,
-                                  end,
-                                  (x, y),
-                                )
-                            case 'S' => (
-                                  free + Position(x, y),
-                                  blocked,
-                                  Some(Position(x, y)),
-                                  end,
-                                  (x, y),
-                                )
-                            case 'E' => (
-                                  free + Position(x, y),
-                                  blocked,
-                                  start,
-                                  Some(Position(x, y)),
-                                  (x, y),
-                                )
-                            case _ =>
-                                throw new RuntimeException("Unexpected case")
-                        end match
-                    }
-                }
+                .zipWithIndex.foldLeft(init):
+                    case (grid, (line, x)) =>
+                        logger.debug(s"grid: ${grid}, line: ${line}")
+                        line.zipWithIndex.foldLeft(grid):
+                            case (grid, (c, y)) =>
+                                val (free, blocked, start, end, _) = grid
+                                // format: off
+                                c match
+                                    case '.' => (free + Position(x, y), blocked, start, end, (x, y))
+                                    case '#' => (free, blocked + Position(x, y), start, end, (x, y))
+                                    case 'S' => (free + Position(x, y), blocked, Some(Position(x, y)), end, (x, y))
+                                    case 'E' => (free + Position(x, y), blocked, start, Some(Position(x, y)), (x, y))
+                                    case _ => throw new RuntimeException("Unexpected case")
+                                end match
+                                // format: on
 
             val (maxX, maxY) = max
             factory.create(free, blocked, start, end, (maxX + 1, maxY + 1))
@@ -139,9 +119,7 @@ object Grid:
     end fromResource
 
     object Factory:
-
         given GridFactory[Grid] with
-
             def create(
                 free: Set[Position],
                 blocked: Set[Position],

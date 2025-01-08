@@ -68,11 +68,13 @@ object Day13:
 
     case class ClawMachine(A: Button, B: Button, target: Position):
 
+        /** @return the fewest tokens to win the price. */
         def cheapestWayToWin(depth: Int): Option[Long] =
             import scala.collection.immutable.MultiSet
 
             val visited = scala.collection.mutable.Set[MultiSet[Token]]()
 
+            /** @return the fewest tokens to get to the price (recursively) */
             def loop(
                 position: Position,
                 way: MultiSet[Token],
@@ -80,9 +82,11 @@ object Day13:
                 minCost: Option[Long],
                 depth: Int,
             ): (Set[MultiSet[Token]], Option[Long]) =
+                // formt: off
                 logger.debug(
                   s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}"
                 )
+                // formt: on
 
                 if depth < 0 then (ways, minCost)
                 else if position > target then (ways, minCost)
@@ -93,44 +97,61 @@ object Day13:
                 else if visited.contains(way) then (ways, minCost)
                 else
                     visited += way
+                    // format: off
                     val (waysA, minCostA) = loop(
-                      position + A.diff,
-                      way + A.cost,
-                      ways,
-                      minCost,
-                      depth - 1,
+                        position + A.diff,
+                        way + A.cost,
+                        ways,
+                        minCost,
+                        depth - 1,
                     )
+                    // format: on
+                    // format: off
                     val (waysB, minCostB) = loop(
-                      position + B.diff,
-                      way + B.cost,
-                      ways,
-                      minCost,
-                      depth - 1,
+                        position + B.diff,
+                        way + B.cost,
+                        ways,
+                        minCost,
+                        depth - 1,
                     )
+                    // format: on
                     (waysA ++ waysB, (minCostA, minCostB).min)
                 end if
             end loop
 
-            val result =
+            val (_, cheapestWay) =
                 loop(Position(0, 0), MultiSet.empty, Set.empty, None, depth)
-            logger.debug(s"result: ${result}")
-            result._2
+            logger.debug(s"result: ${cheapestWay}")
+            cheapestWay
         end cheapestWayToWin
 
         import breeze.linalg.*
 
+        /** @return
+          *   the cheapest way to win the price (by solving the linear equation
+          *   system)
+          */
         def solve: Option[(Long, Long)] =
-            def isWhole(n: Double): Boolean = BigDecimal(n)
-                .setScale(3, BigDecimal.RoundingMode.HALF_UP).isWhole()
+            def isWhole(n: Double): Boolean =
+                BigDecimal(n)
+                    .setScale(3, BigDecimal.RoundingMode.HALF_UP)
+                    .isWhole()
+
             def isPositive(n: Double): Boolean = n > 0
 
-            val coefficients = DenseMatrix(
-              (A.diff.x.toDouble, B.diff.x.toDouble),
-              (A.diff.y.toDouble, B.diff.y.toDouble),
-            )
+            val coefficients =
+                // format: off
+                DenseMatrix(
+                    (A.diff.x.toDouble, B.diff.x.toDouble),
+                    (A.diff.y.toDouble, B.diff.y.toDouble),
+                )
+                // format: on
             val constants = DenseVector(target.x.toDouble, target.y.toDouble)
+            // \ is the breeze solve operator
             val solution = coefficients \ constants
             assert(solution.length == 2)
+
+            // Valid solutions must be whole and positive
             if solution.forall(n => isWhole(n) && isPositive(n)) then
                 Some((solution(0).round, solution(1).round))
             else None
@@ -149,22 +170,27 @@ object Day13:
 
         // Button A: X+65, Y+27!Button B: X+32, Y+70!Prize: X=305, Y=4371!
         val parser: matching.Regex =
-            """Button A\: X\+(\d+), Y\+(\d+)!Button B\: X\+(\d+), Y\+(\d+)!Prize\: X\=(\d+), Y\=(\d+)!"""
-                .r
+            // format: off
+            """Button A\: X\+(\d+), Y\+(\d+)!Button B\: X\+(\d+), Y\+(\d+)!Prize\: X\=(\d+), Y\=(\d+)!""".r
+            // format: on
 
         def parse(
             line: String,
             errorCorrection: Long,
         ): (Position, Position, Position) = line match
-            case parser(ax, ay, bx, by, tx, ty) => (
-                  Position(ax.toLong, ay.toLong),
-                  Position(bx.toLong, by.toLong),
-                  Position(
-                    tx.toLong + errorCorrection,
-                    ty.toLong + errorCorrection,
-                  ),
+            // format: off
+            case parser(ax, ay, bx, by, tx, ty) => 
+                (
+                    Position(ax.toLong, ay.toLong),
+                    Position(bx.toLong, by.toLong),
+                    Position(
+                        tx.toLong + errorCorrection,
+                        ty.toLong + errorCorrection,
+                    ),
                 )
             case _ => throw new RuntimeException("Unexpected case")
+            // format: on
+        end parse
     end Parser
 
     /** @return the file for the given filename as parsed elements */
@@ -180,18 +206,18 @@ object Day13:
         val source = Source.fromResource(filename)
         try
             val lines = source.getLines().grouped(4).map(_.mkString("!")).toSet
-            lines.map { line =>
+            lines.map: line =>
                 logger.debug(s"line: ${line}")
                 val (a, b, target) = Parser.parse(line, errorCorrection)
                 ClawMachine(Button(a, 3), Button(b, 1), target)
-            }
+
         finally source.close()
         end try
     end readFile
 
     extension (machines: Set[ClawMachine])
-        def cheapestWaysToWin(depth: Int): Long = machines.toList
-            .flatMap(_.cheapestWayToWin(depth)).sum
+        def cheapestWaysToWin(depth: Int): Long = 
+            machines.toList.flatMap(_.cheapestWayToWin(depth)).sum
 
     /** @return the fewest tokens to win all prices */
     def part1(machines: Set[ClawMachine]): Long =
@@ -206,6 +232,10 @@ object Day13:
         require(machines.nonEmpty, "machines.nonEmpty")
         logger.debug(s"machines: ${machines}")
 
-        machines.flatMap(_.solve).map { case (a, b) => (a * 3) + (b * 1) }.sum
+        def cheapestWay(cost: (Long, Long)): Long =
+            val (a, b) = cost
+            (a * 3) + (b * 1)
+
+        machines.flatMap(_.solve).map(cheapestWay).sum
     end part2
 end Day13

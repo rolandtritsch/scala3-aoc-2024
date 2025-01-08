@@ -17,10 +17,10 @@ object GridGraph
         // require(grid.nonEmpty, "grid.nonEmpty")
         logger.debug(s"grid: ${grid}")
 
-        val gridEdges = grid.neighbors.map { case (pos, neighbors) =>
-            logger.debug(s"pos: ${pos}, neighbors: ${neighbors}")
-            neighbors.map(neighbor => new edges.UnDiEdge(pos, neighbor))
-        }.flatten
+        val gridEdges = grid.neighbors.flatMap:
+            case (pos, neighbors) =>
+                logger.debug(s"pos: ${pos}, neighbors: ${neighbors}")
+                neighbors.map(neighbor => new edges.UnDiEdge(pos, neighbor))
 
         GridGraph.from(gridEdges)
     end fromGrid
@@ -30,6 +30,8 @@ object GridGraph
             val start = g.get(from)
             val end = g.get(to)
             val path = start.shortestPathTo(end)
+            
             if path.isEmpty then List()
             else path.get.nodes.map(_.outer).toList.tail
+        end shortestPath
 end GridGraph

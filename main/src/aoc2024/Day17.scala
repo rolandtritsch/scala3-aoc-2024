@@ -131,7 +131,9 @@ object Day17:
     end CDV
 
     object Instruction:
-
+        /** @return
+          *   the (new) Instruction for the given (instruction, operand)
+          */
         def create(instruction: Int, operandLiteral: Int): Instruction =
             instruction match
                 case 0 => ADV(operandLiteral)
@@ -143,16 +145,26 @@ object Day17:
                 case 6 => BDV(operandLiteral)
                 case 7 => CDV(operandLiteral)
                 case _ => throw new RuntimeException("Unexpected case")
+            end match
+        end create
     end Instruction
 
+    /** A Program (State). At the current (program)counter. */
     class Program(
         val counter: Int,
         val registers: Registers,
         val instructions: Seq[Instruction],
         val outputs: List[Operand],
     ):
+        /** @return
+          *   true if the program is finished (has reached the halted state;
+          *   there is no instruction at the current counter)
+          */
         def halted: Boolean = counter < 0 || counter >= instructions.size
 
+        /** @return
+          *   the next Program (State)
+          */
         def next: Program =
             val instruction = instructions(counter)
             val newRegisters = instruction.execute(registers)
@@ -162,14 +174,20 @@ object Day17:
             val newOutputs =
                 if newRegisters.contains('Y') then newRegisters('Y') :: outputs
                 else outputs
+            // format: off
             new Program(
-              newCounter,
-              newRegisters.removed('Z').removed('Y'),
-              instructions,
-              newOutputs,
+                newCounter,
+                newRegisters.removed('Z').removed('Y'),
+                instructions,
+                newOutputs,
             )
+            // format: on
         end next
 
+        /** @return
+          *   the final Program (State) (after running the Program recursively
+          *   and it has reached the halted state)
+          */
         def run: Program = if halted then this else next.run
     end Program
 
@@ -182,7 +200,8 @@ object Day17:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try source.getLines().toSeq.map { line =>
+        try 
+            val registers = source.getLines().toSeq.map: line =>
                 logger.debug(s"line: ${line}")
                 // Register A: 46337277
                 val parser: matching.Regex = """Register (\w): (\d+)""".r
@@ -190,7 +209,8 @@ object Day17:
                 assert(parsed.size == 2, s"parsed.size == 2: ${parsed.size}")
                 logger.debug(s"parsed: ${parsed}")
                 (parsed(0).charAt(0), parsed(1).toLong)
-            }.toMap.withDefault(_ => Long.MinValue)
+
+            registers.toMap.withDefault(_ => Long.MinValue)
         finally source.close()
         end try
     end readFileRegisters
@@ -204,7 +224,8 @@ object Day17:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try source.getLines().toSeq.flatMap { line =>
+        try 
+            source.getLines().toSeq.flatMap:line =>
                 logger.debug(s"line: ${line}")
                 // Program: 2,4,1,1,7,5,4,4,1,4,0,3,5,5,3,0
                 val parser: matching.Regex = """Program: (\d+(?:,\s*\d+)*)""".r
@@ -212,10 +233,8 @@ object Day17:
                     .head.split(",").map(_.toInt).grouped(2)
                     .map(pair => (pair(0), pair(1)))
                 logger.debug(s"parsed: ${parsed}")
-                parsed.map { (instruction, operandLiteral) =>
+                parsed.map: (instruction, operandLiteral) =>
                     Instruction.create(instruction, operandLiteral)
-                }
-            }
         finally source.close()
         end try
     end readFileInstructions

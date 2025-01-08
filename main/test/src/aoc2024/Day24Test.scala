@@ -26,48 +26,52 @@ class Day24Test extends munit.ScalaCheckSuite:
         assertEquals(obtained.size, 222)
 
     test("Day24 - assignment - toString"):
+        // format: off
         assertEquals(
-          Assignment(LeftVariable("a"), Value(true)).toString,
-          "def a = true"
+            Assignment(LeftVariable("a"), Value(true)).toString,
+            "def a = true"
         )
         assertEquals(
-          Assignment(
-            LeftVariable("b"),
-            Expression(LeftVariable("c"), Operation.AND, RightVariable("d"))
-          ).toString,
-          "def b = c && d"
+            Assignment(
+                LeftVariable("b"),
+                Expression(LeftVariable("c"), Operation.AND, RightVariable("d"))
+            ).toString,
+            "def b = c && d"
         )
+        // format: on
 
     test("Day24 - generate - test2"):
         val initials = readFileInitials("./inputs/Day24Test2-Initials.txt")
         val statements =
             readFileStatements("./inputs/Day24Test2-Statements.txt")
         val obtained = generate(initials ++ statements)
+        // format: off
         val expected = """
-                         |def x00 = true
-                         |def x01 = true
-                         |def x02 = true
-                         |def y00 = false
-                         |def y01 = true
-                         |def y02 = false
-                         |def z00 = x00 && y00
-                         |def z01 = x01 ^ y01
-                         |def z02 = x02 || y02
-                         |List(z02,z01,z00).map(if(_) 1 else 0).mkString
-                         |""".stripMargin.trim
-
+            |def x00 = true
+            |def x01 = true
+            |def x02 = true
+            |def y00 = false
+            |def y01 = true
+            |def y02 = false
+            |def z00 = x00 && y00
+            |def z01 = x01 ^ y01
+            |def z02 = x02 || y02
+            |List(z02,z01,z00).map(if(_) 1 else 0).mkString
+            |""".stripMargin.trim
+        // format: on
         assertEquals(obtained, expected)
 
     test("Day24 - evaluate - basic"):
+        // format: off
         val code = """
-      def d = c || e
-      def a = true
-      def b = true
-      def c = a && b
-      def e = false
-      List(a, b, c, d, e).map(if(_) 1 else 0).mkString
-    """
-
+            |def d = c || e
+            |def a = true
+            |def b = true
+            |def c = a && b
+            |def e = false
+            |List(a, b, c, d, e).map(if(_) 1 else 0).mkString
+            |""".stripMargin.trim
+        // format: on
         val obtained = evaluate(code)
         assertEquals(obtained, "11110")
 

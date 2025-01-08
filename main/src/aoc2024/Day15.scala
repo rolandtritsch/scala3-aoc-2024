@@ -67,9 +67,10 @@ object Day15:
             case Move.Left  => Position(x, y - 1)
             case Move.Right => Position(x, y + 1)
 
-        def isBlockedByWall(walls: Set[Position]): Boolean = walls
-            .contains(this)
-        def isBlockedByBox(boxes: Set[Position]): Boolean = boxes.contains(this)
+        def isBlockedByWall(walls: Set[Position]): Boolean =
+            walls.contains(this)
+        def isBlockedByBox(boxes: Set[Position]): Boolean =
+            boxes.contains(this)
     end Position
 
     object Position:
@@ -103,22 +104,18 @@ object Day15:
             val nextRobot = robot.next(move)
             if nextRobot.isBlockedByWall(walls) then this
             else if nextRobot.isBlockedByBox(boxes) then
-                val (nextSpaces, nextBoxes, movedIt) = spaces
-                    .push(nextRobot, nextRobot, boxes, walls, move)
-                logger.debug(
-                  s"nextSpaces: ${nextSpaces}, nextBoxes: ${nextBoxes}, movedIt: ${movedIt}"
-                )
+                val (nextSpaces, nextBoxes, movedIt) =
+                    spaces.push(nextRobot, nextRobot, boxes, walls, move)
+                // format: off
+                logger.debug(s"nextSpaces: ${nextSpaces}, nextBoxes: ${nextBoxes}, movedIt: ${movedIt}")
+                // format: on
                 if movedIt then
                     val (finalSpaces, nextRobot) = nextSpaces.move(robot, move)
-                    this.clone(
-                      robot = nextRobot,
-                      boxes = nextBoxes,
-                      spaces = finalSpaces,
-                    )
+                    // format: off
+                    this.clone(robot = nextRobot, boxes = nextBoxes, spaces = finalSpaces)
+                    // format: on
                 else this
-                end if
             else this.clone(robot = nextRobot)
-            end if
         end move
 
         override def toString(): String =
@@ -152,20 +149,18 @@ object Day15:
             walls: Set[Position],
             move: Move,
         ): (Set[Position], Set[Position], Boolean) =
-            logger.debug(
-              s"box: ${box}, currentBox: ${currentBox}, move: ${move}, boxes: ${boxes}, spaces: ${spaces}, walls: ${walls}"
-            )
+            // format: off
+            logger.debug(s"box: ${box}, currentBox: ${currentBox}, move: ${move}, boxes: ${boxes}, spaces: ${spaces}, walls: ${walls}")
+            // format: on
 
             if currentBox.next(move).isBlockedByWall(walls) then
                 (spaces, boxes, false)
             else if currentBox.next(move).isBlockedByBox(boxes) then
                 spaces.push(box, currentBox.next(move), boxes, walls, move)
             else
-                (
-                  spaces - currentBox.next(move) + box,
-                  boxes + currentBox.next(move) - box,
-                  true,
-                )
+                // format: off
+                (spaces - currentBox.next(move) + box, boxes + currentBox.next(move) - box, true)
+                // format: on
             end if
         end push
     end extension
@@ -173,7 +168,6 @@ object Day15:
     type State = (Warehouse, List[Move])
 
     extension (state: State)
-
         def next: State =
             logger.debug(s"state: ${state}")
 
@@ -194,22 +188,26 @@ object Day15:
         logger.debug(s"filename: ${filename}")
 
         val source = Source.fromResource(filename)
-        try source.getLines().toSeq.zipWithIndex
-                .foldLeft(new Warehouse()) { case (wh, (line, x)) =>
-                    logger.debug(s"line: ${line}")
-                    line.zipWithIndex.foldLeft(wh) { case (wh, (c, y)) =>
+        try 
+            source
+                .getLines()
+                .toSeq
+                .zipWithIndex
+                .foldLeft(new Warehouse()):(wh, row) =>
+                    logger.debug(s"line: ${row}")
+
+                    val (line, y) = row
+                    line.zipWithIndex.foldLeft(wh): (wh, col) =>
+                        val (c, x) = col
                         c match
-                            case '#' => wh
-                                    .clone(walls = wh.walls + Position(x, y))
-                            case 'O' => wh
-                                    .clone(boxes = wh.boxes + Position(x, y))
-                            case '.' => wh
-                                    .clone(spaces = wh.spaces + Position(x, y))
-                            case '@' => wh.clone(robot = Position(x, y))
+                            case '#' => 
+                                wh.clone(walls = wh.walls + Position(x, y))
+                            case 'O' => 
+                                wh.clone(boxes = wh.boxes + Position(x, y))
+                            case '.' => 
+                                wh.clone(spaces = wh.spaces + Position(x, y))
                             case _ =>
                                 throw new RuntimeException(s"Unexpected case")
-                    }
-                }
         finally source.close()
         end try
     end readFileWarehouse
@@ -224,14 +222,15 @@ object Day15:
         val source = Source.fromResource(filename)
         try
             val moves = source.getLines().mkString
-            moves.map { case c =>
+            val ms = moves.map: c =>
                 c match
                     case '^' => Move.Up
                     case 'v' => Move.Down
                     case '<' => Move.Left
                     case '>' => Move.Right
                     case _   => throw new RuntimeException(s"Unexpected case")
-            }.toList
+            ms.toList
+
         finally source.close()
         end try
     end readFileMoves

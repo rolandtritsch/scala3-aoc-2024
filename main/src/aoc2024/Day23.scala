@@ -39,8 +39,8 @@ object Day23:
         // Build adjacency map
         val graph = connections.foldLeft(Map.empty[String, Set[String]]):
             case (acc, Connection(a, b)) => acc
-                    .updatedWith(a)(opt => Some(opt.getOrElse(Set.empty) + b))
-                    .updatedWith(b)(opt => Some(opt.getOrElse(Set.empty) + a))
+                .updatedWith(a)(opt => Some(opt.getOrElse(Set.empty) + b))
+                .updatedWith(b)(opt => Some(opt.getOrElse(Set.empty) + a))
 
         // Find all sets of three inter-connected computers
         val allNodes = graph.keySet
@@ -49,8 +49,7 @@ object Day23:
                 a <- allNodes.toSeq
                 b <- graph(a)
                 c <- graph(a).intersect(graph(b))
-                if a < b && b < c /* Avoid duplicates
-                 * by enforcing order */
+                if a < b && b < c
             yield Set(a, b, c)
 
         // Count triplets containing at least one computer starting with 't'
@@ -62,4 +61,5 @@ object Day23:
         require(connections.nonEmpty, "connections.nonEmpty")
         logger.debug(s"connections: ${connections}")
 
-        0 // TODO: Implement part 2
+        0
+    end part2

@@ -18,7 +18,6 @@ class Day04Test extends munit.ScalaCheckSuite:
         val expected = Seq("aA1", "bB2", "cC3")
 
         assertEquals(obtained, expected)
-
         assertEquals(obtained.rotate.rotate.rotate, input)
 
     test("Day04 - transpose"):
@@ -29,7 +28,6 @@ class Day04Test extends munit.ScalaCheckSuite:
         val expected = Seq("1Aa", "2Bb", "3Cc")
 
         assertEquals(obtained, expected)
-
         assertEquals(obtained.transposed, input)
 
     test("Day04 - diagonalize - tlbr"):
@@ -37,15 +35,17 @@ class Day04Test extends munit.ScalaCheckSuite:
 
         val input    = Seq("1234", "ABCD", "abcd", "+-*/")
         val obtained = input.diagonalizeTLBR
+        // format: off
         val expected = Seq(
-          ((0, 0), "1Bc/"),
-          ((0, 1), "2Cd"),
-          ((0, 2), "3D"),
-          ((0, 3), "4"),
-          ((1, 0), "Ab*"),
-          ((2, 0), "a-"),
-          ((3, 0), "+")
+            ((0, 0), "1Bc/"),
+            ((0, 1), "2Cd"),
+            ((0, 2), "3D"),
+            ((0, 3), "4"),
+            ((1, 0), "Ab*"),
+            ((2, 0), "a-"),
+            ((3, 0), "+")
         )
+        // format: on
 
         assertEquals(obtained, expected)
 
@@ -54,15 +54,17 @@ class Day04Test extends munit.ScalaCheckSuite:
 
         val input    = Seq("1234", "ABCD", "abcd", "+-*/")
         val obtained = input.diagonalizeTRBL
+        // format: off
         val expected = Seq(
-          ((0, 3), "4Cb+"),
-          ((1, 3), "Dc-"),
-          ((2, 3), "d*"),
-          ((3, 3), "/"),
-          ((0, 0), "1"),
-          ((0, 1), "2A"),
-          ((0, 2), "3Ba")
+            ((0, 3), "4Cb+"),
+            ((1, 3), "Dc-"),
+            ((2, 3), "d*"),
+            ((3, 3), "/"),
+            ((0, 0), "1"),
+            ((0, 1), "2A"),
+            ((0, 2), "3Ba")
         )
+        // format: on
 
         assertEquals(obtained, expected)
 
@@ -75,8 +77,8 @@ class Day04Test extends munit.ScalaCheckSuite:
         import aoc2024.Day04.*
 
         val input = Seq("M.S", ".A.", "M.S")
-        val obtained = input.diagonalizeTLBR
-            .findAllPos("MAS", Position.nextTLBR)
+        val obtained = 
+            input.diagonalizeTLBR.findAllPos("MAS", Position.nextTLBR)
         val expected = Seq((0, 0))
 
         assertEquals(obtained, expected)
@@ -85,8 +87,8 @@ class Day04Test extends munit.ScalaCheckSuite:
         import aoc2024.Day04.*
 
         val input = Seq("M.S", ".A.", "M.S")
-        val obtained = input.diagonalizeTRBL
-            .findAllPos("SAM", Position.nextTRBL)
+        val obtained = 
+            input.diagonalizeTRBL.findAllPos("SAM", Position.nextTRBL)
         val expected = Seq((0, 2))
 
         assertEquals(obtained, expected)
@@ -97,18 +99,20 @@ class Day04Test extends munit.ScalaCheckSuite:
             "XMXXMSSSMSXSXMMXSAMMXXSXMASMSSXXMAMXAMXSXMXSMAMMASXXASMMXMASXMSSXMMMXMXSXXSXMXXSAMXSXSXSAMXMSAMXMAXXXMXMAMSASXMSSXMSXSXXMAXXSSSMXMXMXMMAASXM"
         assertEquals(obtained(0), expected)
 
+    // format: off
     val input = Seq(
-      "MMMSXXMASM",
-      "MSAMXMSMSA",
-      "AMXSXMAAMM",
-      "MSAMASMSMX",
-      "XMASAMXAMM",
-      "XXAMMXXAMA",
-      "SMSMSASXSS",
-      "SAXAMASAAA",
-      "MAMMMXMMMM",
-      "MXMXAXMASX"
+        "MMMSXXMASM",
+        "MSAMXMSMSA",
+        "AMXSXMAAMM",
+        "MSAMASMSMX",
+        "XMASAMXAMM",
+        "XXAMMXXAMA",
+        "SMSMSASXSS",
+        "SAXAMASAAA",
+        "MAMMMXMMMM",
+        "MXMXAXMASX"
     )
+    // format: on
 
     test("Day04 - part1 - test"):
         val obtained = Day04.part1(input)

@@ -28,11 +28,10 @@ trait Dfs:
         if current == end.get then Some(path :+ current)
         else if path.contains(current) then None
         else
-            adjacent(current).foldLeft(Option.empty[Path]) { case (p, n) =>
+            adjacent(current).foldLeft(Option.empty[Path]): (p, n) =>
                 p match
                     case Some(_) => p
                     case None    => findFirst(n, path :+ current)
-            }
         end if
     end findFirst
 
@@ -68,10 +67,9 @@ trait Dfs:
             if current == end.get then Some(path :+ current).min(bestPath)
             else if score(path :+ current) >= visited(current) then bestPath
             else
-                adjacent(current).foldLeft(bestPath) { case (bp, n) =>
+                adjacent(current).foldLeft(bestPath):(bp, n) =>
                     visited.update(current, score(path :+ current))
                     findCheapest(n, path :+ current, bp).min(bp)
-                }
             end if
         end findCheapest
 

@@ -62,25 +62,29 @@ class Day20Test extends munit.ScalaCheckSuite:
         val shortestPath       = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = track.shortCuts(program, shortestPath.get)
-            .map { case (c, p) => (c, p.getOrElse(List.empty).length) }.toList
+        val shortCutsPathLength =
+            track.shortCuts(program, shortestPath.get).map:
+                case (c, p) =>
+                    (c, p.getOrElse(List.empty).length)
 
-        assertEquals(shortCutsPathLength.size, 44)
+        assertEquals(shortCutsPathLength.toList.size, 44)
 
     test("Day20 - shortCuts - shortCutsValue - test"):
-        val input            = readFile("./inputs/Day20Test.txt")
+        val input = readFile("./inputs/Day20Test.txt")
         val (track, program) = input
 
         Day20.visited.clear()
-        val shortestPath       = program.dfs(track)
+        val shortestPath = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = track.shortCuts(program, shortestPath.get)
-            .map { case (c, p) => (c, p.getOrElse(List.empty).length) }.toList
+        val shortCutsPathLength = 
+            track.shortCuts(program, shortestPath.get).map:
+                case (c, p) => 
+                    (c, p.getOrElse(List.empty).length)
 
-        val shortCutsValue = shortCutsPathLength.map { (c, p) =>
-            (c, shortestPathLength - p)
-        }
+        val shortCutsValue = shortCutsPathLength.toList.map:
+            (c, p) =>
+                (c, shortestPathLength - p)
 
         assertEquals(shortCutsValue.size, 44)
 
@@ -92,30 +96,36 @@ class Day20Test extends munit.ScalaCheckSuite:
         val shortestPath       = program.dfs(track)
         val shortestPathLength = shortestPath.get.length
 
-        val shortCutsPathLength = track.shortCuts(program, shortestPath.get)
-            .map { case (c, p) => (c, p.getOrElse(List.empty).length) }.toList
+        val shortCutsPathLength = 
+            track.shortCuts(program, shortestPath.get).map:
+                case (c, p) => 
+                    (c, p.getOrElse(List.empty).length)
 
-        val shortCutsValue = shortCutsPathLength.map { (c, p) =>
-            (c, shortestPathLength - p)
-        }
+        val shortCutsValue = shortCutsPathLength.toList.map:
+            (c, p) =>
+                (c, shortestPathLength - p)
 
-        val obtained = shortCutsValue.groupBy(_._2)
+        val obtained = shortCutsValue
+            .groupBy(_._2)
             .map((cheatValue, cheatList) => (cheatValue, cheatList.size))
             .toSet
 
+        // format: off
         val expected = Set(
-          (14, 2),
-          (14, 4),
-          (2, 6),
-          (4, 8),
-          (2, 10),
-          (3, 12),
-          (1, 20),
-          (1, 36),
-          (1, 38),
-          (1, 40),
-          (1, 64)
-        ).map((c, v) => (v, c))
+            (14, 2),
+            (14, 4),
+            (2, 6),
+            (4, 8),
+            (2, 10),
+            (3, 12),
+            (1, 20),
+            (1, 36),
+            (1, 38),
+            (1, 40),
+            (1, 64)
+        )
+        // format: on
+        .map((c, v) => (v, c))
 
         assertEquals(obtained, expected)
 

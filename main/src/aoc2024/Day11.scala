@@ -75,23 +75,28 @@ object Day11:
     private def ruleDefault(stone: Stone): RuleResult =
         (stone * 2024, None, true)
 
-    // not private to support testing
+    // Not private to support testing
     val rules = List(ruleZero, ruleEven, ruleDefault)
 
     extension (stones: List[Stone])
         /** @return the list of stones after the rules where applied */
-        def apply(rules: List[Rule]): List[Stone] = stones.flatMap { stone =>
-            rules.foldLeft(List[Stone](), false) {
-                case ((newStones, done), rule) =>
+        def apply(rules: List[Rule]): List[Stone] =
+            stones.flatMap: stone =>
+                val (stones, _) = rules.foldLeft(List[Stone](), false): (ss, rule) =>
+                    val (newStones, done) = ss
                     if done then (newStones, done)
                     else
                         rule(stone) match
-                            case (s, None, done)      => (List(s), done)
-                            case (s0, Some(s1), done) => (List(s0, s1), done)
+                            case (s, None, done) => (List(s), done)
+                            case (s0, Some(s1), done) =>
+                                (List(s0, s1), done)
                             case _ =>
                                 throw new RuntimeException("Unexpected case")
-            }._1
-        }
+                        end match
+                    end if
+
+                stones
+        end apply
 
         /** @return
           *   the list of stones after the rules have been applied (recursively)
@@ -104,10 +109,10 @@ object Day11:
             import scala.collection.parallel.CollectionConverters.*
 
             val levelOneStones = stones.apply(rules)
-            val levelNStonesSizes = levelOneStones.par.map { stone =>
+            val levelNStonesSizes = levelOneStones.par.map: stone =>
                 List(stone).applyN(rules, n - 1).size
-            }.sum
-            levelNStonesSizes
+
+            levelNStonesSizes.sum
         end ssize
 
         /** @return the sum of all parallel counts */
@@ -125,10 +130,10 @@ object Day11:
         /** @return the new/next stone(s) after applying the rules */
         def apply(rules: List[Rule]): (Stone, Option[Stone]) =
             val (s0, s1, _) = rules
-                .foldLeft(0L, Option(0L), false) { case (applied, rule) =>
+                .foldLeft(0L, Option(0L), false):(applied, rule) =>
                     val (_, _, done) = applied
                     if done then applied else rule(stone)
-                }
+
             (s0, s1)
         end apply
 
