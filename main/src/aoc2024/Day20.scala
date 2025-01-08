@@ -160,7 +160,7 @@ object Day20:
         val shortestPathLength = shortestPath.get.length // scalafix:ok
 
         val shortCutsPathLength =
-            track.shortCuts(program, shortestPath.get).map:  // scalafix:ok
+            track.shortCuts(program, shortestPath.get).map: // scalafix:ok
                 (c, p) =>
                     (c, p.getOrElse(List.empty).length)
 
