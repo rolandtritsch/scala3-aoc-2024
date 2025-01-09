@@ -11,7 +11,6 @@ class Day19Test extends munit.ScalaCheckSuite:
 
     test("Day19 - readFile - test"):
         val obtained = readFile("./inputs/Day19Test.txt")
-        // format: off
         assertEquals(
             obtained._1,
             Set("r", "wr", "b", "g", "bwu", "rb", "gb", "br")
@@ -29,16 +28,13 @@ class Day19Test extends munit.ScalaCheckSuite:
                 "bbrgwb"
             )
         )
-        // format: on
 
     test("Day19 - readFile"):
         val obtained = readFile("./inputs/Day19.txt")
         assert(obtained._1.contains("wwubu"))
-        // format: off
         assert(obtained._2.contains(
             "gwwggrgbwbbguwgbguubbwrbgurgbburrgbwruwgurgwgguwbwgbgrr"
         ))
-        // format: on
 
     test("Day19 - part1 - test"):
         val obtained = part1(readFile("./inputs/Day19Test.txt"))

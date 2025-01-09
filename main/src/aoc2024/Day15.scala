@@ -107,20 +107,16 @@ object Day15:
             else if nextRobot.isBlockedByBox(boxes) then
                 val (nextSpaces, nextBoxes, movedIt) = spaces
                     .push(nextRobot, nextRobot, boxes, walls, move)
-                // format: off
                 logger.debug(
                     s"nextSpaces: ${nextSpaces}, nextBoxes: ${nextBoxes}, movedIt: ${movedIt}"
                 )
-                // format: on
                 if movedIt then
                     val (finalSpaces, nextRobot) = nextSpaces.move(robot, move)
-                    // format: off
                     this.clone(
                         robot = nextRobot,
                         boxes = nextBoxes,
                         spaces = finalSpaces,
                     )
-                    // format: on
                 else this
                 end if
             else this.clone(robot = nextRobot)
@@ -147,9 +143,7 @@ object Day15:
 
     extension (spaces: Set[Position])
 
-        // format: off
-        /** @return the next Position/Spaces after the given Move */ // scalafix:ok
-        // format: on
+        /** @return the next Position/Spaces after the given Move */
         def move(robot: Position, move: Move): (Set[Position], Position) =
             (spaces - robot.next(move) + robot, robot.next(move))
 
@@ -161,24 +155,20 @@ object Day15:
             walls: Set[Position],
             move: Move,
         ): (Set[Position], Set[Position], Boolean) =
-            // format: off
             logger.debug(
                 s"box: ${box}, currentBox: ${currentBox}, move: ${move}, boxes: ${boxes}, spaces: ${spaces}, walls: ${walls}"
             )
-            // format: on
 
             if currentBox.next(move).isBlockedByWall(walls) then
                 (spaces, boxes, false)
             else if currentBox.next(move).isBlockedByBox(boxes) then
                 spaces.push(box, currentBox.next(move), boxes, walls, move)
             else
-                // format: off
                 (
                     spaces - currentBox.next(move) + box,
                     boxes + currentBox.next(move) - box,
                     true,
                 )
-                // format: on
             end if
         end push
     end extension

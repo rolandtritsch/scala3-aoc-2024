@@ -30,7 +30,6 @@ class DfsTest extends munit.ScalaCheckSuite:
     test("Dfs - findFirst"):
         val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest.txt")
         val path = grid.findFirst(grid.start.get)
-        // format: off
         val expected = List(
             Position(1, 1),
             Position(2, 1),
@@ -38,7 +37,6 @@ class DfsTest extends munit.ScalaCheckSuite:
             Position(3, 2),
             Position(3, 3),
         )
-        // format: on
         assertEquals(path.get, expected)
 
     test("Dfs - findFirst - no-path"):
@@ -51,7 +49,6 @@ class DfsTest extends munit.ScalaCheckSuite:
         val grid = Grid
             .fromResource[GridWithDfs]("./tests/GridTest-NoBoundaries.txt")
         val path = grid.findFirst(grid.start.get)
-        // format: off
         val expected = List(
             Position(0, 0),
             Position(1, 0),
@@ -69,7 +66,6 @@ class DfsTest extends munit.ScalaCheckSuite:
             Position(4, 3),
             Position(4, 4),
         )
-        // format: on
         assertEquals(path.get, expected)
 
     test("Dfs - findFirst - small"):

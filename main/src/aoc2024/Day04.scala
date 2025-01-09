@@ -77,9 +77,7 @@ object Day04:
 
     extension (lines: Seq[String])
 
-        // format: off
-        /** @return the number of what occurences in the lines */ // scalafix:ok
-        // format: on
+        /** @return the number of what occurences in the lines */
         def findAll(what: String): Int =
             lines.foldLeft(0): (matchCount, line) =>
                 val parser: scala.util.matching.Regex = what.r
@@ -103,10 +101,7 @@ object Day04:
                 def collectDiagonal(position: Position, line: String): String =
                     val (row, col) = position
                     if row >= rows || col >= cols then line
-                    // format: off
                     else collectDiagonal(Position.nextTLBR(position), line + grid(row)(col))
-                    // format: on
-                end collectDiagonal
 
                 val line = collectDiagonal(startPosition, "")
                 (startPosition, line)
@@ -128,10 +123,7 @@ object Day04:
                 def collectDiagonal(position: Position, line: String): String =
                     val (row, col) = position
                     if row >= rows || col < 0 then line
-                    // format: off
                     else collectDiagonal(Position.nextTRBL(position), line + grid(row)(col))
-                    // format: on
-                end collectDiagonal
 
                 val line = collectDiagonal(startPosition, "")
                 (startPosition, line)
@@ -167,23 +159,15 @@ object Day04:
 
         val what = "MAS"
 
-        // format: off
         val positionsTLBR =
             puzzle.diagonalizeTLBR.findAllPos(what, Position.nextTLBR) ++
             puzzle.diagonalizeTLBR.findAllPos(what.reverse, Position.nextTLBR)
         val positionsTRBL =
             puzzle.diagonalizeTRBL.findAllPos(what, Position.nextTRBL) ++
             puzzle.diagonalizeTRBL.findAllPos(what.reverse, Position.nextTRBL)
-        // format: on
 
-        // A little bit of a hack. We know that the A is the next character
-        // from the start of the string. So we can just look for the As
-        // on the TLBR and TRBL, intersect them and then get the size of the
-        // intersection.
-        // scalafix: off
         val positionsOfAsTLBR = positionsTLBR.map(Position.nextTLBR(_))
         val positionsOfAsTRBL = positionsTRBL.map(Position.nextTRBL(_))
-        // scalafix: on
 
         positionsOfAsTRBL.intersect(positionsOfAsTLBR).size
     end part2

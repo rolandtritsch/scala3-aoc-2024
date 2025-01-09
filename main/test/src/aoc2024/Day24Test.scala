@@ -26,7 +26,6 @@ class Day24Test extends munit.ScalaCheckSuite:
         assertEquals(obtained.size, 222)
 
     test("Day24 - assignment - toString"):
-        // format: off
         assertEquals(
             Assignment(LeftVariable("a"), Value(true)).toString,
             "def a = true"
@@ -38,14 +37,12 @@ class Day24Test extends munit.ScalaCheckSuite:
             ).toString,
             "def b = c && d"
         )
-        // format: on
 
     test("Day24 - generate - test2"):
         val initials = readFileInitials("./inputs/Day24Test2-Initials.txt")
         val statements =
             readFileStatements("./inputs/Day24Test2-Statements.txt")
         val obtained = generate(initials ++ statements)
-        // format: off
         val expected = """
             |def x00 = true
             |def x01 = true
@@ -58,11 +55,9 @@ class Day24Test extends munit.ScalaCheckSuite:
             |def z02 = x02 || y02
             |List(z02,z01,z00).map(if(_) 1 else 0).mkString
             |""".stripMargin.trim
-        // format: on
         assertEquals(obtained, expected)
 
     test("Day24 - evaluate - basic"):
-        // format: off
         val code = """
             |def d = c || e
             |def a = true
@@ -71,7 +66,6 @@ class Day24Test extends munit.ScalaCheckSuite:
             |def e = false
             |List(a, b, c, d, e).map(if(_) 1 else 0).mkString
             |""".stripMargin.trim
-        // format: on
         val obtained = evaluate(code)
         assertEquals(obtained, "11110")
 

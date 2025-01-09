@@ -8,7 +8,6 @@ class Day03Test extends munit.ScalaCheckSuite:
         val input =
             "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
         val instructions = input.parseLine
-        // format: off
         val expectedInstructions = List(
             "mul(2,4)",
             "don't()",
@@ -17,12 +16,10 @@ class Day03Test extends munit.ScalaCheckSuite:
             "do()",
             "mul(8,5)"
         )
-        // format: on
 
         assertEquals(instructions, expectedInstructions)
 
         val operations = instructions.map(_.parseInstruction)
-        // format: off
         val expectedOperations = List(
             Mul(2, 4),
             Disable(),
@@ -31,7 +28,6 @@ class Day03Test extends munit.ScalaCheckSuite:
             Enable(),
             Mul(8, 5)
         )
-        // format: on
 
         assertEquals(operations, expectedOperations)
 

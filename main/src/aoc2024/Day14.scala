@@ -139,9 +139,7 @@ object Day14:
                         .next
                         .subgroups
                         .map(_.toInt)
-                    // format: off
                     assert(parsed.size == 4, s"parsed.size == 4: ${parsed.size}")
-                    // format: on
 
                     val (py, px, vy, vx) =
                         (parsed(0), parsed(1), parsed(2), parsed(3))

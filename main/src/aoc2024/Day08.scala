@@ -85,9 +85,7 @@ object Day08:
 
     extension (antennas: Set[Antenna])
 
-        // format: off
-        /** @return the set of antenna pairs for all the given antennas. */ // scalafix:ok
-        // format: on
+        /** @return the set of antenna pairs for all the given antennas. */
         def pairs: Set[(Antenna, Antenna)] =
             val groupByFrequency = antennas.groupBy(_.frequency).map(_._2)
             val antennaPairs = groupByFrequency.flatMap:
@@ -101,9 +99,7 @@ object Day08:
 
     extension (pair: (Antenna, Antenna))
 
-        // format: off
-        /** @return the antiNodes for the antenna pair. */ // scalafix:ok
-        // format: on
+        /** @return the antiNodes for the antenna pair. */
         def antiNodes: Set[Position] =
             val (a1, a2) = pair
             Set(a1.antiNode(a2), a2.antiNode(a1))
@@ -122,9 +118,7 @@ object Day08:
                 logger.debug(s"nextAntiNodePosition: ${nextAntiNodePosition}")
 
                 if !Grid.isOnGrid(maxX, maxY, nextAntiNodePosition) then nodes
-                // format: off
                 else collectAntiNodes(Antenna(a1.frequency, nextAntiNodePosition), a1, nodes + nextAntiNodePosition)
-                // format: on
             end collectAntiNodes
 
             val (a1, a2) = pair

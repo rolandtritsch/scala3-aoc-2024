@@ -63,7 +63,6 @@ object Day18:
                 .filterNot(blocked.contains(_))
                 .toSet
 
-            // format: off
             val grid = factory.create(
                 free,
                 blocked,
@@ -71,7 +70,6 @@ object Day18:
                 Some(Position(dimX - 1, dimY - 1)),
                 dimensions,
             )
-            // format: on
             val bytes = remainingBytes.map(parseLine)
             (grid, bytes)
         finally source.close()

@@ -108,7 +108,6 @@ class Day20Test extends munit.ScalaCheckSuite:
             .map((cheatValue, cheatList) => (cheatValue, cheatList.size))
             .toSet
 
-        // format: off
         val expected = Set(
             (14, 2),
             (14, 4),
@@ -122,8 +121,7 @@ class Day20Test extends munit.ScalaCheckSuite:
             (1, 40),
             (1, 64)
         )
-        // format: on
-            .map((c, v) => (v, c))
+        .map((c, v) => (v, c))
 
         assertEquals(obtained, expected)
 

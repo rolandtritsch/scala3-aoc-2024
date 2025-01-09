@@ -35,7 +35,6 @@ class Day04Test extends munit.ScalaCheckSuite:
 
         val input = Seq("1234", "ABCD", "abcd", "+-*/")
         val obtained = input.diagonalizeTLBR
-        // format: off
         val expected = Seq(
             ((0, 0), "1Bc/"),
             ((0, 1), "2Cd"),
@@ -45,7 +44,6 @@ class Day04Test extends munit.ScalaCheckSuite:
             ((2, 0), "a-"),
             ((3, 0), "+")
         )
-        // format: on
 
         assertEquals(obtained, expected)
 
@@ -54,7 +52,6 @@ class Day04Test extends munit.ScalaCheckSuite:
 
         val input = Seq("1234", "ABCD", "abcd", "+-*/")
         val obtained = input.diagonalizeTRBL
-        // format: off
         val expected = Seq(
             ((0, 3), "4Cb+"),
             ((1, 3), "Dc-"),
@@ -64,7 +61,6 @@ class Day04Test extends munit.ScalaCheckSuite:
             ((0, 1), "2A"),
             ((0, 2), "3Ba")
         )
-        // format: on
 
         assertEquals(obtained, expected)
 
@@ -99,7 +95,6 @@ class Day04Test extends munit.ScalaCheckSuite:
             "XMXXMSSSMSXSXMMXSAMMXXSXMASMSSXXMAMXAMXSXMXSMAMMASXXASMMXMASXMSSXMMMXMXSXXSXMXXSAMXSXSXSAMXMSAMXMAXXXMXMAMSASXMSSXMSXSXXMAXXSSSMXMXMXMMAASXM"
         assertEquals(obtained(0), expected)
 
-    // format: off
     val input = Seq(
         "MMMSXXMASM",
         "MSAMXMSMSA",
@@ -112,7 +107,6 @@ class Day04Test extends munit.ScalaCheckSuite:
         "MAMMMXMMMM",
         "MXMXAXMASX"
     )
-    // format: on
 
     test("Day04 - part1 - test"):
         val obtained = Day04.part1(input)

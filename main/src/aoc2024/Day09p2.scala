@@ -55,11 +55,9 @@ object Day09p2:
 
             val (_, _) = line.tail.grouped(2)
                 .foldLeft(firstBlockSize, 1): (block, chars) =>
-                    // format: off
                     logger.debug(
                         s"blocks: ${blocks}, block: ${block}, chars: ${chars}}"
                     )
-                    // format: on
                     val (offset, id) = block
 
                     val freeBlockSize = chars(0).toString.toInt
@@ -100,18 +98,14 @@ object Day09p2:
 
                 val check =
                     if offset != poffset + psize then
-                        // format: off
                         logger.warn(
                             s"Offset corrupted - offset: ${offset}, poffset: ${poffset}, psize: ${psize}, id: ${id}"
                         )
-                        // format: on
                         false
                     else if id.getOrElse(-99) == pid.getOrElse(-99) then
-                        // format: off
                         logger.warn(
                             s"Id corrupted - offset: ${offset}, poffset: ${poffset}, psize: ${psize}, id: ${id}"
                         )
-                        // format: on
                         false
                     else true
                 (b, c && check)
@@ -151,10 +145,8 @@ object Day09p2:
             val block = blocks(freeIndex)
             val (offset, size, id) = block
             val splitBlocks =
-                // format: off
                 if size > minSize then List((offset, minSize, id), (offset + minSize, size - minSize, id))
                 else List(block)
-                // format: on
 
             blocks.remove(freeIndex)
             blocks.insertAll(freeIndex, splitBlocks)

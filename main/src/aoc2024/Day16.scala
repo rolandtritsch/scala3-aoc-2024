@@ -47,13 +47,11 @@ object Day16:
         case FORWARD, ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE
     import Move.*
 
-    // format: off
     val cost: Map[Move, Int] = Map(
         FORWARD -> 1,
         ROTATE_CLOCKWISE -> 1000,
         ROTATE_COUNTERCLOCKWISE -> 1000,
     )
-    // format: on
 
     extension (path: List[(Reindeer, Move)])
         def score: Int = path.map(p => cost(p._2)).sum
@@ -71,7 +69,6 @@ object Day16:
         end next
     end Position
 
-    // format: off
     val rotate: Map[(Move, Orientation), Orientation] = Map(
         (ROTATE_CLOCKWISE, SOUTH) -> WEST,
         (ROTATE_CLOCKWISE, WEST) -> NORTH,
@@ -82,7 +79,6 @@ object Day16:
         (ROTATE_COUNTERCLOCKWISE, NORTH) -> WEST,
         (ROTATE_COUNTERCLOCKWISE, WEST) -> SOUTH,
     )
-    // format: on
 
     case class Reindeer(val position: Position, val orientation: Orientation):
         extension (bestPath: Option[List[(Reindeer, Move)]])
@@ -116,50 +112,36 @@ object Day16:
                     Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation))
                         .next(maze, visited)
                 val nextCounterClockwise =
-                    // format: off
                     Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation))
                         .next(maze, visited)
-                    // format: on
                 val nextVisited = visited.updated(this.position, path.score)
 
                 val (vForward, bpForward) =
                     if nextForward.isDefined then
-                        // format: off
-                        // scalafix: off
                         nextForward.get.dfs(
                             maze,
                             (this, FORWARD) :: path,
                             bestPath,
                             nextVisited,
                         )
-                        // scalafix: on
-                        // format: on
                     else (nextVisited, bestPath)
                 val (vClockwise, bpClockwise) =
                     if nextClockwise.isDefined then
-                        // format: off
-                        // scalafix: off
                         nextClockwise.get.dfs(
                             maze,
                             (Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_CLOCKWISE) :: path,
                             bpForward.min(bestPath),
                             vForward
                         )
-                        // scalafix: on
-                        // format: on
                     else (vForward, bpForward.min(bestPath))
                 val (vCounterClockwise, bpCounterClockwise) =
                     if nextCounterClockwise.isDefined then
-                        // format: off
-                        // scalafix: off
                         nextCounterClockwise.get.dfs(
                             maze,
                             (Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)), FORWARD) :: (this, ROTATE_COUNTERCLOCKWISE) :: path,
                             bpClockwise.min(bpForward),
                             vClockwise,
                         )
-                        // scalafix: on
-                        // format: on
                     else (vClockwise, bpClockwise.min(bpForward))
                 (vCounterClockwise, bpCounterClockwise.min(bpClockwise))
             end if
@@ -212,14 +194,12 @@ object Day16:
                         logger.debug(s"line: ${line}")
                         line.zipWithIndex.foldLeft(state):
                             case ((maze, reindeer), (c, y)) =>
-                                // format: off
                                 c match
                                     case '#' => (maze.clone(walls = maze.walls + Position(x, y)), reindeer)
                                     case 'S' => (maze, Some(Reindeer(Position(x, y), EAST)))
                                     case 'E' => (maze.clone(exit = Position(x, y)), reindeer)
                                     case '.' => (maze, reindeer)
                                     case _ => throw new RuntimeException(s"Unexpected case: $c")
-                                // format: on
 
             (maze, reindeer.get) // scalafix:ok
         finally source.close()

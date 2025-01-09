@@ -84,11 +84,9 @@ object Day13:
                 minCost: Option[Long],
                 depth: Int,
             ): (Set[MultiSet[Token]], Option[Long]) =
-                // format: off
                 logger.debug(
                     s"position: ${position}, way: ${way}, ways: ${ways}, minCost: ${minCost}, depth: ${depth}"
                 )
-                // format: on
 
                 if depth < 0 then (ways, minCost)
                 else if position > target then (ways, minCost)
@@ -99,7 +97,6 @@ object Day13:
                 else if visited.contains(way) then (ways, minCost)
                 else
                     visited += way
-                    // format: off
                     val (waysA, minCostA) = loop(
                         position + A.diff,
                         way + A.cost,
@@ -107,8 +104,6 @@ object Day13:
                         minCost,
                         depth - 1,
                     )
-                    // format: on
-                    // format: off
                     val (waysB, minCostB) = loop(
                         position + B.diff,
                         way + B.cost,
@@ -116,7 +111,6 @@ object Day13:
                         minCost,
                         depth - 1,
                     )
-                    // format: on
                     (waysA ++ waysB, (minCostA, minCostB).min)
                 end if
             end loop
@@ -142,53 +136,41 @@ object Day13:
             def isPositive(n: Double): Boolean = n > 0
 
             val coefficients =
-                // format: off
                 DenseMatrix(
                     (A.diff.x.toDouble, B.diff.x.toDouble),
                     (A.diff.y.toDouble, B.diff.y.toDouble),
                 )
-                // format: on
             val constants = DenseVector(target.x.toDouble, target.y.toDouble)
-            // \ is the breeze solve operator
             val solution = coefficients \ constants
             assert(solution.length == 2)
 
-            // Valid solutions must be whole and positive
-            // format: off
             Option.when(
                 solution.forall(n => isWhole(n) && isPositive(n))
             )(
                 (solution(0).round, solution(1).round)
             )
-            // format: on
         end solve
     end ClawMachine
 
     extension (minCost: (Option[Long], Option[Long]))
-        // scalafix: off
         def min: Option[Long] = minCost match
             case (Some(a), Some(b)) => Some(math.min(a, b))
             case (Some(a), None)    => Some(a)
             case (None, Some(b))    => Some(b)
             case (None, None)       => None
         end min
-        // scalafix: on
     end extension
 
     object Parser:
         import scala.util.matching
 
-        // Button A: X+65, Y+27!Button B: X+32, Y+70!Prize: X=305, Y=4371!
         val parser: matching.Regex =
-            // format: off
             """Button A\: X\+(\d+), Y\+(\d+)!Button B\: X\+(\d+), Y\+(\d+)!Prize\: X\=(\d+), Y\=(\d+)!""".r
-            // format: on
 
         def parse(
             line: String,
             errorCorrection: Long,
         ): (Position, Position, Position) = line match
-            // format: off
             case parser(ax, ay, bx, by, tx, ty) =>
                 (
                     Position(ax.toLong, ay.toLong),
@@ -199,11 +181,9 @@ object Day13:
                     ),
                 )
             case _ => throw new RuntimeException("Unexpected case")
-            // format: on
         end parse
     end Parser
 
-    /** @return the file for the given filename as parsed elements */
     def readFile(
         filename: String,
         errorCorrection: Long = 0L,
@@ -229,7 +209,6 @@ object Day13:
         def cheapestWaysToWin(depth: Int): Long =
             machines.toList.flatMap(_.cheapestWayToWin(depth)).sum
 
-    /** @return the fewest tokens to win all prices */
     def part1(machines: Set[ClawMachine]): Long =
         require(machines.nonEmpty, "machines.nonEmpty")
         logger.debug(s"machines: ${machines}")
@@ -237,7 +216,6 @@ object Day13:
         machines.cheapestWaysToWin(200)
     end part1
 
-    /** @return the fewest tokens to win all prices */
     def part2(machines: Set[ClawMachine]): Long =
         require(machines.nonEmpty, "machines.nonEmpty")
         logger.debug(s"machines: ${machines}")

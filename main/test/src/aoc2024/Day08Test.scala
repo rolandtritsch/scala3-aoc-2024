@@ -18,16 +18,13 @@ class Day08Test extends munit.ScalaCheckSuite:
     test("Day08 - anntenna.pairs"):
         import aoc2024.Day08.*
 
-        // format: off
         val input = Set(
             Antenna('A', Position(0, 0)),
             Antenna('A', Position(1, 1)),
             Antenna('B', Position(0, 1)),
             Antenna('B', Position(1, 0))
         )
-        // format: on
         val obtained = input.pairs
-        // format: off
         val expected = Set(
             (Antenna('A', Position(0, 0)), Antenna('A', Position(1, 1))),
             (Antenna('B', Position(0, 1)), Antenna('B', Position(1, 0)))
@@ -40,7 +37,6 @@ class Day08Test extends munit.ScalaCheckSuite:
 
         val input    = Day08.readFile("./inputs/Day08Test.txt")
         val obtained = input.antennas.pairs
-        // format: off
         val expected = Set(
             (Antenna('0', Position(2, 5)), Antenna('0', Position(1, 8))),
             (Antenna('0', Position(2, 5)), Antenna('0', Position(4, 4))),
@@ -52,7 +48,6 @@ class Day08Test extends munit.ScalaCheckSuite:
             (Antenna('A', Position(5, 6)), Antenna('A', Position(9, 9))),
             (Antenna('A', Position(9, 9)), Antenna('A', Position(8, 8)))
         )
-        // format: on
 
         assertEquals(obtained, expected)
 
@@ -61,13 +56,11 @@ class Day08Test extends munit.ScalaCheckSuite:
 
         val input = Day08.readFile("./inputs/Day08Test2.txt")
         val obtained = input.antennas.pairs
-        // format: off
         val expected = Set(
             (Antenna('T', Position(0, 0)), Antenna('T', Position(1, 3))),
             (Antenna('T', Position(0, 0)), Antenna('T', Position(2, 1))),
             (Antenna('T', Position(1, 3)), Antenna('T', Position(2, 1)))
         )
-        // format: on
 
         assertEquals(obtained, expected)
 
@@ -111,7 +104,6 @@ class Day08Test extends munit.ScalaCheckSuite:
 
         val input = (Antenna('A', Position(4, 4)), Antenna('A', Position(5, 5)))
         val obtained = input.antiNodes0((10, 10))
-        // format: off
         val expected = Set(
             Position(0, 0),
             Position(1, 1),
@@ -122,7 +114,6 @@ class Day08Test extends munit.ScalaCheckSuite:
             Position(8, 8),
             Position(9, 9)
         )
-        // format: on
 
         assertEquals(obtained, expected)
 

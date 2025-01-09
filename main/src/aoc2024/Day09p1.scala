@@ -78,17 +78,14 @@ object Day09p1:
                 blocksAvailableForDefragmentation: Vector[Int],
                 n: Int,
             ): Vector[Block] =
-                // format: off
                 logger.debug(
                     s"fragmentedBlocks: ${fragmentedBlocks}, defragmentedBlocks: ${defragmentedBlocks}, blocksAvailableForDefragmentation: ${blocksAvailableForDefragmentation}, n: ${n}"
                 )
-                // format: on
 
                 if n >= usedBlocks.size then
                     defragmentedBlocks ++
                         Vector.fill(blocks.size - usedBlocks.size)(None)
                 else
-                    // format: off
                     fragmentedBlocks match
                         case Vector(None, _*) =>
                             defragmentor(
@@ -106,7 +103,6 @@ object Day09p1:
                             )
                         case _ => throw new RuntimeException("Unexpected case")
                     end match
-                    // format: on
                 end if
             end defragmentor
 

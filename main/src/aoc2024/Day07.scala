@@ -45,13 +45,10 @@ object Day07:
         ): Boolean = numbers match
             case Nil                        => current == result
             case number :: remainingNumbers =>
-                // format: off
                 logger.debug(
                     s"current: ${current}, result: ${result}, numbers: ${numbers}, checkConcat: ${checkConcat}"
                 )
-                // format: on
 
-                // format: off
                 check(
                     current + number,
                     result,
@@ -73,7 +70,6 @@ object Day07:
                     )
                     && checkConcat
                 )
-                // format: on
         end check
 
         /** @return true, if the equation is valid */

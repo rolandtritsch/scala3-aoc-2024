@@ -36,14 +36,12 @@ object Day20:
     case class Position(x: Int, y: Int):
         /** @return all possible next positions for this position */
         def next(walls: Set[Position]): Seq[Position] =
-            // format: off
             Seq(
                 Position(x - 1, y),
                 Position(x + 1, y),
                 Position(x, y - 1),
                 Position(x, y + 1),
             )
-            // format: on
                 .filterNot(walls.contains(_))
 
         /** @return the shortest path through the race track */
@@ -134,7 +132,6 @@ object Day20:
                         logger.debug(s"line: ${line}")
                         line.zipWithIndex.foldLeft(state):
                             case ((track, program), (c, y)) =>
-                                // format: off
                                 c match
                                     case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
                                     case 'E' => (track.clone(end = Position(x, y)), program)
@@ -142,7 +139,6 @@ object Day20:
                                     case '.' => (track, program)
                                     case _ => throw new RuntimeException("Unexpected case")
                                 end match
-                                // format: on
             (track, program.get) // scalafix:ok
         finally source.close()
         end try

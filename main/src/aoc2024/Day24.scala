@@ -107,7 +107,6 @@ object Day24:
                 val parsed = parser.findAllIn(line).matchData.next.subgroups
                 logger.debug(s"parsed: ${parsed}")
                 assert(parsed.size == 4, s"parsed.size == 4: ${parsed.size}")
-                // format: off
                 Assignment(
                     LeftVariable(parsed(3)),
                     Expression(
@@ -116,7 +115,6 @@ object Day24:
                         RightVariable(parsed(2)),
                     ),
                 )
-                // format: on
             assignments.toSet
         finally source.close()
         end try

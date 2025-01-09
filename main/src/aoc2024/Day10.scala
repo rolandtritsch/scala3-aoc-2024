@@ -43,11 +43,13 @@ object Day10:
         val source = Source.fromResource(filename)
         try
             val lines = source.getLines().toArray
-            val parsed = lines.map: line =>
-                line.toArray.map(_.toString).map: height =>
+            val parsed = lines.map(line =>
+                line.toArray.map(_.toString).map(height =>
                     height match
                         case "." => -99
                         case _   => height.toInt
+                )
+            )
 
             TopographicalMap(parsed)
         finally source.close()
@@ -69,23 +71,19 @@ object Day10:
 
         extension (p: Position)
 
-            // format: off
             /** @return true, if the position is on the grid */ // scalafix:ok
-            // format: on
             def isOnGrid: Boolean =
                 p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
 
             /** @return all possible next positions for this position */
             private def next: Set[Position] =
-                // format: off
                 Set(
                     Position(p.x, p.y + 1),
                     Position(p.x + 1, p.y),
                     Position(p.x, p.y - 1),
                     Position(p.x - 1, p.y),
                 )
-                // format: on
-                    .filter(_.isOnGrid).filter(this(_) == this(p) + 1)
+                .filter(_.isOnGrid).filter(this(_) == this(p) + 1)
             end next
 
             /** @return all paths for the given position/trailhead */
@@ -113,13 +111,16 @@ object Day10:
 
         /** @return all trailHeads */
         def trailHeads: Set[Position] =
-            val cells = grid.zipWithIndex.flatMap: (line, x) =>
+            val cells = grid.zipWithIndex.flatMap((line, x) =>
                 line.zipWithIndex.map((v, y) => (v, x, y))
+            )
             val heads = cells
-                .withFilter: (v, _, _) =>
+                .withFilter((v, _, _) =>
                     v == minHeight
-                .map: (_, x, y) =>
+                )
+                .map((_, x, y) =>
                     Position(x, y)
+                )
             heads.toSet
         end trailHeads
     end TopographicalMap

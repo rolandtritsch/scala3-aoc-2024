@@ -6,7 +6,6 @@ class Day21Test extends munit.ScalaCheckSuite:
     val only = new munit.Tag("only")
     val ignore = new munit.Tag("ignore")
 
-    // format: off
     val results = Map(
         "029A" ->
             "<vA<AA>>^AvAA<^A>A<v<A>>^AvA^A<vA>^A<v<A>^A>AAvA^A<v<A>A>^AAAvA<^A>A",
@@ -18,7 +17,6 @@ class Day21Test extends munit.ScalaCheckSuite:
         "379A" ->
             "<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A"
     )
-    // format: on
 
     test("Day21 - dummy".tag(ignore)):
         assert(true)

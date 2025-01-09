@@ -72,9 +72,7 @@ object Day05:
 
     extension (update: Update)
 
-        // format: off
-        /** @return the Set of facts to check against the rules */ // scalafix:ok
-        // format: on
+        /** @return the Set of facts to check against the rules */
         def facts: Set[Fact] =
             def factBuilder(update: Update, facts: Set[Fact]): Set[Fact] =
                 update match
@@ -116,11 +114,9 @@ object Day05:
                 case Nil => throw new RuntimeException("No fix found")
                 case fact :: rest =>
                     val swapped = update.swap(fact)
-                    // format: off
                     logger.info(
                         s"update: ${update}, fact: ${fact}, swapped: ${swapped}"
                     )
-                    // format: on
                     if swapped.isValid(rules) then swapped else fix0(rest)
 
             def fix1(invalid: List[Fact], update: Update): Update =

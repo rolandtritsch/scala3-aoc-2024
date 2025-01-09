@@ -61,14 +61,12 @@ class Grid(
         p: Position,
         visited: Set[Position] = Set.empty,
     ): Set[Position] =
-        // format: off
         Set(
             Position(p.x - 1, p.y),
             Position(p.x + 1, p.y),
             Position(p.x, p.y - 1),
             Position(p.x, p.y + 1),
         )
-        // format: on
             .filter(p => free.contains(p) && !visited.contains(p))
     end adjacent
 end Grid
@@ -89,7 +87,6 @@ object Grid:
     def fromResource[G](filename: String)(using factory: GridFactory[G]): G =
         val source = scala.io.Source.fromResource(filename)
         try
-            // format: off
             val init = (
                 Set.empty[Position],
                 Set.empty[Position],
@@ -97,7 +94,6 @@ object Grid:
                 Option.empty[Position],
                 (0, 0),
             )
-            // format: on
             val (free, blocked, start, end, max) = source.getLines().toSeq
                 .zipWithIndex.foldLeft(init):
                     case (grid, (line, x)) =>
@@ -105,7 +101,6 @@ object Grid:
                         line.zipWithIndex.foldLeft(grid):
                             case (grid, (c, y)) =>
                                 val (free, blocked, start, end, _) = grid
-                                // format: off
                                 c match
                                     case '.' => (free + Position(x, y), blocked, start, end, (x, y))
                                     case '#' => (free, blocked + Position(x, y), start, end, (x, y))
@@ -113,7 +108,6 @@ object Grid:
                                     case 'E' => (free + Position(x, y), blocked, start, Some(Position(x, y)), (x, y))
                                     case _ => throw new RuntimeException("Unexpected case")
                                 end match
-                                // format: on
 
             val (maxX, maxY) = max
             factory.create(free, blocked, start, end, (maxX + 1, maxY + 1))

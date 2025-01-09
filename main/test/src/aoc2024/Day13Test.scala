@@ -14,24 +14,20 @@ class Day13Test extends munit.ScalaCheckSuite:
 
     test("Day13 - readFile - test"):
         val obtained = Day13.readFile("./inputs/Day13Test.txt")
-        // format: off
         val expected = ClawMachine(
             Button(Position(94, 34), 3),
             Button(Position(22, 67), 1),
             Position(8400, 5400)
         )
-        // format: on
         assertEquals(obtained.head, expected)
 
     test("Day13 - readFile - test"):
         val obtained = Day13.readFile("./inputs/Day13Test.txt", errorCorrection)
-        // format: off
         val expected = ClawMachine(
             Button(Position(94, 34), 3),
             Button(Position(22, 67), 1),
             Position(10000000008400L, 10000000005400L)
         )
-        // format: on
         assertEquals(obtained.head, expected)
 
     test("Day13 - readFile"):
@@ -47,13 +43,11 @@ class Day13Test extends munit.ScalaCheckSuite:
         assert(Position(0, 0) == Position(0, 0))
 
     test("Day13 - chepeastWayToWin"):
-        // format: off
         val machine = ClawMachine(
             Button(Position(2, 2), 3),
             Button(Position(1, 1), 1),
             Position(10, 10)
         )
-        // format: on
         val obtained = machine.cheapestWayToWin(10)
 
         assertEquals(obtained, Some(10L))
@@ -75,13 +69,11 @@ class Day13Test extends munit.ScalaCheckSuite:
         assertEquals(obtained, 34393L)
 
     test("Day13 - solve - simple"):
-        // format: off
         val machine = ClawMachine(
             Button(Position(94, 34), 3),
             Button(Position(22, 67), 1),
             Position(8400, 5400)
         )
-        // format: on
         assertEquals(machine.solve, Some(80L, 40L))
 
     test("Day13 - solve - test"):

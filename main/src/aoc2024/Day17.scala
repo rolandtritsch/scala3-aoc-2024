@@ -176,14 +176,12 @@ object Day17:
             val newOutputs =
                 if newRegisters.contains('Y') then newRegisters('Y') :: outputs
                 else outputs
-            // format: off
             new Program(
                 newCounter,
                 newRegisters.removed('Z').removed('Y'),
                 instructions,
                 newOutputs,
             )
-            // format: on
         end next
 
         /** @return
