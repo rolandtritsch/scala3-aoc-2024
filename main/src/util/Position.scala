@@ -4,4 +4,4 @@ package util
 case class Position(x: Int, y: Int)
 
 object Position:
-    implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))
+  implicit val ordering: Ordering[Position] = Ordering.by(p => (p.x, p.y))

@@ -96,14 +96,12 @@ object Day12:
     def collectRegion(plots: Set[Plot]): (Region, Set[Plot]) =
       val validPositions = plots.map(_.position)
 
-      def neighbors(p: Position): Set[Position] =
-                Set(
-                    Position(p.x - 1, p.y),
-                    Position(p.x + 1, p.y),
-                    Position(p.x, p.y - 1),
-                    Position(p.x, p.y + 1),
-                )
-          .filter(validPositions.contains)
+      def neighbors(p: Position): Set[Position] = Set(
+        Position(p.x - 1, p.y),
+        Position(p.x + 1, p.y),
+        Position(p.x, p.y - 1),
+        Position(p.x, p.y + 1),
+      ).filter(validPositions.contains)
 
       /** Do a depth-first traversal flood-fill of the garden from the given start position (to find
         * the region for that start position).
@@ -126,9 +124,10 @@ object Day12:
       val remainingPlots = plots.filter(p => remainingPositions.contains(p.position))
       val area = regionPlots.size
       val perimeter = regionPlots.toList.map(_.neighbors.size).sum
-      val sides = countSides(regionPositions, regionPlots.head.plant)
-
-            (Region(location, plots.head.plant, regionPositions, area, perimeter, sides), remainingPlots)
+      val sides = countSides(regionPositions, regionPlots.head.plant)(
+        Region(location, plots.head.plant, regionPositions, area, perimeter, sides),
+        remainingPlots,
+      )
     end collectRegion
 
     /** @return
@@ -175,13 +174,12 @@ object Day12:
     def neighbors(p: Position, garden: Array[Array[Char]]): Set[Position] =
       val (maxX, maxY) = (garden.length, garden(0).length)
       val thisPlant = garden(p.x)(p.y)
-      val positionsToCheck =
-                Set(
-                    Position(p.x - 1, p.y),
-                    Position(p.x + 1, p.y),
-                    Position(p.x, p.y - 1),
-                    Position(p.x, p.y + 1),
-                )
+      val positionsToCheck = Set(
+        Position(p.x - 1, p.y),
+        Position(p.x + 1, p.y),
+        Position(p.x, p.y - 1),
+        Position(p.x, p.y + 1),
+      )
       val inGardenNeigbors = positionsToCheck.filter: p =>
         p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
       .filter: p =>
