@@ -126,12 +126,12 @@ object Day20:
             logger.debug(s"line: ${line}")
             line.zipWithIndex.foldLeft(state):
               case ((track, program), (c, y)) => c match
-                  case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
-                  case 'E' => (track.clone(end = Position(x, y)), program)
-                  case 'S' => (track, Some(Position(x, y)))
-                  case '.' => (track, program)
-                  case _   => throw new RuntimeException("Unexpected case")
-                end match
+                case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
+                case 'E' => (track.clone(end = Position(x, y)), program)
+                case 'S' => (track, Some(Position(x, y)))
+                case '.' => (track, program)
+                case _   => throw new RuntimeException("Unexpected case")
+              end match
       (track, program.get)
     finally source.close()
     end try

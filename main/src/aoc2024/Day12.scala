@@ -124,10 +124,9 @@ object Day12:
       val remainingPlots = plots.filter(p => remainingPositions.contains(p.position))
       val area = regionPlots.size
       val perimeter = regionPlots.toList.map(_.neighbors.size).sum
-      val sides = countSides(regionPositions, regionPlots.head.plant)(
-        Region(location, plots.head.plant, regionPositions, area, perimeter, sides),
-        remainingPlots,
-      )
+      val sides = countSides(regionPositions, regionPlots.head.plant)
+      
+      (Region(location, plots.head.plant, regionPositions, area, perimeter, sides), remainingPlots)
     end collectRegion
 
     /** @return
