@@ -60,7 +60,8 @@ object Day18:
                 (0 until dimX).flatMap: x =>
                     (0 until dimY).map: y =>
                         Position(x, y)
-                .filterNot(blocked.contains(_)).toSet
+                .filterNot(blocked.contains(_))
+                .toSet
 
             // format: off
             val grid = factory.create(
