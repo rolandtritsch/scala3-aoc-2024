@@ -21,15 +21,15 @@ trait Bfs:
         val paths = mutable.Queue[(Position, Path)]()
         val visited = mutable.Set[Position]()
 
-        if start.isEmpty || end.isEmpty then return None // scalafix:ok
+        if start.isEmpty || end.isEmpty then return None
 
-        paths.enqueue((start.get, List(start.get))) // scalafix:ok
-        visited.add(start.get) // scalafix:ok
+        paths.enqueue((start.get, List(start.get)))
+        visited.add(start.get)
 
         while paths.nonEmpty do
             val (current, path) = paths.dequeue()
 
-            if current == end.get then return Some(path) // scalafix:ok
+            if current == end.get then return Some(path)
             else
                 for
                     next <- adjacent(current)
@@ -56,7 +56,7 @@ trait Bfs:
         visited: Set[Position],
     ): Option[Path] =
         logger.debug(s"paths: ${paths}")
-        val foundOne = paths.find(_.last == end.get) // scalafix:ok
+        val foundOne = paths.find(_.last == end.get)
         if foundOne.nonEmpty then foundOne
         else
             val (nextPaths, nexts) = paths

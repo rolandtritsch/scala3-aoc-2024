@@ -10,8 +10,6 @@ import com.typesafe.scalalogging.Logger
   * Please take a look at Day09p1 and Day09p2.
   */
 
-// scalafix: off
 object Day09:
     val logger: Logger = Logger(this.getClass.getName)
 end Day09
-// scalafix: on

@@ -165,7 +165,8 @@ object Day16:
           */
         def walk(maze: Maze): Int =
             val (_, bestPath) = dfs(maze)
-            bestPath.get.score // scalafix:ok
+            bestPath.get.score
+
     end Reindeer
 
     class Maze(val walls: Set[Position], val exit: Position):
@@ -201,7 +202,8 @@ object Day16:
                                     case '.' => (maze, reindeer)
                                     case _ => throw new RuntimeException(s"Unexpected case: $c")
 
-            (maze, reindeer.get) // scalafix:ok
+            (maze, reindeer.get)
+
         finally source.close()
         end try
     end readFile

@@ -65,13 +65,13 @@ object Day10:
     /** A map of the given topography */
     class TopographicalMap(private val grid: Grid):
         val maxX = grid.size
-        val maxY = grid(0).size // scalafix:ok
+        val maxY = grid(0).size
         val minHeight = 0
         val maxHeight = 9
 
         extension (p: Position)
 
-            /** @return true, if the position is on the grid */ // scalafix:ok
+            /** @return true, if the position is on the grid */
             def isOnGrid: Boolean =
                 p.x >= 0 && p.x < maxX && p.y >= 0 && p.y < maxY
 
