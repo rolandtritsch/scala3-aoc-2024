@@ -126,13 +126,13 @@ object Day20:
             logger.debug(s"line: ${line}")
             line.zipWithIndex.foldLeft(state):
               case ((track, program), (c, y)) => c match
-                case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
-                case 'E' => (track.clone(end = Position(x, y)), program)
-                case 'S' => (track, Some(Position(x, y)))
-                case '.' => (track, program)
-                case _   => throw new RuntimeException("Unexpected case")
-              end match
-      (track, program.get)
+                  case '#' => (track.clone(walls = track.walls + Position(x, y)), program)
+                  case 'E' => (track.clone(end = Position(x, y)), program)
+                  case 'S' => (track, Some(Position(x, y)))
+                  case '.' => (track, program)
+                  case _   => throw new RuntimeException("Unexpected case")
+
+      (track, program.get) // scalafix:ok
     finally source.close()
     end try
   end readFile
@@ -146,10 +146,10 @@ object Day20:
 
     Day20.visited.clear()
     val shortestPath = program.dfs(track)
-    val shortestPathLength = shortestPath.get.length
+    val shortestPathLength = shortestPath.get.length // scalafix:ok
 
-    val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map: (c, p) =>
-      (c, p.getOrElse(List.empty).length)
+    val shortCutsPathLength = track.shortCuts(program, shortestPath.get).map: // scalafix:ok
+      (c, p) => (c, p.getOrElse(List.empty).length)
 
     val shortCutsValue = shortCutsPathLength.toList.map: (c, p) =>
       (c, shortestPathLength - p)

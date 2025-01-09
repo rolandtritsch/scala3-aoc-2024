@@ -89,7 +89,7 @@ object Day18:
     end findNoPath
 
     val (grid, remainingBytes) = grids
-    val byte = findNoPath(grid, remainingBytes).get
+    val byte = findNoPath(grid, remainingBytes).get // scalafix:ok
     (byte.y, byte.x).toString
   end part2
 

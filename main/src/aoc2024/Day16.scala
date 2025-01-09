@@ -77,7 +77,7 @@ object Day16:
     (ROTATE_COUNTERCLOCKWISE, WEST) -> SOUTH,
   )
 
-  case class Reindeer(val position: Position, val orientation: Orientation):
+  case class Reindeer(position: Position, orientation: Orientation):
 
     extension (bestPath: Option[List[(Reindeer, Move)]])
 
@@ -114,6 +114,7 @@ object Day16:
           else (nextVisited, bestPath)
         val (vClockwise, bpClockwise) =
           if nextClockwise.isDefined then
+            // scalafix: off
             nextClockwise.get.dfs(
               maze,
               (Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation)), FORWARD) ::
@@ -121,9 +122,11 @@ object Day16:
               bpForward.min(bestPath),
               vForward,
             )
+            // scalafix: on
           else (vForward, bpForward.min(bestPath))
         val (vCounterClockwise, bpCounterClockwise) =
           if nextCounterClockwise.isDefined then
+            // scalafix: off
             nextCounterClockwise.get.dfs(
               maze,
               (Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)), FORWARD) ::
@@ -131,6 +134,7 @@ object Day16:
               bpClockwise.min(bpForward),
               vClockwise,
             )
+            // scalafix: on
           else (vClockwise, bpClockwise.min(bpForward))
         (vCounterClockwise, bpCounterClockwise.min(bpClockwise))
       end if
@@ -149,7 +153,7 @@ object Day16:
       */
     def walk(maze: Maze): Int =
       val (_, bestPath) = dfs(maze)
-      bestPath.get.score
+      bestPath.get.score // scalafix:ok
 
   end Reindeer
 
@@ -184,7 +188,7 @@ object Day16:
                   case '.' => (maze, reindeer)
                   case _   => throw new RuntimeException(s"Unexpected case: $c")
 
-      (maze, reindeer.get)
+      (maze, reindeer.get) // scalafix:ok
 
     finally source.close()
     end try

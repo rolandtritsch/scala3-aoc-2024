@@ -21,7 +21,7 @@ trait Dfs:
     require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
     logger.debug(s"current: ${current}, path: ${path}")
 
-    if current == end.get then Some(path :+ current)
+    if current == end.get then Some(path :+ current) // scalafix:ok
     else if path.contains(current) then None
     else
       adjacent(current).foldLeft(Option.empty[Path]): (p, n) =>
@@ -54,7 +54,7 @@ trait Dfs:
       require(!blocked.contains(current), s"blocked.contains(${current}) - path: ${path}")
       logger.debug(s"current: ${current}, path: ${path}")
 
-      if current == end.get then Some(path :+ current).min(bestPath)
+      if current == end.get then Some(path :+ current).min(bestPath) // scalafix:ok
       else if score(path :+ current) >= visited(current) then bestPath
       else
         adjacent(current).foldLeft(bestPath): (bp, n) =>

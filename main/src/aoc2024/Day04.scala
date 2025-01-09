@@ -76,7 +76,9 @@ object Day04:
 
   extension (lines: Seq[String])
 
-    /** @return the number of what occurences in the lines */
+    // format: off
+    /** @return the number of what occurences in the lines */ // scalafix:ok
+    // format: on
     def findAll(what: String): Int = lines.foldLeft(0): (matchCount, line) =>
       val parser: scala.util.matching.Regex = what.r
       matchCount + parser.findAllIn(line).size
@@ -138,10 +140,12 @@ object Day04:
 
     val what = "XMAS"
 
-    puzzle.findAll(what) + puzzle.findAll(what.reverse) + puzzle.transposed.findAll(what) +
-      puzzle.transposed.findAll(what.reverse) + puzzle.diagonalizeTLBR.map(_._2).findAll(what) +
-      puzzle.diagonalizeTLBR.map(_._2).findAll(what.reverse) + puzzle.diagonalizeTRBL.map(_._2)
-        .findAll(what) + puzzle.diagonalizeTRBL.map(_._2).findAll(what.reverse)
+    // format: off
+    puzzle.findAll(what) + puzzle.findAll(what.reverse)
+    + puzzle.transposed.findAll(what) + puzzle.transposed.findAll(what.reverse)
+    + puzzle.diagonalizeTLBR.map(_._2).findAll(what) + puzzle.diagonalizeTLBR.map(_._2).findAll(what.reverse)
+    + puzzle.diagonalizeTRBL.map(_._2).findAll(what) + puzzle.diagonalizeTRBL.map(_._2).findAll(what.reverse)
+    // format: on
   end part1
 
   /** @return the number of X-MASes in the puzzle/grid */

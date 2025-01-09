@@ -32,7 +32,7 @@ object GridGraph extends mutable.TypedGraphFactory[Position, edges.UnDiEdge[Posi
       val end = g.get(to)
       val path = start.shortestPathTo(end)
 
-      if path.isEmpty then List() else path.get.nodes.map(_.outer).toList.tail
+      if path.isEmpty then List() else path.get.nodes.map(_.outer).toList.tail // scalafix:ok
     end shortestPath
 
   end extension

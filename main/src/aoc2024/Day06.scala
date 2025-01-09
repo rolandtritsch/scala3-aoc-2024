@@ -50,7 +50,7 @@ object Day06:
 
   class Grid(val grid: Array[Array[State]], var guard: Position):
     val rows = grid.length
-    val cols = grid(0).length
+    val cols = grid(0).length // scalafix:ok
     var done = false
     var looped = false
     val visited: mutable.Set[Position] = mutable.Set.empty[Position]
@@ -131,7 +131,7 @@ object Day06:
         val grid = clone(lab, row, col, BLOCKED)
         val lookForLoop = Grid(grid, lab.guard)
         lookForLoop.walk
-        if lookForLoop.looped then counter += 1
+        if lookForLoop.looped then counter += 1 // scalafix:ok
     counter
   end findLoops
 

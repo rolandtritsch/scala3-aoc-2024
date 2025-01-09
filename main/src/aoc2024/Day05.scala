@@ -71,7 +71,9 @@ object Day05:
 
   extension (update: Update)
 
-    /** @return the Set of facts to check against the rules */
+    // format: off
+    /** @return the Set of facts to check against the rules */ // scalafix:ok
+    // format: on
     def facts: Set[Fact] =
       def factBuilder(update: Update, facts: Set[Fact]): Set[Fact] = update match
         case Nil           => facts
