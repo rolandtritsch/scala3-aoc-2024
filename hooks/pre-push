@@ -1,0 +1,6 @@
+#! /bin/bash
+set -e # exit on failure
+
+./mill main.reformat 2>&1 | grep "Everything is formatted already"
+./mill main.test.reformat 2>&1 | grep "Everything is formatted already"
+./mill main.fix --check
