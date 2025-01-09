@@ -37,6 +37,11 @@ jobs:
 
       - uses: coursier/cache-action@v6
 
+      - name: Run the formatter
+        run: |
+          ./mill main.reformat
+          ./mill main.test.reformat
+
       - name: Run the linter
         run: ./mill main.fix --check
 
