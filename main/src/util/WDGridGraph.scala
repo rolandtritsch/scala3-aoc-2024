@@ -63,13 +63,13 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
 
       if path.isEmpty then None
       else
-        // scalafix: off
+        // scalafix:off
         logger.debug(s"from: ${from}, to: ${to}, path: ${path}, path.weight: ${path.get.weight}")
 
         val positions = path.get.nodes.map(_.outer).toList.tail
         val weights = path.get.edges.map(_.weight.toInt).toList
         Some(positions.zip(weights))
-        // scalafix: on
+        // scalafix:on
       end if
     end cheapestPath
 

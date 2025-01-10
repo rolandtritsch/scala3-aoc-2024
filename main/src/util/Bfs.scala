@@ -4,8 +4,6 @@ package util
 trait Bfs:
 
   import scala.collection.mutable
-  import util.Position
-  import util.DPosition
 
   val logger: com.typesafe.scalalogging.Logger
 
