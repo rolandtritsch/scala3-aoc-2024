@@ -4,14 +4,15 @@ package util
 trait Bfs:
 
   import scala.collection.mutable
-  import util.Position.*
+  import util.Position
+  import util.DPosition
 
   val logger: com.typesafe.scalalogging.Logger
 
   val start: Option[Position]
   val end: Option[Position]
   val blocked: Set[Position]
-  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[RPosition]
+  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[DPosition]
 
   /** @return
     *   the first path from start to end (or None if no path exists)

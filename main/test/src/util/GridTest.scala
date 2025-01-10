@@ -1,22 +1,11 @@
 package util
 
-import util.Position.*
-
 class GridTest extends munit.ScalaCheckSuite:
+  import util.DPosition.*
+  import util.Grid.Factory.given
+
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
-
-  given Grid.GridFactory[Grid] with
-
-    def create(
-        free: Set[Position],
-        blocked: Set[Position],
-        start: Option[Position],
-        end: Option[Position],
-        dimensions: (Int, Int),
-    ): Grid = new Grid(free, blocked, start, end, dimensions)
-
-  end given
 
   test("Grid - source"):
     val grid = Grid.fromResource("./tests/GridTest.txt")
@@ -32,8 +21,8 @@ class GridTest extends munit.ScalaCheckSuite:
 
     val obtained = grid.adjacent(Position(1, 1))
     val expected = Set(
-      RPosition(1, 2, Direction.Right, Position(1, 1)),
-      RPosition(2, 1, Direction.Down, Position(1, 1)),
+      DPosition(1, 2, Direction.Right),
+      DPosition(2, 1, Direction.Down),
     )
     assertEquals(obtained, expected)
 
@@ -42,8 +31,8 @@ class GridTest extends munit.ScalaCheckSuite:
 
     val obtained = grid.neighbors(Position(1, 2))
     val expected = Set(
-      RPosition(1, 1, Direction.Left, Position(1, 2)),
-      RPosition(1, 3, Direction.Right, Position(1, 2)),
+      DPosition(1, 1, Direction.Left),
+      DPosition(1, 3, Direction.Right),
     )
     assertEquals(obtained, expected)
 

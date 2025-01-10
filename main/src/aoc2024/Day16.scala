@@ -8,35 +8,9 @@ import com.typesafe.scalalogging.Logger
   *
   * We are looking to find the shortest, least expensive, lowest cost/lowest points path through the
   * maze. Let's call this number the score.
-  *
-  * Not sure if we can avoid building all paths to make sure we find the one with the lowest score.
-  * But we can optimize the search by aborting the search as soon as the current path has a higher
-  * score than the smallest one we have found so far.
-  *
-  * (As always) We probably also need to implement a loop detection (by keeping a Set of visited
-  * Positions).
-  *
-  * Don't think we need to model free-space this time around.
-  *
-  * But we need the walls. But no dimenstions (because we have an outerwall).
-  *
-  * The Moves are FORWARD, ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE.
-  *
-  * The Reindeer has a Position and an Orientation. Orientation being EAST, WEST, NORTH, SOUTH.
-  *
-  * Was debating with myself, if I go with a different implementation approach (2-dimensional array
-  * and iterators (just to learn something new), but will stick with the case classes and the
-  * recursion (for now).
-  *
-  * Part1:
-  *
-  *   - Read the file/maze
-  *   - Do a recursive tree search (every node has (up to) three children (the 3 possible Moves))
-  *   - Note: While we do the search lets keep track of the lowest score so far AND the path that
-  *     produced the score (maybe we need that path for part2)
-  *   - Return the lowest score found
-  *
-  * This worked for the sample input, but not for the real input.
+  * 
+  * My initial solution was to use dfs and bfs. This worked. I got the right solution for all test
+  * cases for part1, but not for the real input.
   *
   * Therefore I decided to switch gears and use scala-graph instead of my own dfs/bfs
   * implementation. For that to work we need to model the maze as a graph. Every Position is a node
@@ -67,178 +41,53 @@ import com.typesafe.scalalogging.Logger
   */
 
 object Day16:
+  import util.Grid
+  import util.WDGridGraph
+  import util.DPosition
+  import util.DPosition.*
+
   val logger: Logger = Logger(this.getClass.getName)
 
-  enum Move:
-    case FORWARD, ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE
+  object Implicits:
 
-  import Move.*
+    given ((DPosition, DPosition) => Int) = (from, to) => (from.direction, to.direction) match
+      case (Direction.Up, Direction.Up)       => 1
+      case (Direction.Down, Direction.Down)   => 1
+      case (Direction.Left, Direction.Left)   => 1
+      case (Direction.Right, Direction.Right) => 1
+      case _                                  => 1001
 
-  val cost: Map[Move, Int] =
-    Map(FORWARD -> 1, ROTATE_CLOCKWISE -> 1000, ROTATE_COUNTERCLOCKWISE -> 1000)
+  def readFile(filename: String): Grid =
+    import util.Grid.Factory.given
 
-  extension (path: List[(Reindeer, Move)]) def score: Int = path.map(p => cost(p._2)).sum
-
-  enum Orientation:
-    case EAST, WEST, NORTH, SOUTH
-
-  import Orientation.*
-
-  case class Position(x: Int, y: Int):
-
-    def next(orienation: Orientation): Position = orienation match
-      case EAST  => Position(x, y + 1)
-      case WEST  => Position(x, y - 1)
-      case NORTH => Position(x - 1, y)
-      case SOUTH => Position(x + 1, y)
-    end next
-
-  end Position
-
-  val rotate: Map[(Move, Orientation), Orientation] = Map(
-    (ROTATE_CLOCKWISE, SOUTH) -> WEST,
-    (ROTATE_CLOCKWISE, WEST) -> NORTH,
-    (ROTATE_CLOCKWISE, NORTH) -> EAST,
-    (ROTATE_CLOCKWISE, EAST) -> SOUTH,
-    (ROTATE_COUNTERCLOCKWISE, SOUTH) -> EAST,
-    (ROTATE_COUNTERCLOCKWISE, EAST) -> NORTH,
-    (ROTATE_COUNTERCLOCKWISE, NORTH) -> WEST,
-    (ROTATE_COUNTERCLOCKWISE, WEST) -> SOUTH,
-  )
-
-  case class Reindeer(position: Position, orientation: Orientation):
-
-    extension (bestPath: Option[List[(Reindeer, Move)]])
-
-      def min(path: List[(Reindeer, Move)]): Option[List[(Reindeer, Move)]] = bestPath match
-        case Some(bp) => if bp.score > path.score then Some(path) else bestPath
-        case None     => Some(path)
-
-      def min(path: Option[List[(Reindeer, Move)]]): Option[List[(Reindeer, Move)]] = bestPath match
-        case Some(bp) => path.min(bp)
-        case None     => path
-
-    end extension
-
-    /** @return the shortest path through the maze */
-    def dfs(
-        maze: Maze,
-        path: List[(Reindeer, Move)] = List.empty,
-        bestPath: Option[List[(Reindeer, Move)]] = None,
-        visited: Map[Position, Int] = Map.empty.withDefaultValue(Int.MaxValue),
-    ): (Map[Position, Int], Option[List[(Reindeer, Move)]]) =
-      if position == maze.exit then (visited, bestPath.min(path))
-      else if path.score >= visited(this.position) then (visited, None)
-      else
-        val nextForward = next(maze, visited)
-        val nextClockwise = Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation))
-          .next(maze, visited)
-        val nextCounterClockwise = Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation))
-          .next(maze, visited)
-        val nextVisited = visited.updated(this.position, path.score)
-
-        val (vForward, bpForward) =
-          if nextForward.isDefined then
-            nextForward.get.dfs(maze, (this, FORWARD) :: path, bestPath, nextVisited)
-          else (nextVisited, bestPath)
-        val (vClockwise, bpClockwise) =
-          if nextClockwise.isDefined then
-            // scalafix: off
-            nextClockwise.get.dfs(
-              maze,
-              (Reindeer(position, rotate(ROTATE_CLOCKWISE, orientation)), FORWARD) ::
-                (this, ROTATE_CLOCKWISE) :: path,
-              bpForward.min(bestPath),
-              vForward,
-            )
-            // scalafix: on
-          else (vForward, bpForward.min(bestPath))
-        val (vCounterClockwise, bpCounterClockwise) =
-          if nextCounterClockwise.isDefined then
-            // scalafix: off
-            nextCounterClockwise.get.dfs(
-              maze,
-              (Reindeer(position, rotate(ROTATE_COUNTERCLOCKWISE, orientation)), FORWARD) ::
-                (this, ROTATE_COUNTERCLOCKWISE) :: path,
-              bpClockwise.min(bpForward),
-              vClockwise,
-            )
-            // scalafix: on
-          else (vClockwise, bpClockwise.min(bpForward))
-        (vCounterClockwise, bpCounterClockwise.min(bpClockwise))
-      end if
-    end dfs
-
-    /** @return the nex Reindeer or None if there is no next */
-    def next(maze: Maze, visited: Map[Position, Int]): Option[Reindeer] =
-      logger.debug(s"next: this: ${this}, visited: ${visited}")
-
-      val nextPosition = position.next(orientation)
-      Option.when(!maze.walls.contains(nextPosition))(Reindeer(nextPosition, orientation))
-    end next
-
-    /** @return
-      *   the score for the least expensive path to the exit (after walking the maze)
-      */
-    def walk(maze: Maze): Int =
-      val (_, bestPath) = dfs(maze)
-      bestPath.get.score // scalafix:ok
-
-  end Reindeer
-
-  class Maze(val walls: Set[Position], val exit: Position):
-    def this() = this(Set.empty, Position(0, 0))
-
-    def clone(walls: Set[Position] = this.walls, exit: Position = this.exit): Maze =
-      Maze(walls, exit)
-
-  end Maze
-
-  type State = (Maze, Reindeer)
-
-  /** @return the Maze and the Reindeer (in its starting position) */
-  def readFile(filename: String): State =
-    import scala.io.Source
-
-    require(filename.nonEmpty, "filename.nonEmpty")
-    logger.debug(s"filename: ${filename}")
-
-    val source = Source.fromResource(filename)
-    try
-      val (maze, reindeer) = source.getLines().toSeq.zipWithIndex
-        .foldLeft((new Maze(), Option.empty[Reindeer])):
-          case (state, (line, x)) =>
-            logger.debug(s"line: ${line}")
-            line.zipWithIndex.foldLeft(state):
-              case ((maze, reindeer), (c, y)) => c match
-                  case '#' => (maze.clone(walls = maze.walls + Position(x, y)), reindeer)
-                  case 'S' => (maze, Some(Reindeer(Position(x, y), EAST)))
-                  case 'E' => (maze.clone(exit = Position(x, y)), reindeer)
-                  case '.' => (maze, reindeer)
-                  case _   => throw new RuntimeException(s"Unexpected case: $c")
-
-      (maze, reindeer.get) // scalafix:ok
-
-    finally source.close()
-    end try
+    Grid.fromResource(filename)
   end readFile
 
   /** @return the score for the least expensive path to the exit */
-  def part1(state: State): Int =
-    require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
-    logger.debug(s"state: ${state}")
+  def part1(grid: Grid): Int =
+    import Implicits.given
+    import util.WDGridGraph.cheapestPath
 
-    val (maze, reindeer) = state
-    reindeer.walk(maze)
+    require(grid.start.nonEmpty, "grid.start.nonEmpty")
+    logger.debug(s"grid: ${grid}")
+
+    val maze = WDGridGraph.fromGrid(grid)
+    val start = DPosition(grid.start.get.x, grid.start.get.y, Direction.Right)
+    val ends = Direction.values.map(DPosition(grid.end.get.x, grid.end.get.y, _))
+    val paths = ends.flatMap(maze.cheapestPath(start, _))
+    val scores = paths.map(_.map(_._2).sum)
+    scores.min
   end part1
 
   /** @return the solution for part2 */
-  def part2(state: State): Int =
-    require(state._1.walls.nonEmpty, "state._1.walls.nonEmpty")
-    logger.debug(s"state: ${state}")
+  def part2(grid: Grid): Int =
+    import Implicits.given
+    
+    require(grid.start.nonEmpty, "grid.start.nonEmpty")
+    logger.debug(s"grid: ${grid}")
 
-    val (maze, reindeer) = state
-    maze.exit.y
+    val maze = WDGridGraph.fromGrid(grid)
+    maze.nodes.size
   end part2
 
 end Day16

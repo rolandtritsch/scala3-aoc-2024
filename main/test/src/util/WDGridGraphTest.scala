@@ -1,24 +1,12 @@
 package util
 
-import util.Position.*
-
 class WDGridGraphTest extends munit.ScalaCheckSuite:
+  import util.Grid.Factory.given
+  import util.WDGridGraph.Implicits.given
+  import util.DPosition.*
+
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
-
-  import util.WDGridGraph.Implicits.given
-
-  given Grid.GridFactory[Grid] with
-
-    def create(
-        free: Set[Position],
-        blocked: Set[Position],
-        start: Option[Position],
-        end: Option[Position],
-        dimensions: (Int, Int),
-    ): Grid = new Grid(free, blocked, start, end, dimensions)
-
-  end given
 
   test("WDGridGraph - source"):
     val grid = Grid.fromResource("./tests/GridTest.txt")
@@ -34,31 +22,39 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     assert(graph.isMixed)
     assert(!graph.isMulti)
     assert(!graph.isTrivial)
-    assertEquals(graph.nodes.size, 8)
-    assertEquals(graph.edges.size, 16)
+    assertEquals(graph.nodes.size, 32)
+    assertEquals(graph.edges.size, 48)
 
   test("WDGridGraph - shortestPath - small"):
     val grid = Grid.fromResource("./tests/GridTest-Small.txt")
     val graph = WDGridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val startPos = DPosition(1, 1, Direction.Right)
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
     assertEquals(path.size, 15)
 
   test("WDGridGraph - shortestPath - smallMedium"):
     val grid = Grid.fromResource("./tests/GridTest-SmallMedium.txt")
     val graph = WDGridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val startPos = DPosition(1, 1, Direction.Right)
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
     assertEquals(path.size, 25)
 
   test("WDGridGraph - shortestPath - medium"):
     val grid = Grid.fromResource("./tests/GridTest-Medium.txt")
-    val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val graph = WDGridGraph.fromGrid(grid)
+    val startPos = DPosition(1, 1, Direction.Right)
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
     assertEquals(path.size, 95)
 
   test("WDGridGraph - shortestPath - large"):
     val grid = Grid.fromResource("./tests/GridTest-Large.txt")
     val graph = WDGridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val startPos = DPosition(1, 1, Direction.Right)
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
     assertEquals(path.size, 195)
 
 end WDGridGraphTest

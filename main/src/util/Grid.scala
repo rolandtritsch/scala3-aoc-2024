@@ -1,7 +1,6 @@
 package util
 
 import com.typesafe.scalalogging.Logger
-import util.Position.*
 
 /** A Grid. The datastructure we use to read a grid from a file.
   *
@@ -19,6 +18,8 @@ class Grid(
     val end: Option[Position],
     val dimensions: (Int, Int),
 ):
+  import util.DPosition.*
+
   val logger: Logger = Logger(this.getClass.getName)
 
   def clone(
@@ -46,17 +47,17 @@ class Grid(
         else new RuntimeException("Unexpected case")
         end if
       rows.mkString
-    val grid = cols.mkString.mkString("\n")
+    val grid = cols.mkString("\n")
     s"${this}\n${grid}\n"
   end toStringPretty
 
-  def neighbors: Map[Position, Set[RPosition]] = free.map(p => (p, adjacent(p))).toMap
+  def neighbors: Map[Position, Set[DPosition]] = free.map(p => (p, adjacent(p))).toMap
 
-  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[RPosition] = Set(
-    RPosition(p.x - 1, p.y, Direction.Up, p),
-    RPosition(p.x + 1, p.y, Direction.Down, p),
-    RPosition(p.x, p.y - 1, Direction.Left, p),
-    RPosition(p.x, p.y + 1, Direction.Right, p),
+  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[DPosition] = Set(
+    DPosition(p.x - 1, p.y, Direction.Up),
+    DPosition(p.x + 1, p.y, Direction.Down),
+    DPosition(p.x, p.y - 1, Direction.Left),
+    DPosition(p.x, p.y + 1, Direction.Right),
   ).filter(p => free.contains(p.toPosition) && !visited.contains(p.toPosition))
   end adjacent
 

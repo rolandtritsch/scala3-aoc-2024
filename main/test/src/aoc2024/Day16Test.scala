@@ -1,6 +1,11 @@
 package aoc2024
 
 import aoc2024.Day16.*
+import aoc2024.Day16.Implicits.given
+
+import util.Grid
+import util.Grid.Factory.given
+import util.WDGridGraph
 
 class Day16Test extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
@@ -9,15 +14,11 @@ class Day16Test extends munit.ScalaCheckSuite:
   test("Day16 - dummy".tag(ignore)):
     assert(true)
 
-  test("Day16 - readFile - test"):
-    val (maze, reindeer) = readFile("./inputs/Day16Test.txt")
-    assertEquals(maze.exit, Position(1, 13))
-    assertEquals(reindeer.position, Position(13, 1))
-
-  test("Day16 - readFile"):
-    val (maze, reindeer) = readFile("./inputs/Day16.txt")
-    assertEquals(maze.exit, Position(1, 139))
-    assertEquals(reindeer.position, Position(139, 1))
+  test("Day16 - fromResource - test"):
+    val grid = Grid.fromResource("./inputs/Day16Test.txt")
+    val graph = WDGridGraph.fromGrid(grid)
+    assertEquals(graph.nodes.size, 416)
+    assertEquals(graph.edges.size, 660)
 
   test("Day16 - part1 - test"):
     val input = readFile("./inputs/Day16Test.txt")
@@ -29,27 +30,19 @@ class Day16Test extends munit.ScalaCheckSuite:
     val obtained = part1(input)
     assertEquals(obtained, 11048)
 
-  test("Day16 - part1 - test9"):
-
-    val input = readFile("./inputs/Day16Test9.txt")
+  test("Day16 - part1"):
+    val input = readFile("./inputs/Day16.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 3030)
+    assertEquals(obtained, 78428)
 
-  // test("Day16 - part1") {
-  //   val input = readFile("./inputs/Day16.txt")
-  //   val obtained = part1(input)
-  //   assertEquals(obtained, 0)
-  // }
+  test("Day16 - part2 - test"):
+    val input = readFile("./inputs/Day16Test.txt")
+    val obtained = part2(input)
+    assertEquals(obtained, 416)
 
-  // Test("Day16 - part2 - test") {
-  //   val input = readFile("./inputs/Day16Test.txt")
-  //   val obtained = part2(input)
-  //   assertEquals(obtained, 13)
-  // }
+  test("Day16 - part2"):
+    val input = readFile("./inputs/Day16.txt")
+    val obtained = part2(input)
+    assertEquals(obtained, 40504)
 
-  // test("Day16 - part2") {
-  //   val input = readFile("./inputs/Day16.txt")
-  //   val obtained = part2(input)
-  //   assertEquals(obtained, 139)
-  // }
 end Day16Test
