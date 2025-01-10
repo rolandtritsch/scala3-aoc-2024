@@ -8,7 +8,7 @@ trait Dfs:
 
   val end: Option[Position]
   val blocked: Set[Position]
-  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[Position]
+  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[RPosition]
 
   /** @return
     *   the first path found from the start to the end or None
@@ -27,7 +27,7 @@ trait Dfs:
       adjacent(current).foldLeft(Option.empty[Path]): (p, n) =>
         p match
           case Some(_) => p
-          case None    => findFirst(n, path :+ current)
+          case None    => findFirst(n.toPosition, path :+ current)
     end if
   end findFirst
 
@@ -59,7 +59,7 @@ trait Dfs:
       else
         adjacent(current).foldLeft(bestPath): (bp, n) =>
           visited.update(current, score(path :+ current))
-          findCheapest(n, path :+ current, bp).min(bp)
+          findCheapest(n.toPosition, path :+ current, bp).min(bp)
       end if
     end findCheapest
 

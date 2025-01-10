@@ -9,7 +9,7 @@ trait Bfs:
   val start: Option[Position]
   val end: Option[Position]
   val blocked: Set[Position]
-  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[Position]
+  def adjacent(p: Position, v: Set[Position] = Set.empty): Set[RPosition]
 
   /** @return
     *   the first path from start to end (or None if no path exists)
@@ -31,10 +31,16 @@ trait Bfs:
 
       if current == end.get then return Some(path) // scalafix:ok
       else
-        for next <- adjacent(current) if !visited.contains(next) do
+        // format: off
+        for 
+          n <- adjacent(current)
+          next = n.toPosition
+          if !visited.contains(next) 
+        do
           visited.add(next)
           paths.enqueue((next, path :+ next))
         end for
+        // format: on
       end if
     end while
 
@@ -55,7 +61,7 @@ trait Bfs:
     else
       val (nextPaths, nexts) = paths.foldLeft((Set.empty[Option[Path]], Set.empty[Position])):
         case ((nextPaths, nexts), p) =>
-          val nss = adjacent(p.last, visited)
+          val nss = adjacent(p.last, visited).map(_.toPosition)
           val nps = if nss.isEmpty then None else nss.map(n => Some(p :+ n))
           (nextPaths ++ nps, nexts ++ nss)
 

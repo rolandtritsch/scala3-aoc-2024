@@ -20,7 +20,7 @@ object GridGraph extends mutable.TypedGraphFactory[Position, edges.UnDiEdge[Posi
     val gridEdges = grid.neighbors.flatMap:
       case (pos, neighbors) =>
         logger.debug(s"pos: ${pos}, neighbors: ${neighbors}")
-        neighbors.map(neighbor => new edges.UnDiEdge(pos, neighbor))
+        neighbors.map(neighbor => new edges.UnDiEdge(pos, neighbor.toPosition))
 
     GridGraph.from(gridEdges)
   end fromGrid

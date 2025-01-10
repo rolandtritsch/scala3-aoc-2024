@@ -49,14 +49,14 @@ class Grid(
     s"${this}\n${grid}\n"
   end toStringPretty
 
-  def neighbors: Map[Position, Set[Position]] = free.map(p => (p, adjacent(p))).toMap
+  def neighbors: Map[Position, Set[RPosition]] = free.map(p => (p, adjacent(p))).toMap
 
-  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[Position] = Set(
-    Position(p.x - 1, p.y),
-    Position(p.x + 1, p.y),
-    Position(p.x, p.y - 1),
-    Position(p.x, p.y + 1),
-  ).filter(p => free.contains(p) && !visited.contains(p))
+  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[RPosition] = Set(
+    RPosition(p.x - 1, p.y, Direction.Up, p),
+    RPosition(p.x + 1, p.y, Direction.Down, p),
+    RPosition(p.x, p.y - 1, Direction.Left, p),
+    RPosition(p.x, p.y + 1, Direction.Right, p),
+  ).filter(p => free.contains(p.toPosition) && !visited.contains(p.toPosition))
   end adjacent
 
 end Grid

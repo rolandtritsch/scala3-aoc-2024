@@ -28,12 +28,21 @@ class GridTest extends munit.ScalaCheckSuite:
   test("Grid - adjacent"):
     val grid = Grid.fromResource("./tests/GridTest.txt")
 
-    assertEquals(grid.adjacent(Position(1, 1)), Set(Position(1, 2), Position(2, 1)))
+    val obtained = grid.adjacent(Position(1, 1))
+    val expected = Set(
+      RPosition(1, 2, Direction.Right, Position(1, 1)),
+      RPosition(2, 1, Direction.Down, Position(1, 1)),
+    )
+    assertEquals(obtained, expected)
 
   test("Grid - neighbors"):
     val grid = Grid.fromResource("./tests/GridTest.txt")
 
-    assertEquals(grid.neighbors(Position(1, 1)), Set(Position(1, 2), Position(2, 1)))
-    assertEquals(grid.neighbors(Position(1, 2)), Set(Position(1, 1), Position(1, 3)))
+    val obtained = grid.neighbors(Position(1, 2))
+    val expected = Set(
+      RPosition(1, 1, Direction.Left, Position(1, 2)),
+      RPosition(1, 3, Direction.Right, Position(1, 2)),
+    )
+    assertEquals(obtained, expected)
 
 end GridTest
