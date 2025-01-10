@@ -17,7 +17,7 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
 
   object Implicits:
 
-    /** The (default) cost function to build the edges */ 
+    /** The (default) cost function to build the edges */
     given ((DPosition, DPosition) => Int) = (from, to) =>
       (from.direction, to.direction) match
         case (Direction.Up, Direction.Up)       => 1
@@ -34,7 +34,7 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
     require(grid.end.nonEmpty, "grid.end.nonEmpty")
     logger.debug(s"grid: ${grid}")
 
-    /** @return true if the two DPositions have opposite directions */   
+    /** @return true if the two DPositions have opposite directions */
     def opposite(dPos: DPosition, nPos: DPosition): Boolean = (dPos.direction, nPos.direction) match
       case (Direction.Up, Direction.Down)    => true
       case (Direction.Down, Direction.Up)    => true
