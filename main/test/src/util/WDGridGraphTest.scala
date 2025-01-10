@@ -1,5 +1,7 @@
 package util
 
+import util.Position.*
+
 class WDGridGraphTest extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")

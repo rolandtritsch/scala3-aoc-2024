@@ -3,6 +3,7 @@ package util
 import com.typesafe.scalalogging.Logger
 import scalax.collection.edges
 import scalax.collection.mutable
+import util.Position.*
 
 /** A Graph that describes a grid. Defined by a Set of Positions (Nodes/Vertexs) and the neighbors
   * (Edges) each Node has .

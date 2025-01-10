@@ -1,7 +1,6 @@
 package aoc2024
 
 import com.typesafe.scalalogging.Logger
-import util.GridGraph
 
 /** Day18 - RAM Run
   *
@@ -30,8 +29,9 @@ import util.GridGraph
 object Day18:
   val logger: Logger = Logger(this.getClass.getName)
 
+  import util.GridGraph
   import util.Grid.*
-  import util.Position
+  import util.Position.*
 
   def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(using
       factory: GridFactory[G]
@@ -65,7 +65,7 @@ object Day18:
   end fromResource
 
   /** @return the shortest path through the corrupted memory */
-  def part1(grids: (util.Grid, Seq[util.Position])): Int =
+  def part1(grids: (util.Grid, Seq[util.Position.Position])): Int =
     import util.GridGraph.shortestPath
 
     val (grid, _) = grids
@@ -75,10 +75,10 @@ object Day18:
   end part1
 
   /** @return the first byte that has no (shortest) path (anymore) */
-  def part2(grids: (util.Grid, Seq[util.Position])): String =
+  def part2(grids: (util.Grid, Seq[util.Position.Position])): String =
     import util.GridGraph.shortestPath
 
-    def findNoPath(grid: util.Grid, remainingBytes: Seq[util.Position]): Option[Position] =
+    def findNoPath(grid: util.Grid, remainingBytes: Seq[util.Position.Position]): Option[Position] =
       remainingBytes match
         case Nil => None
         case b :: bs =>

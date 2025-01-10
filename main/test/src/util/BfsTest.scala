@@ -1,5 +1,7 @@
 package util
 
+import util.Position.*
+
 class BfsTest extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")

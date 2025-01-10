@@ -1,7 +1,7 @@
 package util
 
 /** A path between two positions */
-type Path = List[Position]
+type Path = List[Position.Position]
 
 extension (path: Option[Path])
 

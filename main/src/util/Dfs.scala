@@ -2,7 +2,9 @@ package util
 
 /** Trait for depth first search. */
 trait Dfs:
+
   import scala.collection.mutable
+  import util.Position.*
 
   val logger: com.typesafe.scalalogging.Logger
 

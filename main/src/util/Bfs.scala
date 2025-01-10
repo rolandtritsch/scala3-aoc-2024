@@ -2,7 +2,9 @@ package util
 
 /** Trait for breadth first search. */
 trait Bfs:
+
   import scala.collection.mutable
+  import util.Position.*
 
   val logger: com.typesafe.scalalogging.Logger
 

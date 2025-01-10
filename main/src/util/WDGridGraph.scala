@@ -3,6 +3,7 @@ package util
 import com.typesafe.scalalogging.Logger
 import scalax.collection.edges
 import scalax.collection.mutable
+import util.Position.*
 
 /** A weighted, directed Graph that describes a grid. Defined by a Set of directed Positions
   * (Nodes/Vertices) and the neighbors (Edges) each Node has (and the cost of traversing that edge).

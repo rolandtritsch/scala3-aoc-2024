@@ -1,6 +1,7 @@
 package util
 
 import com.typesafe.scalalogging.Logger
+import util.Position.*
 
 /** A Grid. The datastructure we use to read a grid from a file.
   *
