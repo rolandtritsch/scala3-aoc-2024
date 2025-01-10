@@ -32,10 +32,10 @@ trait Bfs:
       if current == end.get then return Some(path) // scalafix:ok
       else
         // format: off
-        for 
+        for
           n <- adjacent(current)
           next = n.toPosition
-          if !visited.contains(next) 
+          if !visited.contains(next)
         do
           visited.add(next)
           paths.enqueue((next, path :+ next))

@@ -14,12 +14,16 @@ object WDGridGraph extends mutable.TypedGraphFactory[Position, edges.labeled.WDi
   val logger: Logger = Logger(this.getClass.getName)
 
   object Implicits:
-    given ((DPosition, RPosition) => Int) = (from, to) => (from.direction, to.relative) match
-      case (Direction.Up, Direction.Up)    => 1
-      case (Direction.Down, Direction.Down) => 1
-      case (Direction.Left, Direction.Left) => 1
-      case (Direction.Right, Direction.Right) => 1
-      case _ => 2
+
+    given ((DPosition, RPosition) => Int) = (from, to) =>
+      (from.direction, to.relative) match
+        case (Direction.Up, Direction.Up)       => 1
+        case (Direction.Down, Direction.Down)   => 1
+        case (Direction.Left, Direction.Left)   => 1
+        case (Direction.Right, Direction.Right) => 1
+        case _                                  => 2
+
+  end Implicits
 
   def fromGrid(grid: Grid)(using cost: (DPosition, RPosition) => Int): WDGridGraph =
     // require(grid.nonEmpty, "grid.nonEmpty")
@@ -30,7 +34,7 @@ object WDGridGraph extends mutable.TypedGraphFactory[Position, edges.labeled.WDi
         logger.debug(s"pos: ${pos}, neighbors: ${neighbors}")
         val directedPositions = Direction.values.map(d => DPosition(pos.x, pos.y, d)).toSet
         directedPositions.flatMap: dPos =>
-          neighbors.map: nPos => 
+          neighbors.map: nPos =>
             new edges.labeled.WDiEdge(dPos.toPosition, nPos.toPosition, cost(dPos, nPos))
 
     WDGridGraph.from(gridEdges)
