@@ -17,6 +17,7 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
 
   object Implicits:
 
+    /** The (default) cost function to build the edges */ 
     given ((DPosition, DPosition) => Int) = (from, to) =>
       (from.direction, to.direction) match
         case (Direction.Up, Direction.Up)       => 1
@@ -27,11 +28,13 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
 
   end Implicits
 
+  /** @return a WDGridGraph from a Grid */
   def fromGrid(grid: Grid)(using cost: (DPosition, DPosition) => Int): WDGridGraph =
     require(grid.start.nonEmpty, "grid.start.nonEmpty")
     require(grid.end.nonEmpty, "grid.end.nonEmpty")
     logger.debug(s"grid: ${grid}")
 
+    /** @return true if the two DPositions have opposite directions */   
     def opposite(dPos: DPosition, nPos: DPosition): Boolean = (dPos.direction, nPos.direction) match
       case (Direction.Up, Direction.Down)    => true
       case (Direction.Down, Direction.Up)    => true
@@ -45,6 +48,7 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
         logger.debug(s"pos: ${pos}, neighbors: ${neighbors}")
         val directedPositions = Direction.values.map(DPosition(pos.x, pos.y, _)).toSet
         directedPositions.flatMap: dPos =>
+          // filter out going in the opposite direction again
           neighbors.filterNot(opposite(dPos, _)).map: nPos =>
             logger.debug(s"dPos: ${dPos}, nPos: ${nPos}, cost: ${cost(dPos, nPos)}")
             new edges.labeled.WDiEdge(dPos, nPos, cost(dPos, nPos))
@@ -54,9 +58,8 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
 
   extension (g: WDGridGraph)
 
+    /** @return the cheapest path from one DPosition to another */
     def cheapestPath(from: DPosition, to: DPosition): Option[List[(DPosition, Int)]] =
-      // def w(e: g.EdgeT): Int = e.weight
-
       val start = g.get(from)
       val end = g.get(to)
       val path = start.shortestPathTo(end)

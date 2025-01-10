@@ -51,6 +51,7 @@ object Day16:
 
   object Implicits:
 
+    /** The cost function to build the edges */
     given ((DPosition, DPosition) => Int) = (from, to) =>
       (from.direction, to.direction) match
         case (Direction.Up, Direction.Up)       => 1
@@ -61,6 +62,7 @@ object Day16:
 
   end Implicits
 
+  /** @return the Grid for the given filename. */
   def readFile(filename: String): Grid =
     import util.Grid.Factory.given
 
