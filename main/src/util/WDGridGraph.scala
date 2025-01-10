@@ -28,16 +28,16 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
   end Implicits
 
   def fromGrid(grid: Grid)(using cost: (DPosition, DPosition) => Int): WDGridGraph =
-    require(grid.start. nonEmpty, "grid.start.nonEmpty")
+    require(grid.start.nonEmpty, "grid.start.nonEmpty")
     require(grid.end.nonEmpty, "grid.end.nonEmpty")
     logger.debug(s"grid: ${grid}")
 
     def opposite(dPos: DPosition, nPos: DPosition): Boolean = (dPos.direction, nPos.direction) match
-      case (Direction.Up, Direction.Down)     => true
-      case (Direction.Down, Direction.Up)     => true
-      case (Direction.Left, Direction.Right)  => true
-      case (Direction.Right, Direction.Left)  => true
-      case _                                  => false
+      case (Direction.Up, Direction.Down)    => true
+      case (Direction.Down, Direction.Up)    => true
+      case (Direction.Left, Direction.Right) => true
+      case (Direction.Right, Direction.Left) => true
+      case _                                 => false
     end opposite
 
     val gridEdges = grid.neighbors.flatMap:
@@ -70,6 +70,7 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
         val weights = path.get.edges.map(_.weight.toInt).toList
         Some(positions.zip(weights))
         // scalafix: on
+      end if
     end cheapestPath
 
   end extension

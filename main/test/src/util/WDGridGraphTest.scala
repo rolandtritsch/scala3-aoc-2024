@@ -1,6 +1,7 @@
 package util
 
 class WDGridGraphTest extends munit.ScalaCheckSuite:
+
   import util.Grid.Factory.given
   import util.WDGridGraph.Implicits.given
   import util.DPosition.*

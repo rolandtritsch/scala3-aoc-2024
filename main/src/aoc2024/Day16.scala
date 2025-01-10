@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.Logger
   *
   * We are looking to find the shortest, least expensive, lowest cost/lowest points path through the
   * maze. Let's call this number the score.
-  * 
+  *
   * My initial solution was to use dfs and bfs. This worked. I got the right solution for all test
   * cases for part1, but not for the real input.
   *
@@ -41,6 +41,7 @@ import com.typesafe.scalalogging.Logger
   */
 
 object Day16:
+
   import util.Grid
   import util.WDGridGraph
   import util.DPosition
@@ -50,12 +51,15 @@ object Day16:
 
   object Implicits:
 
-    given ((DPosition, DPosition) => Int) = (from, to) => (from.direction, to.direction) match
-      case (Direction.Up, Direction.Up)       => 1
-      case (Direction.Down, Direction.Down)   => 1
-      case (Direction.Left, Direction.Left)   => 1
-      case (Direction.Right, Direction.Right) => 1
-      case _                                  => 1001
+    given ((DPosition, DPosition) => Int) = (from, to) =>
+      (from.direction, to.direction) match
+        case (Direction.Up, Direction.Up)       => 1
+        case (Direction.Down, Direction.Down)   => 1
+        case (Direction.Left, Direction.Left)   => 1
+        case (Direction.Right, Direction.Right) => 1
+        case _                                  => 1001
+
+  end Implicits
 
   def readFile(filename: String): Grid =
     import util.Grid.Factory.given
@@ -82,7 +86,7 @@ object Day16:
   /** @return the solution for part2 */
   def part2(grid: Grid): Int =
     import Implicits.given
-    
+
     require(grid.start.nonEmpty, "grid.start.nonEmpty")
     logger.debug(s"grid: ${grid}")
 

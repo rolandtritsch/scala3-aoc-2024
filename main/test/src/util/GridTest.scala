@@ -1,6 +1,7 @@
 package util
 
 class GridTest extends munit.ScalaCheckSuite:
+
   import util.DPosition.*
   import util.Grid.Factory.given
 
@@ -20,20 +21,14 @@ class GridTest extends munit.ScalaCheckSuite:
     val grid = Grid.fromResource("./tests/GridTest.txt")
 
     val obtained = grid.adjacent(Position(1, 1))
-    val expected = Set(
-      DPosition(1, 2, Direction.Right),
-      DPosition(2, 1, Direction.Down),
-    )
+    val expected = Set(DPosition(1, 2, Direction.Right), DPosition(2, 1, Direction.Down))
     assertEquals(obtained, expected)
 
   test("Grid - neighbors"):
     val grid = Grid.fromResource("./tests/GridTest.txt")
 
     val obtained = grid.neighbors(Position(1, 2))
-    val expected = Set(
-      DPosition(1, 1, Direction.Left),
-      DPosition(1, 3, Direction.Right),
-    )
+    val expected = Set(DPosition(1, 1, Direction.Left), DPosition(1, 3, Direction.Right))
     assertEquals(obtained, expected)
 
 end GridTest
