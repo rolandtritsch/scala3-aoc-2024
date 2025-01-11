@@ -33,9 +33,18 @@ object Day18:
   import util.Grid.*
   import util.Position
 
-  def fromResource[G](filename: String, initialGridBytes: Int = Int.MaxValue)(using
-      factory: GridFactory[G]
+  def readFile(filename: String): (util.Grid, Seq[Position]) =
+    import util.Grid.Factory.given
+    fromResource(filename, 1024)
+  end readFile
+
+  // format: off
+  def fromResource[G](
+    filename: String, initialGridBytes: Int = Int.MaxValue
+  )(
+    using factory: GridFactory[G]
   ): (G, Seq[Position]) =
+  // format: on
     def parseLine(line: String): Position =
       val parsed = line.split(",").map(_.toInt)
       assert(parsed.length == 2, s"parsed.size == 2: ${parsed.length}")
