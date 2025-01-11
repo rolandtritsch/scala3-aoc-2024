@@ -17,8 +17,9 @@ import com.typesafe.scalalogging.Logger
   *     - We do not want to remove outer walls
   *     - We (probably) do not need to keep track of the free space (we can just remove the wall)
   *     - The walls that can be removed are the ones that are on the ones that have a space in fron
-  *       of them and a space behind them and that are on the (original) shortest path 
-  *   - Walk the race track with the wall removed to find the shortest path (in picoseconds) ... again
+  *       of them and a space behind them and that are on the (original) shortest path
+  *   - Walk the race track with the wall removed to find the shortest path (in picoseconds) ...
+  *     again
   *   - Rinse and repeat
   *
   * As always ... initially I used/wasted a lot of time implementing my own dfs/bfs. At the end I
@@ -26,6 +27,7 @@ import com.typesafe.scalalogging.Logger
   */
 
 object Day20:
+
   import util.Grid
   import util.Position
 
@@ -46,9 +48,8 @@ object Day20:
       graph.shortestPath(track.start.get, track.end.get)
     end path
 
-    /** @return all the possible cheats (on the path)*/
-    def cheats(path: List[Position]): Set[Position] =
-      track.blocked.filter: b =>
+    /** @return all the possible cheats (on the path) */
+    def cheats(path: List[Position]): Set[Position] = track.blocked.filter: b =>
         // format: off
         (
           track.free.contains(b.up)
@@ -63,11 +64,13 @@ object Day20:
     end cheats
 
     /** @return all the possible grids (with a wall removed) */
-    def shortCuts(cheats: Set[Position]): Set[Grid] =
-      cheats.map(c => track.clone(free = track.free + c, blocked = track.blocked - c))
+    def shortCuts(cheats: Set[Position]): Set[Grid] = cheats
+      .map(c => track.clone(free = track.free + c, blocked = track.blocked - c))
 
     /** @return how much a cheat saves in picoseconds */
     def saving(initial: Int) = initial - track.path.size
+
+  end extension
 
   /** @return the solution for part1 */
   def part1(track: Grid, threshold: Int = 100): Int =

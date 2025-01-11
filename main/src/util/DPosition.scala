@@ -11,6 +11,8 @@ case class DPosition(x: Int, y: Int, direction: DPosition.Direction):
   def left = DPosition(x, y - 1, DPosition.Direction.Left)
   def right = DPosition(x, y + 1, DPosition.Direction.Right)
 
+end DPosition
+
 object DPosition:
 
   enum Direction:
