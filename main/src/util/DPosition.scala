@@ -6,10 +6,10 @@ case class DPosition(x: Int, y: Int, direction: DPosition.Direction):
 
   def adjacent: Set[DPosition] = Set(up, down, left, right)
 
-  def up = DPosition(x - 1, y, DPosition.Direction.Up)
-  def down = DPosition(x + 1, y, DPosition.Direction.Down)
-  def left = DPosition(x, y - 1, DPosition.Direction.Left)
-  def right = DPosition(x, y + 1, DPosition.Direction.Right)
+  def up: DPosition = DPosition(x - 1, y, DPosition.Direction.Up)
+  def down: DPosition = DPosition(x + 1, y, DPosition.Direction.Down)
+  def left: DPosition = DPosition(x, y - 1, DPosition.Direction.Left)
+  def right: DPosition = DPosition(x, y + 1, DPosition.Direction.Right)
 
 end DPosition
 

@@ -58,7 +58,9 @@ object WDGridGraph extends mutable.TypedGraphFactory[DPosition, edges.labeled.WD
 
   extension (g: WDGridGraph)
 
-    /** @return the cheapest path from one DPosition to another */
+    // format: off
+    /** @return the cheapest path from one DPosition to another */ // scalafix:ok
+    // format: on
     def cheapestPath(from: DPosition, to: DPosition): Option[List[(DPosition, Int)]] =
       val start = g.get(from)
       val end = g.get(to)

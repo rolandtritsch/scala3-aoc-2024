@@ -6,9 +6,9 @@ case class Position(x: Int, y: Int):
 
   def adjacent: Set[Position] = Set(up, down, left, right)
 
-  def up = Position(x - 1, y)
-  def down = Position(x + 1, y)
-  def left = Position(x, y - 1)
-  def right = Position(x, y + 1)
+  def up: Position = Position(x - 1, y)
+  def down: Position = Position(x + 1, y)
+  def left: Position = Position(x, y - 1)
+  def right: Position = Position(x, y + 1)
 
 end Position

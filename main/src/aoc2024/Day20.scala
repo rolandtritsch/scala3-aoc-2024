@@ -40,7 +40,9 @@ object Day20:
 
   extension (track: Grid)
 
-    /** @return the shortest path through the race track */
+    // format: off
+    /** @return the shortest path through the race track */ // scalafix:ok
+    // format: on
     def path: List[Position] =
       import util.GridGraph.shortestPath
 
@@ -83,7 +85,7 @@ object Day20:
     val cheats = track.cheats(path)
     val savings = track.shortCuts(cheats).toList.map(_.saving(initial))
 
-    savings.filter(_ >= threshold).size
+    savings.count(_ >= threshold)
   end part1
 
   /** @return the solution for part2 */
