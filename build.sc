@@ -37,8 +37,8 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
   }
   
   object test extends ScoverageTests with TestModule.Munit with ScalafmtModule {
+    def testCachedArgs = Seq("--exclude-tags=slow")
     //def testCachedArgs = Seq("--include-tags=only")
-    //def testCachedArgs = Seq("--exclude-tags=slow")
     //def testCachedArgs = Seq("--exclude-tags=ignore")
     def ivyDeps = Agg(
       ivy"org.scalameta::munit::1.0.0",

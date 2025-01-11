@@ -53,12 +53,8 @@ class Grid(
 
   def neighbors: Map[Position, Set[DPosition]] = free.map(p => (p, adjacent(p))).toMap
 
-  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[DPosition] = Set(
-    DPosition(p.x - 1, p.y, Direction.Up),
-    DPosition(p.x + 1, p.y, Direction.Down),
-    DPosition(p.x, p.y - 1, Direction.Left),
-    DPosition(p.x, p.y + 1, Direction.Right),
-  ).filter(p => free.contains(p.toPosition) && !visited.contains(p.toPosition))
+  def adjacent(p: Position, visited: Set[Position] = Set.empty): Set[DPosition] =
+    p.toDPosition.adjacent.filter(p => free.contains(p.toPosition) && !visited.contains(p.toPosition))
   end adjacent
 
 end Grid
