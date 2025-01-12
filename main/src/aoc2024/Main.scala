@@ -87,23 +87,23 @@ def solve() =
   println(s"Day18 - part1: ${Day18.part1(input18p1)}")
   println(s"Day18 - part2: ${Day18.part2(input18p2)}")
 
-  val input19 = Day19.readFile("./inputs/Day19Test.txt")
+  val input19 = Day19.readFile("./inputs/Day19.txt")
   println(s"Day19 - part1: ${Day19.part1(input19)}")
   println(s"Day19 - part2: ${Day19.part2(input19)}")
 
-  val input20 = Day20.readFile("./inputs/Day20Test.txt")
+  val input20 = Day20.readFile("./inputs/Day20.txt")
   println(s"Day20 - part1: ${Day20.part1(input20)}")
   println(s"Day20 - part2: ${Day20.part2(input20)}")
 
-  val input21 = Day21.readFile("./inputs/Day21Test.txt")
+  val input21 = Day21.readFile("./inputs/Day21.txt")
   println(s"Day21 - part1: ${Day21.part1(input21)}")
   println(s"Day21 - part2: ${Day21.part2(input21)}")
 
-  val input22 = Day22.readFile("./inputs/Day22Test.txt")
+  val input22 = Day22.readFile("./inputs/Day22.txt")
   println(s"Day22 - part1: ${Day22.part1(input22)}")
   println(s"Day22 - part2: ${Day22.part2(input22)}")
 
-  val input23 = Day23.readFile("./inputs/Day23Test.txt")
+  val input23 = Day23.readFile("./inputs/Day23.txt")
   println(s"Day23 - part1: ${Day23.part1(input23)}")
   println(s"Day23 - part2: ${Day23.part2(input23)}")
 
@@ -112,5 +112,9 @@ def solve() =
   val input24State = (input24Initials, input24Statements)
   println(s"Day24 - part1: ${Day24.part1(input24State)}")
   println(s"Day24 - part2: ${Day24.part2(input24State)}")
+
+  val input25 = Day25.readFile("./inputs/Day25.txt")
+  println(s"Day25 - part1: ${Day25.part1(input25)}")
+  println(s"Day25 - part2: ${Day25.part2(input25)}")
 
 end solve
