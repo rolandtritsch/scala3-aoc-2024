@@ -91,7 +91,8 @@ def solve() =
   println(s"Day19 - part1: ${Day19.part1(input19)}")
   println(s"Day19 - part2: ${Day19.part2(input19)}")
 
-  val input20 = Day20.readFile("./inputs/Day20.txt")
+  //val input20 = Day20.readFile("./inputs/Day20.txt")
+  val input20 = Day20.readFile("./inputs/Day20Test.txt")
   println(s"Day20 - part1: ${Day20.part1(input20)}")
   println(s"Day20 - part2: ${Day20.part2(input20)}")
 
