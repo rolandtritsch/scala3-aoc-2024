@@ -36,4 +36,5 @@ class Day25Test extends munit.ScalaCheckSuite:
     val input = readFile("./inputs/Day25.txt")
     val obtained = part2(input)
     assertEquals(obtained, 1)
+
 end Day25Test
