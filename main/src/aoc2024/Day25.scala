@@ -36,4 +36,5 @@ object Day25:
     logger.debug(s"is: ${is}")
     1
   end part2
+
 end Day25
