@@ -27,16 +27,16 @@ class Day22Test extends munit.ScalaCheckSuite:
     assertEquals(next(123L), 15887950L)
 
   test("Day22 - secrets(10)"):
-    val secrets = LazyList.iterate(123L)(next) 
+    val secrets = LazyList.iterate(123L)(next)
     assertEquals(secrets(10), 5908254L)
-  
+
   test("Day22 - secrets(2000)"):
     assertEquals(LazyList.iterate(123L)(next)(10), 5908254L)
     assertEquals(LazyList.iterate(1L)(next)(2000), 8685429L)
     assertEquals(LazyList.iterate(10L)(next)(2000), 4700978L)
     assertEquals(LazyList.iterate(100L)(next)(2000), 15273692L)
     assertEquals(LazyList.iterate(2024L)(next)(2000), 8667524L)
-   
+
   test("Day22 - part1 - test"):
     val input = readFile("./inputs/Day22Test.txt")
     val obtained = part1(input)
