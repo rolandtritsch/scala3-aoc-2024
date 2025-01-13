@@ -5,10 +5,9 @@ import com.typesafe.scalalogging.Logger
 /** Day22 - Monkey Market
   *
   * That looks/sounds simple enough.
-  * 
-  * Let's go with a LazyList and build the sequence of secrets.
-  * We then "just" need to access the nth (2000th) secret and 
-  * return the sum of those.
+  *
+  * Let's go with a LazyList and build the sequence of secrets. We then "just" need to access the
+  * nth (2000th) secret and return the sum of those.
   */
 
 object Day22:
@@ -44,10 +43,13 @@ object Day22:
 
     val finalSecrets = secrets.map(LazyList.iterate(_)(next)(2000))
     finalSecrets.sum
+  end part1
 
   /** @return the solution for part2 */
   def part2(secrets: Set[Secret]): Long =
     require(secrets.nonEmpty, "secrets.nonEmpty")
+
     secrets.sum
+  end part2
 
 end Day22
