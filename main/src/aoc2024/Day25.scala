@@ -46,7 +46,7 @@ object Day25:
                 case (positions, (c, col)) => c match
                     case '#' => positions ++ Set((row, col))
                     case '.' => positions
-                    
+
           if isKey(block) then (keys + positions, locks) else (keys, locks + positions)
     finally source.close()
     end try
@@ -60,8 +60,7 @@ object Day25:
 
     val (keys, locks) = input
     val (_, count) = keys.foldLeft(locks, 0):
-      case ((ls, count), key) =>
-        (ls, count + ls.count(_.intersect(key).isEmpty))
+      case ((ls, count), key) => (ls, count + ls.count(_.intersect(key).isEmpty))
 
     count
   end part1
