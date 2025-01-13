@@ -38,7 +38,8 @@ object Day25:
 
     val source = Source.fromResource(filename)
     try
-      val blocks = source.getLines().grouped(8).toSeq
+      val blockSize = 8
+      val blocks = source.getLines().grouped(blockSize).toSeq
       blocks.foldLeft((Set.empty[Set[Position]], Set.empty[Set[Position]])):
         case ((keys, locks), block) =>
           val positions = block.zipWithIndex.foldLeft(Set.empty[Position]):
