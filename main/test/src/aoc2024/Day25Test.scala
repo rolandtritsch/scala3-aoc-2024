@@ -10,22 +10,24 @@ class Day25Test extends munit.ScalaCheckSuite:
     assert(true)
 
   test("Day25 - readFile - test"):
-    val obtained = readFile("./inputs/Day25Test.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    val (keys, locks) = readFile("./inputs/Day25Test.txt")
+    assertEquals(keys.size, 3)
+    assertEquals(locks.size, 2)
 
   test("Day25 - readFile"):
-    val obtained = readFile("./inputs/Day25.txt")
-    assertEquals(obtained, Seq(1, 2, 3))
+    val (keys, locks) = readFile("./inputs/Day25.txt")
+    assertEquals(keys.size, 250)
+    assertEquals(locks.size, 250)
 
   test("Day25 - part1 - test"):
     val input = readFile("./inputs/Day25Test.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 1)
+    assertEquals(obtained, 3)
 
   test("Day25 - part1"):
     val input = readFile("./inputs/Day25.txt")
     val obtained = part1(input)
-    assertEquals(obtained, 1)
+    assertEquals(obtained, 3269)
 
   test("Day25 - part2 - test"):
     val input = readFile("./inputs/Day25Test.txt")
