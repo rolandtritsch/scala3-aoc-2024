@@ -68,7 +68,7 @@ class Day21Test extends munit.ScalaCheckSuite:
   test("Day21 - path"):
     val pad = NumericKeypad.create
     val obtained = pad.path("029A")
-    val expected = "<A^A>^^AvvvA" 
+    val expected = "<A^A>^^AvvvA"
     assertEquals(obtained, expected)
 
   test("Day21 - complexity"):
