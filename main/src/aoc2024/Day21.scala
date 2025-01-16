@@ -131,7 +131,7 @@ object Day21:
 
   object NumericKeypad extends mutable.TypedGraphFactory[NumericKey, NumericEdge]:
 
-    val padEdges = Set(
+    val padEdges: Set[(Char, Char, Char)] = Set(
       ('7', '8', '>'),
       ('7', '4', 'v'),
       ('8', '7', '<'),
@@ -172,7 +172,7 @@ object Day21:
 
   end NumericKeypad
 
-  val lookup = Map(
+  val lookup: Map[String, Set[String]] = Map(
     "<<" -> Set("A"),
     "<v" -> Set(">A"),
     "<>" -> Set(">>A"),
