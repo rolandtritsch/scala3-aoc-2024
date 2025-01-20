@@ -1,5 +1,7 @@
 package aoc2024
 
+import aoc2024.Day07.Equation
+
 class Day07Test extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
@@ -19,7 +21,7 @@ class Day07Test extends munit.ScalaCheckSuite:
 
     assertEquals(obtained(0), expected)
 
-  val input = Day07.readFile("./inputs/Day07Test.txt")
+  val input: List[Equation] = Day07.readFile("./inputs/Day07Test.txt")
 
   test("Day07 - isValid"):
     assert(input(0).isValid())

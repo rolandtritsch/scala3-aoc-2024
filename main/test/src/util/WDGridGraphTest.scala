@@ -18,7 +18,7 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     assert(graph.isConnected)
     assert(graph.isCyclic)
     assert(graph.isDirected)
-    assert(!graph.isEmpty)
+    assert(graph.nonEmpty)
     assert(!graph.isHyper)
     assert(graph.isMixed)
     assert(!graph.isMulti)
@@ -30,32 +30,32 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     val grid = Grid.fromResource("./tests/GridTest-Small.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
-    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 15)
 
   test("WDGridGraph - shortestPath - smallMedium"):
     val grid = Grid.fromResource("./tests/GridTest-SmallMedium.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
-    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 25)
 
   test("WDGridGraph - shortestPath - medium"):
     val grid = Grid.fromResource("./tests/GridTest-Medium.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
-    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 95)
 
   test("WDGridGraph - shortestPath - large"):
     val grid = Grid.fromResource("./tests/GridTest-Large.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
-    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 195)
 
 end WDGridGraphTest

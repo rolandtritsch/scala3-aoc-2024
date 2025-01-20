@@ -27,7 +27,7 @@ class GridGraphTest extends munit.ScalaCheckSuite:
     assert(graph.isConnected)
     assert(graph.isCyclic)
     assert(!graph.isDirected)
-    assert(!graph.isEmpty)
+    assert(graph.nonEmpty)
     assert(!graph.isHyper)
     assert(!graph.isMixed)
     assert(!graph.isMulti)
@@ -38,25 +38,25 @@ class GridGraphTest extends munit.ScalaCheckSuite:
   test("GridGraph - shortestPath - small"):
     val grid = Grid.fromResource("./tests/GridTest-Small.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes // scalafix:ok
     assertEquals(path.size, 15)
 
   test("GridGraph - shortestPath - smallMedium"):
     val grid = Grid.fromResource("./tests/GridTest-SmallMedium.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes // scalafix:ok
     assertEquals(path.size, 25)
 
   test("GridGraph - shortestPath - medium"):
     val grid = Grid.fromResource("./tests/GridTest-Medium.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes // scalafix:ok
     assertEquals(path.size, 95)
 
   test("GridGraph - shortestPath - large"):
     val grid = Grid.fromResource("./tests/GridTest-Large.txt")
     val graph = GridGraph.fromGrid(grid)
-    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes
+    val path = graph.get(Position(1, 1)).shortestPathTo(graph.get(grid.end.get)).get.nodes // scalafix:ok
     assertEquals(path.size, 195)
 
 end GridGraphTest

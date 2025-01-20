@@ -3,11 +3,12 @@ package aoc2024
 import aoc2024.Day18.*
 import util.Grid.Factory.given
 import util.Position
+import scala.concurrent.duration.Duration
 
 class Day18Test extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
-  override val munitTimeout = scala.concurrent.duration.Duration(60, "s")
+  override val munitTimeout: Duration = scala.concurrent.duration.Duration(60, "s")
 
   test("Day18 - dummy".tag(ignore)):
     assert(true)

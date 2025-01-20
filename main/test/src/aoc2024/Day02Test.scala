@@ -6,7 +6,7 @@ class Day02Test extends munit.ScalaCheckSuite:
     val obtained = Day02.readFile("./inputs/Day02.txt")
     assertEquals(obtained(0), Seq(16, 17, 18, 21, 23, 24, 27, 24))
 
-  val input = Seq(
+  val input: Seq[Seq[Int]] = Seq(
     Seq(7, 6, 4, 2, 1),
     Seq(1, 2, 7, 8, 9),
     Seq(9, 7, 6, 2, 1),

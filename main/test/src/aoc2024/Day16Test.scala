@@ -1,12 +1,11 @@
 package aoc2024
-
+// scalafix: off
 import aoc2024.Day16.*
 import aoc2024.Day16.Implicits.given
-
 import util.Grid
 import util.Grid.Factory.given
 import util.WDGridGraph
-
+// scalafix: on
 class Day16Test extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")

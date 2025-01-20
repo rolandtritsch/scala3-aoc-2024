@@ -1,7 +1,9 @@
 package aoc2024
 
+import scala.concurrent.duration.Duration
+
 class Day06Test extends munit.ScalaCheckSuite:
-  override val munitTimeout = scala.concurrent.duration.Duration(60, "s")
+  override val munitTimeout: Duration = scala.concurrent.duration.Duration(60, "s")
 
   test("Day06 - readFile - test"):
     val obtained = Day06.readFile("./inputs/Day06Test.txt")

@@ -1,8 +1,8 @@
 package aoc2024
 
 class Day05Test extends munit.ScalaCheckSuite:
-  val testRules = Day05.readFileRules("./inputs/Day05Test-Rules.txt")
-  val testUpdates = Day05.readFileUpdates("./inputs/Day05Test-Updates.txt")
+  val testRules: Set[(Int, Int)] = Day05.readFileRules("./inputs/Day05Test-Rules.txt")
+  val testUpdates: Set[List[Int]] = Day05.readFileUpdates("./inputs/Day05Test-Updates.txt")
 
   test("Day05 - readFile - Rules - Test"):
     assertEquals(testRules.size, 21)
@@ -47,8 +47,8 @@ class Day05Test extends munit.ScalaCheckSuite:
 
     assert(!input.isValid(testRules))
 
-  val rules = Day05.readFileRules("./inputs/Day05-Rules.txt")
-  val updates = Day05.readFileUpdates("./inputs/Day05-Updates.txt")
+  val rules: Set[(Int, Int)] = Day05.readFileRules("./inputs/Day05-Rules.txt")
+  val updates: Set[List[Int]] = Day05.readFileUpdates("./inputs/Day05-Updates.txt")
 
   test("Day05 - part1 - test"):
     val obtained = Day05.part1(testRules, testUpdates)
