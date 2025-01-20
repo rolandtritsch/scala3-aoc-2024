@@ -116,7 +116,7 @@ object Day21:
         case '^' => 4.0f
 
       val sp = pad.get(NumericKey(from)).shortestPathTo(pad.get(NumericKey(to)), ordering)
-      sp.get.edges.map(_.move).mkString
+      sp.get.edges.map(_.move).mkString // scalafix:ok
     end path0
 
     def path(keys: String): String =

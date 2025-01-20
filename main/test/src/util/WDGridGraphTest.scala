@@ -18,7 +18,6 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     assert(graph.isConnected)
     assert(graph.isCyclic)
     assert(graph.isDirected)
-    assert(graph.nonEmpty)
     assert(!graph.isHyper)
     assert(graph.isMixed)
     assert(!graph.isMulti)

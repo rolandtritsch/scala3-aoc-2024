@@ -39,7 +39,7 @@ class Day13Test extends munit.ScalaCheckSuite:
     assert(Position(0, 1) > Position(0, 0))
     assert(Position(1, 0) > Position(0, 0))
     assert(Position(1, 1) > Position(0, 0))
-    assert(Position(0, 0) == Position(0, 0))
+    assert(Position(0, 0) == Position(0, 0)) // scalafix:ok
 
   test("Day13 - chepeastWayToWin"):
     val machine =
