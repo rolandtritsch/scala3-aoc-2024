@@ -8,13 +8,21 @@ import com.goyeau.mill.scalafix.ScalafixModule
 import $ivy.`com.lihaoyi::mill-contrib-scoverage:`
 import mill.contrib.scoverage.ScoverageModule
 
-object main extends ScalaModule with ScoverageModule with ScalafmtModule with ScalafixModule {
+object main
+  extends ScalaModule
+  with ScoverageModule
+  with ScalafmtModule
+  with ScalafixModule
+{
+  // Note: This cannot be upgraded, because we are using toolbox
   def scalaVersion = "3.4.3"
+
   def scalacOptions = Seq(
     "-Wunused:imports", 
-    "-deprecation", 
     "-Xfatal-warnings",
+    "-deprecation", 
   )
+
   def scoverageVersion = "2.2.1"
 
   def ivyDeps = Agg(
@@ -33,31 +41,44 @@ object main extends ScalaModule with ScoverageModule with ScalafmtModule with Sc
   )
 
   def scalafixConfig = T {
-    Some(millSourcePath / ".." /".scalafix.conf")
+    Some(millSourcePath / ".." / ".scalafix.conf")
   }
   
-  object test extends ScoverageTests with TestModule.Munit with ScalafmtModule {
+  object test
+    extends ScoverageTests
+    with TestModule.Munit
+    with ScalafmtModule
+    with ScalafixModule
+  {
     def testCachedArgs = Seq("--exclude-tags=slow")
     //def testCachedArgs = Seq("--include-tags=only")
     //def testCachedArgs = Seq("--exclude-tags=ignore")
+
     def ivyDeps = Agg(
       ivy"org.scalameta::munit::1.0.0",
       ivy"org.scalameta::munit-scalacheck:1.0.0",
       ivy"org.typelevel::spire:0.18.0",
     )
+
     def forkArgs: T[Seq[String]] = Seq("-Xss1G", "-Xmx10G")
+
+    def scalafixConfig = T {
+      Some(millSourcePath / ".." / ".." / ".scalafix.conf")
+    }
   }
 
   object migrate extends ScalaModule {
     def scalaVersion = main.scalaVersion
+
     def scalacOptions = Seq(
       "-rewrite",
       "-indent",
     )
-    //def sources = main.sources
+
     def sources = T {
       main.sources() ++ test.sources()
     }
+
     def ivyDeps = T {
       main.ivyDeps() ++ test.ivyDeps()
     }
