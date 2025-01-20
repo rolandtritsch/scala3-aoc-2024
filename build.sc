@@ -61,6 +61,10 @@ object main
     )
 
     def forkArgs: T[Seq[String]] = Seq("-Xss1G", "-Xmx10G")
+  
+    def scalafixIvyDeps = Agg(
+      ivy"com.github.xuwei-k::scalafix-rules:0.5.1",
+    )
 
     def scalafixConfig = T {
       Some(millSourcePath / ".." / ".." / ".scalafix.conf")
