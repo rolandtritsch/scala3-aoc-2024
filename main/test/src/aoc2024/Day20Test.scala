@@ -1,8 +1,10 @@
 package aoc2024
+
 // scalafix:off
 import scala.concurrent.duration.Duration
 
 import aoc2024.Day20.*
+
 // scalafix:on
 class Day20Test extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")

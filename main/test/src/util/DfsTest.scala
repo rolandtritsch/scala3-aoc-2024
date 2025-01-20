@@ -1,8 +1,10 @@
 package util
+
 // scalafix:off
 import scala.concurrent.duration.Duration
 
 import util.Position.*
+
 // scalafix:on
 class DfsTest extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
