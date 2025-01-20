@@ -29,7 +29,7 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     val grid = Grid.fromResource("./tests/GridTest-Small.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
     val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 15)
 
@@ -37,7 +37,7 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     val grid = Grid.fromResource("./tests/GridTest-SmallMedium.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
     val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 25)
 
@@ -45,7 +45,7 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     val grid = Grid.fromResource("./tests/GridTest-Medium.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
     val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 95)
 
@@ -53,7 +53,7 @@ class WDGridGraphTest extends munit.ScalaCheckSuite:
     val grid = Grid.fromResource("./tests/GridTest-Large.txt")
     val graph = WDGridGraph.fromGrid(grid)
     val startPos = DPosition(1, 1, Direction.Right)
-    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down) // scalafix:ok
+    val endPos = DPosition(grid.end.get.x, grid.end.get.y, Direction.Down)
     val path = graph.get(startPos).shortestPathTo(graph.get(endPos)).get.nodes // scalafix:ok
     assertEquals(path.size, 195)
 

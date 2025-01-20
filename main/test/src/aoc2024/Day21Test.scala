@@ -72,7 +72,7 @@ class Day21Test extends munit.ScalaCheckSuite:
     assertEquals(obtained, expected)
 
   test("Day21 - complexity"):
-    val complexities = results.map((code, keys) => complexity(code, keys.size))
+    val complexities = results.map((code, keys) => complexity(code, keys.length))
     assertEquals(complexities.sum, 126384)
 
   // test("Day21 - part1 - test"):

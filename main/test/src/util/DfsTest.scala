@@ -1,8 +1,9 @@
 package util
-
-import util.Position.*
+// scalafix:off
 import scala.concurrent.duration.Duration
 
+import util.Position.*
+// scalafix:on
 class DfsTest extends munit.ScalaCheckSuite:
   val only = new munit.Tag("only")
   val ignore = new munit.Tag("ignore")
@@ -33,20 +34,20 @@ class DfsTest extends munit.ScalaCheckSuite:
 
   test("Dfs - findFirst"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest.txt")
-    val path = grid.findFirst(grid.start.get) // scalafix:ok
+    val path = grid.findFirst(grid.start.get)
     val expected =
       List(Position(1, 1), Position(2, 1), Position(3, 1), Position(3, 2), Position(3, 3))
     assertEquals(path.get, expected) // scalafix:ok
 
   test("Dfs - findFirst - no-path"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-NoPath.txt")
-    val path = grid.findFirst(grid.start.get) // scalafix:ok
+    val path = grid.findFirst(grid.start.get)
 
     assert(path.isEmpty)
 
   test("Dfs - findFirst - no-boundaries"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-NoBoundaries.txt")
-    val path = grid.findFirst(grid.start.get) // scalafix:ok
+    val path = grid.findFirst(grid.start.get)
     val expected = List(
       Position(0, 0),
       Position(1, 0),
@@ -68,20 +69,22 @@ class DfsTest extends munit.ScalaCheckSuite:
 
   test("Dfs - findFirst - small"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-Small.txt")
-    val path = grid.findFirst(grid.start.get) // scalafix:ok
+    val path = grid.findFirst(grid.start.get)
 
-    assertEquals(path.get.size, 23)
+    assertEquals(path.get.size, 23) // scalafix:ok
 
   test("Dfs - findCheapest - small"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-Small.txt")
-    val path = grid.findCheapest(grid.start.get) // scalafix:ok
+    val path = grid.findCheapest(grid.start.get)
 
-    assertEquals(path.get.size, 15)
+    assertEquals(path.get.size, 15) // scalafix:ok
 
   test("Dfs - findCheapest - smallMedium"):
     val grid = Grid.fromResource[GridWithDfs]("./tests/GridTest-SmallMedium.txt")
-    val path = grid.findCheapest(grid.start.get) // scalafix:ok
+    val path = grid.findCheapest(grid.start.get)
 
+    // scalafix:off
     assertEquals(path.get.size, 25)
+    // scalafix:on
 
 end DfsTest
