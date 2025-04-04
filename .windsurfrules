@@ -1,0 +1,32 @@
+# Scala3 Project for Advent of Code 2024
+
+This project is a Scala3 project for the [Advent of Code - 2024][aoc2024].
+
+## Project structure
+
+The project is structured as follows:
+
+- `main/src` - The main source code
+- `main/test/src` - The test source code
+- `main/resources/` - The resources
+- `main/resources/inputs/` - The input files
+- `out/` - Build artifacts
+- `.metals/` - Metals cache
+- `.bloop/` - Bloop cache
+
+## Mill build
+
+The project is built using [Mill][mill].
+
+## Instructions
+
+- Please write idiomatic Scala3 code
+- Please write tests for the code
+- If possible write property-based tests
+- Please use the [Scala Style Guide][style]
+- Please use the Scala Center Advent of Code 2024 solutions as [inspiration][]
+
+[aoc2024]: https://adventofcode.com/2024
+[mill]: https://mill-build.github.io/
+[style]: https://scala-lang.org/docs/scala3/style-guide.html
+[inspiration]: https://scalacenter.github.io/scala-advent-of-code/2024
