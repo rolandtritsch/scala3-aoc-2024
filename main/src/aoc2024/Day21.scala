@@ -31,16 +31,10 @@ import com.typesafe.scalalogging.Logger
   * different (e.g. if they are subsequent moves, the first one will take x moves to get the < key
   * and then hit A. For the second one we just have to hit A again).
   *
-  * Means the cost of the current edge needs to be derived from the previous move and the current
-  * move, e.g. if previous == current cost == 1 (because we just need to hit A again to get the
-  * next/same move again).
+  * Means the cost of the current edge needs to favor going straight.
   *
-  * The cost of the edges of AvvvA is Av/<vA:3 vv/A:1 vv/A:1 vA/>^A:3. So the total cost is 8.
-  *
-  * Note: The cost of x/x is always 1 and the cost of x/y is equal to the cost of y/x (symmetric).
-  *
-  * Hhhmmm ... that sounds not too bad. We can probably create a map to represent the cost of all
-  * possible edge pairs.
+  * Hhhmmm ... that sounds not too bad. We can probably create cost function to take that into
+  * consideration.
   *
   * But wait ... there is more ...
   *
@@ -60,20 +54,11 @@ import com.typesafe.scalalogging.Logger
   * The insight here is that every compination of two moves can be mapped to a Seq of moves on the
   * next directional keypad. For instance ...
   *
-  *   - A< becomes v<<A
-  *   - >A becomes >>^A
+  *   - A< becomes v<<A or <v<A
+  *   - >A becomes >>^A or >^>A
   *   - vv becomes A
   *
-  * Note: A< does NOT become <v<A, because the next level down we miss the chance to just hit A
-  * twice to go left twice.
-  *
-  * Note: For the 4 keys that are arranged in a 2x2 grid (^A and v>) we also have to decide how to
-  * get to the diagonal keys. Clockwise or counterclockwise. Up/Down first or Left/Right first. For
-  * now I will go with clockwise.
-  *
-  * Note: The numeric keypad has no diagonal keys.
-  *
-  * And then you apply the same replacements to resulting string again.
+  * And then you apply the same replacements to the resulting string again (N times).
   */
 
 object Day21:
@@ -109,11 +94,25 @@ object Day21:
     def path0(from: Char, to: Char): String =
       logger.debug(s"from: ${from}, to: ${to}")
 
-      def ordering(e: pad.EdgeT): Float = e.move match
-        case '<' => 1.0f
-        case '>' => 2.0f
-        case 'v' => 3.0f
-        case '^' => 4.0f
+      // Cost function for the edges.
+      def ordering(e: pad.EdgeT): Float =
+        // This is where the magic happens. If the current edge (e.g. between 1 and 2) is in the same
+        // row or column as the target (e.g. 3), then the cost-factor is 0. Otherwise it is 1.
+        def adjuster(current: Set[Char], lines: Set[Set[Char]]): Float =
+          if lines.exists(current.subsetOf(_)) then 0.0f else 1.0f
+
+        val rows = Set(Set('1', '2', '3'), Set('4', '5', '6'), Set('7', '8', '9'), Set('0', 'A'))
+        val cols = Set(Set('1', '4', '7'), Set('0', '2', '5', '8'), Set('A', '3', '6', '9'))
+        val current = Set(e.source.key, e.target.key, to)
+
+        // Favoring going horizontal, then vertical, but in any case straight
+        e.move match
+          case '<' => 1.0f * adjuster(current, rows)
+          case '>' => 2.0f * adjuster(current, rows)
+          case 'v' => 3.0f * adjuster(current, cols)
+          case '^' => 4.0f * adjuster(current, cols)
+        end match
+      end ordering
 
       val sp = pad.get(NumericKey(from)).shortestPathTo(pad.get(NumericKey(to)), ordering)
       sp.get.edges.map(_.move).mkString // scalafix:ok
@@ -132,34 +131,34 @@ object Day21:
   object NumericKeypad extends mutable.TypedGraphFactory[NumericKey, NumericEdge]:
 
     val padEdges: Set[(Char, Char, Char)] = Set(
-      ('7', '8', '>'),
+      ('0', '2', '^'),
+      ('0', 'A', '>'),
+      ('1', '2', '>'),
+      ('1', '4', '^'),
+      ('2', '0', 'v'),
+      ('2', '1', '<'),
+      ('2', '3', '>'),
+      ('2', '5', '^'),
+      ('3', '2', '<'),
+      ('3', '6', '^'),
+      ('3', 'A', 'v'),
+      ('4', '1', 'v'),
+      ('4', '5', '>'),
+      ('4', '7', '^'),
+      ('5', '2', 'v'),
+      ('5', '4', '<'),
+      ('5', '6', '>'),
+      ('5', '8', '^'),
+      ('6', '3', 'v'),
+      ('6', '5', '<'),
+      ('6', '9', '^'),
       ('7', '4', 'v'),
-      ('8', '7', '<'),
+      ('7', '8', '>'),
       ('8', '5', 'v'),
+      ('8', '7', '<'),
       ('8', '9', '>'),
       ('9', '6', 'v'),
       ('9', '8', '<'),
-      ('4', '5', '>'),
-      ('4', '1', 'v'),
-      ('4', '7', '^'),
-      ('5', '6', '>'),
-      ('5', '2', 'v'),
-      ('5', '4', '<'),
-      ('5', '8', '^'),
-      ('6', '3', 'v'),
-      ('6', '9', '^'),
-      ('6', '5', '<'),
-      ('1', '2', '>'),
-      ('1', '4', '^'),
-      ('2', '3', '>'),
-      ('2', '0', 'v'),
-      ('2', '1', '<'),
-      ('2', '5', '^'),
-      ('3', '6', '^'),
-      ('3', 'A', 'v'),
-      ('3', '2', '<'),
-      ('0', 'A', '>'),
-      ('0', '2', '^'),
       ('A', '0', '<'),
       ('A', '3', '^'),
     )
@@ -177,9 +176,7 @@ object Day21:
     "<v" -> Set(">A"),
     "<>" -> Set(">>A"),
     "<^" -> Set(">^A"),
-    "<A" -> Set(">>^A"),
-    // manual optimization "<A" -> Set(">>^A", ">^>A"),
-
+    "<A" -> Set(">>^A", ">^>A"),
     "vv" -> Set("A"),
     "v<" -> Set("<A"),
     "v>" -> Set(">A"),
@@ -199,8 +196,7 @@ object Day21:
     "A^" -> Set("<A"),
     "A>" -> Set("vA"),
     "Av" -> Set("v<A", "<vA"),
-    "A<" -> Set("v<<A"),
-    // manual optimization "A<" -> Set("v<<A", "<v<A"),
+    "A<" -> Set("v<<A", "<v<A"),
   )
 
   /** @return the list of all possible keystrokes sequences */
@@ -218,7 +214,7 @@ object Day21:
     end if
   end next
 
-  /** @return the length of the shortest keystroke sequence (using N directional keypads */
+  /** @return the length of the shortest keystroke sequence (using N directional keypads) */
   def level(keys: String, n: Int): Int =
     if n <= 0 then next(keys).map(_.size).min
     else
@@ -238,7 +234,6 @@ object Day21:
     val complexities = codes.map: code =>
       val keys = numericKeypad.path(code)
       val shortestPathLength = level(keys, 1)
-      logger.info(s"code: ${code}, keys: ${keys}, shortestPathLength: ${shortestPathLength}")
       complexity(code, shortestPathLength)
 
     complexities.sum
