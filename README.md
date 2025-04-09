@@ -1,5 +1,7 @@
 # scala3-aoc-2024
 
+![aoctree][]
+
 Here we go again: [Advent of Code - 2024][aoc2024]!
 
 To make this work you need to run ...
@@ -43,3 +45,4 @@ and linted before each push.
 - Using `Codeium` and `Windsurf` to write code
 
 [aoc2024]: https://adventofcode.com/2024
+[aoctree]: assets/aoc-tree.png
