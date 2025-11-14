@@ -2,47 +2,60 @@
 
 ![aoctree][]
 
-Here we go again: [Advent of Code - 2024][aoc2024]!
+Solutions to [Advent of Code 2024][aoc2024] challenges implemented in Scala 3.
 
-To make this work you need to run ...
+## What is this?
+
+This repository contains my solutions to the [Advent of Code 2024][aoc2024] programming puzzles. Advent of Code is an annual event featuring daily programming challenges throughout December. Each day presents a two-part puzzle that can be solved using any programming language.
+
+This implementation focuses on:
+- Learning Scala 3 features and idioms
+- Building reusable utilities for common puzzle patterns
+- Exploring AI-assisted development with GitHub Copilot and Codeium
+
+## Quick Start
+
+### Prerequisites
+
+- Java 11 or higher
+- [Mill build tool][mill] (downloaded automatically via `./mill`)
+
+### Running Solutions
 
 ```bash
-./mill main.test
+# Run all solutions
 ./mill main.run
+
+# Run tests
+./mill main.test
 ```
 
-**Note**: This time around the focus is on learning `scala3`
-and using `GitHub Copilot/emacs` and `Codeium/Windsurf` as
-much as possible (as a pair programming buddy).
+### Project Structure
 
-**Note**: Initially the (scala3) code was formatted with
-braces. Then I decided to switch to indent. To migrate
-the code I did run `./mill main.migrate.compile` and
-made heavy use of `scalafmt` and `scalafix`.
+- `main/src/aoc2024/` - Daily puzzle solutions (Day01.scala through Day25.scala)
+- `main/src/util/` - Reusable utility classes for common patterns
+- `main/resources/inputs/` - Puzzle input files
+- `main/test/src/` - Test suites with sample data
 
-**Note**: You can install a/the pre-push hook with ...
+## Implementation Details
 
-```bash
-cd ./.git/hooks
-ln -s ../../hook/pre-push .
-```
+For information about the architecture, design decisions, and implementation patterns, see [CLAUDE.md][].
 
-The hook will make sure the code is properly formatted
-and linted before each push.
+## Contributing
 
-## What I have learned?
+Interested in contributing? Check out the [CONTRIBUTING.md][] file for development workflow and guidelines.
 
-- Lot's about Scala3 ...
-  - extensions
-  - given and using
-  - indent vs. braces
-  - ... and (much) more
-- Using `scalafmt` (for Scala3)
-- Using `scalafix` (for Scala3)
-- Using `breeze` to solve linear equation systems
-- Using `scala-graph` to find the shortest path in a graph (or 2-dim grid)
-- Using `scala-corner` to count the number of corners of regions in a 2-dim grid
-- Using `Codeium` and `Windsurf` to write code
+## What I Learned
+
+- Scala 3 features: extensions, given/using, indent-based syntax
+- Mill build system and Scala tooling (scalafmt, scalafix)
+- Graph algorithms with `scala-graph`
+- Linear algebra with `breeze`
+- Geometry algorithms with `scala-corner`
+- AI-assisted development workflows
 
 [aoc2024]: https://adventofcode.com/2024
 [aoctree]: assets/aoc-tree.png
+[mill]: https://mill-build.org
+[CLAUDE.md]: CLAUDE.md
+[CONTRIBUTING.md]: CONTRIBUTING.md

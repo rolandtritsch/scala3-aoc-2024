@@ -1,93 +1,104 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository. For basic usage information, see [README.md][]. For contribution guidelines, see [CONTRIBUTING.md][].
 
-## Build System
+## Architecture and Design Decisions
 
-This project uses **Mill** as the build tool with Scala 3.4.3. The build configuration is in `build.sc`.
+### Why Mill?
 
-### Essential Commands
+Mill was chosen as the build tool over SBT because:
+- Simpler, more predictable configuration (plain Scala instead of DSL)
+- Faster builds with better caching
+- Better integration with modern Scala 3 tooling
+- Easier to understand for developers new to Scala
 
-```bash
-# Run all solutions
-./mill main.run
+The build configuration lives in `build.sc` with Scala 3.4.3 as the target version.
 
-# Run tests  
-./mill main.test
+### Why This Project Structure?
 
-# Run specific test (use MUnit test names)
-./mill main.test "DayXXTest"
+**Daily Solutions Pattern**: Each day follows a consistent structure because:
+- `readFile()` isolates input parsing from algorithm logic
+- `part1()` and `part2()` methods allow independent testing
+- `Main.scala` orchestrates execution, making it easy to run all solutions or specific days
+- This separation enables better testing and code reuse
 
-# Format code
-./mill main.reformat
+**Utility Framework Philosophy**: The `util` package was designed to:
+- Extract common patterns that appear across multiple puzzles
+- Avoid premature abstraction (utilities are added only after patterns emerge)
+- Provide composable building blocks rather than monolithic solutions
+- Maintain type safety while keeping the API ergonomic
 
-# Apply scalafix
-./mill main.fix
+### Key Design Patterns
 
-# Generate test coverage report
-./mill main.scoverage.htmlReport
+**Grid System**: Many AoC puzzles involve 2D grids, so we built a comprehensive grid framework:
+- `Grid` class provides a high-level abstraction for grid navigation
+- `Position`/`DPosition` handle coordinates with directional movement
+- `GridGraph`/`WDGridGraph` convert grids to graph representations for pathfinding
+- This design separates spatial representation from algorithm implementation
 
-# Compile only
-./mill main.compile
+**Search Algorithms**: BFS and DFS are implemented separately because:
+- Different puzzles need different traversal orders
+- Keeping them separate makes the code easier to understand and test
+- Both integrate with the Grid system through common interfaces
 
-# Test with specific args (exclude slow tests by default)
-./mill main.test.testCached
-```
+**Path Tracking**: The `Path` utility emerged from puzzles requiring:
+- Score accumulation during traversal
+- History tracking for constraint checking
+- Backtracking for finding all valid paths
 
-### Pre-push Hook
+### Dependency Choices
 
-Install the git pre-push hook to ensure code quality:
-```bash
-cd ./.git/hooks
-ln -s ../../hooks/pre-push .
-```
+**scala-graph**: Used for shortest path and graph algorithms because:
+- Provides battle-tested implementations
+- Integrates well with Scala's type system
+- Supports weighted graphs needed for many puzzles
 
-## Architecture Overview
+**breeze**: Chosen for linear algebra because:
+- Some puzzles require solving equation systems
+- Well-maintained library with good performance
+- Familiar API for developers with NumPy experience
 
-### Project Structure
+**scala-corner**: Specialized library for counting corners in 2D regions because:
+- This specific geometric operation appears in multiple puzzles
+- Implementing it correctly is non-trivial
+- Using a library reduces bug risk
 
-- `main/src/aoc2024/` - Daily Advent of Code solutions (Day01.scala through Day25.scala)
-- `main/src/util/` - Reusable utility classes for common puzzle patterns
-- `main/resources/inputs/` - Input files for each day's puzzle
-- `main/test/src/` - MUnit test suites
+**munit**: Selected as testing framework because:
+- Lightweight and fast
+- Good Scala 3 support
+- Simple assertion syntax
 
-### Key Architectural Patterns
+### Testing Philosophy
 
-**Daily Solutions**: Each day follows a consistent pattern with:
-- `readFile()` method to parse input
-- `part1()` and `part2()` methods for each puzzle part
-- Solutions are called from `Main.scala` which runs all days sequentially
+Tests are structured with:
+- Separate test data files to isolate test inputs from production code
+- One test class per day for organization
+- Tagged tests to exclude slow-running tests from regular CI
+- Target of 80% code coverage to balance thoroughness with pragmatism
 
-**Utility Framework**: The `util` package provides reusable components for common AoC patterns:
-- `Grid` - 2D grid representation with free/blocked positions, start/end points
-- `Position`/`DPosition` - Position handling with directional movement
-- `Bfs`/`Dfs` - Search algorithms for pathfinding
-- `GridGraph`/`WDGridGraph` - Graph representations for grid-based puzzles
-- `Path` - Path tracking and scoring utilities
+### Code Style Decisions
 
-**Grid-Based Puzzles**: Many solutions use the Grid utility for 2D navigation problems. The Grid class handles:
-- Parsing grid files with obstacles (#), free spaces (.), start (S), and end (E) positions
-- Boundary checking and neighbor finding
-- Integration with search algorithms
+**Indent-based syntax**: Migrated from braces to indent because:
+- More idiomatic in Scala 3
+- Reduces visual noise
+- Encourages better code structure through indentation awareness
 
-**Dependencies**: Key external libraries used:
-- `scala-graph` - Graph algorithms and shortest path finding
-- `breeze` - Linear algebra (for solving equation systems)
-- `scala-corner` - Counting corners in 2D regions
-- `scala-parallel-collections` - Parallel processing
-- `munit` - Testing framework
+**Strict compiler settings**: Warnings treated as errors because:
+- Forces addressing issues immediately
+- Prevents accumulation of technical debt
+- Maintains high code quality throughout development
 
-### Testing Strategy
+**Formatting and linting**: Automated with scalafmt and scalafix because:
+- Removes subjective style debates
+- Ensures consistency across the codebase
+- Catches common mistakes early
 
-Tests use MUnit with:
-- Test data files in `main/resources/inputs/` (e.g., `Day01Test.txt`)
-- Separate test classes for each day in `main/test/src/aoc2024/`
-- Utility tests in `main/test/src/util/`
-- Tests are tagged and can be run selectively (slow tests excluded by default)
+### Evolution and Migration Notes
 
-### Code Style
+The codebase originally used brace-based syntax and was migrated to indent-based using:
+- `./mill main.migrate.compile` for automated conversion
+- Manual cleanup with scalafmt and scalafix
+- This migration taught valuable lessons about Scala 3's syntax flexibility
 
-- Uses Scala 3 indent-based syntax (migrated from braces)
-- Scalafmt for formatting, Scalafix for linting
-- Compiler warnings treated as errors (`-Xfatal-warnings`)
-- Unused imports detection enabled
+[README.md]: README.md
+[CONTRIBUTING.md]: CONTRIBUTING.md
