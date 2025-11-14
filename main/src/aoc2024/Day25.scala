@@ -6,10 +6,12 @@ import com.typesafe.scalalogging.Logger
   *
   * That looks/sounds simple enough.
   *
-  * We just have to find the key/lock combinations that do not overlop (at least for part1), which
-  * is easier than finding the key/lock combinations actually fit.
+  * We just have to find the key/lock combinations that do not overlop
+  * (at least for part1), which is easier than finding the key/lock
+  * combinations actually fit.
   *
-  * Note: Day25 has no part2. Means we can go for the most simple solution possible for part1.
+  * Note: Day25 has no part2. Means we can go for the most simple
+  * solution possible for part1.
   *
   * There are three data-structures to consider (to model the keys and locks)...
   *
@@ -17,8 +19,8 @@ import com.typesafe.scalalogging.Logger
   *   - a list of pin heights
   *   - a set of positions
   *
-  * For now I will go with the set of positions, because I can determine if they overlap by
-  * intersecting a key-set with a lock-set.
+  * For now I will go with the set of positions, because I can determine
+  * if they overlap by intersecting a key-set with a lock-set.
   */
 
 object Day25:
